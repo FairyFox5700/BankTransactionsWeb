@@ -32,14 +32,14 @@ namespace BankTransactionWeb.DAL.EfCore
             .HasOne<Account>(t => t.AccountDestination)
             .WithMany(a => a.TransactionsForDestination);
             base.OnModelCreating(modelBuilder);
-            //try
-            //{
-            //    modelBuilder.Seed();
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.LogError(ex, "An error occurred seeding the Database.");
-            //}
+            try
+            {
+                modelBuilder.Seed();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred seeding the Database.");
+            }
         }
     }
 }
