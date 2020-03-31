@@ -10,9 +10,9 @@ namespace BankTransactionWeb.BAL.Interfaces
     {
         Task<IEnumerable<PersonDTO>> GetAllPersons();
         Task<PersonDTO> GetPersonById(int id);
-        void AddPerson(PersonDTO person);
-        void UpdatePerson(PersonDTO person);
-        void DeletePerson(PersonDTO person);
-        decimal TotalBalanceOnAccounts(int id);
+        Task AddPerson(PersonDTO person);
+        Task UpdatePerson(PersonDTO person);
+        Task DeletePerson(PersonDTO person);
+        Task<decimal> TotalBalanceOnAccounts(int id);
     }
 }
