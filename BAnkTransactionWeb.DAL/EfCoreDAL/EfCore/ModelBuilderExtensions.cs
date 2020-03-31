@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BankTransactionWeb.DAL.EfCore
-{
+namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
+{ 
     public static class ModelBuilderExtensions
     {
         public static void Seed(this ModelBuilder modelBuilder)

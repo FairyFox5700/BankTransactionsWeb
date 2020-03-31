@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BankTransactionWeb.DAL.EfCore
+namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
 {
    public class BankTransactionContext :DbContext
     {

@@ -1,4 +1,7 @@
-﻿using BankTransactionWeb.DAL.EfCore;
+﻿using BankTransactionWeb.DAL.EfCoreDAL;
+using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
+using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
+using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +19,12 @@ namespace BankTransactionWeb.BAL
             .AddJsonFile("appsettings.json")
             .Build();
             services.AddDbContext<BankTransactionContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+            services.AddTransient<IPersonRepository, PersonRepository>();
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<ICompanyRepository, CompanyRepository>();
+            services.AddTransient<IShareholderRepository, ShareholderRepository>();
+            services.AddTransient<ITransactionRepository,TransactionRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             //services.AddTransient<YourDomainRepository>();
         }
     }

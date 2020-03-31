@@ -1,13 +1,13 @@
-﻿using BankTransactionWeb.DAL.EfCore;
+﻿using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
+using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
-using BankTransactionWeb.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.DAL
+namespace BankTransactionWeb.DAL.EfCoreDAL
 {
     public class UnitOfWork : IUnitOfWork
     {
