@@ -1,4 +1,7 @@
-﻿using BankTransactionWeb.DAL.EfCoreDAL;
+﻿using AutoMapper;
+using BankTransactionWeb.BAL.Infrastucture;
+using BankTransactionWeb.BAL.Interfaces;
+using BankTransactionWeb.DAL.EfCoreDAL;
 using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
 using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
 using BankTransactionWeb.DAL.Interfaces;
@@ -8,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
 
-namespace BankTransactionWeb.BAL
+namespace BankTransactionWeb.BAL.Cofiguration
 {
     public static class DALServiceExtension
     {
@@ -25,7 +28,13 @@ namespace BankTransactionWeb.BAL
             services.AddTransient<IShareholderRepository, ShareholderRepository>();
             services.AddTransient<ITransactionRepository,TransactionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //services.AddTransient<YourDomainRepository>();
+            services.AddTransient<ICompanyService, CompanyService>();
+            services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<IPersonService,PersonService>();
+            services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IShareholderService, ShareholderService>();
+            IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
+            services.AddSingleton(mapper);
         }
     }
 }
