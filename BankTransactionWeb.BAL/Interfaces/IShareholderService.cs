@@ -1,0 +1,17 @@
+﻿using BankTransactionWeb.BAL.Models;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BankTransactionWeb.BAL.Interfaces
+{
+    public interface IShareholderService
+    {
+        Task<IEnumerable<ShareholderDTO>> GetAllCompanies();
+        Task<ShareholderDTO> GetShareholderById(int id);
+        Task AddShareholder(ShareholderDTO shareholder);
+        Task UpdateShareholder(ShareholderDTO shareholder);
+        Task DeleteShareholder(ShareholderDTO shareholder);
+    }
+}
