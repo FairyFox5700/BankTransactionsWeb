@@ -48,6 +48,6 @@ namespace BankTransactionWeb.DAL.InMemoryDAL
         //    Accounts = new List<Account> { account1, account2, account3, account4 };
         //    Transactions = new List<Transaction> { transaction1, transaction2, transaction3, transaction3, transaction4, transaction5, transaction5, transaction6 };
 
-        }
+        //}
     }
 }

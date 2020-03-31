@@ -27,12 +27,12 @@ namespace BankTransactionWeb.DAL.EfCore
             new Shareholder { Id = 2, PersonId = 2, CompanyId = 1 },
             new Shareholder { Id = 3, PersonId = 3, CompanyId = 2 });
             modelBuilder.Entity<Transaction>().HasData(
-            new Transaction { Id = 1, Amount = 300, DateOftransfering = new DateTime(2004, 8, 3), Number = "00000000" },
-            new Transaction { Id = 2, Amount = 70, DateOftransfering = new DateTime(2006, 6, 3), Number = "00000001" },
-            new Transaction { Id = 3, Amount = 70, DateOftransfering = new DateTime(2009, 8, 3), Number = "00000002" },
-            new Transaction { Id = 4, Amount = 34, DateOftransfering = new DateTime(2004, 8, 3), Number = "00000003" },
-            new Transaction { Id = 5, Amount = 900, DateOftransfering = new DateTime(2004, 8, 3), Number = "00000004" },
-            new Transaction { Id = 6, Amount = 800, DateOftransfering = new DateTime(2004, 8, 3), Number = "00000005" });
+            new Transaction { Id = 1, Amount = 300,AccountSourceId=1,AccountDestinationId=2, DateOftransfering = new DateTime(2004, 8, 3) },
+            new Transaction { Id = 2, Amount = 70, AccountSourceId = 1, AccountDestinationId = 2, DateOftransfering = new DateTime(2006, 6, 3) },
+            new Transaction { Id = 3, Amount = 70, AccountSourceId = 2, AccountDestinationId = 2, DateOftransfering = new DateTime(2009, 8, 3)},
+            new Transaction { Id = 4, Amount = 34, AccountSourceId = 1, AccountDestinationId = 2, DateOftransfering = new DateTime(2004, 8, 3)},
+            new Transaction { Id = 5, Amount = 900, AccountSourceId = 4, AccountDestinationId = 2, DateOftransfering = new DateTime(2004, 8, 3) },
+            new Transaction { Id = 6, Amount = 800, AccountSourceId = 3, AccountDestinationId = 2, DateOftransfering = new DateTime(2004, 8, 3) });
         }
     }
 }

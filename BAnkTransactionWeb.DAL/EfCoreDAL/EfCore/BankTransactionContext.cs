@@ -24,14 +24,16 @@ namespace BankTransactionWeb.DAL.EfCore
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
             modelBuilder.Entity<Transaction>()
-            .HasOne<Account>(t => t.AccountSource)
-            .WithMany(a => a.TransactionsForSource);
-            modelBuilder.Entity<Transaction>()
-            .HasOne<Account>(t => t.AccountDestination)
-            .WithMany(a => a.TransactionsForDestination);
-            base.OnModelCreating(modelBuilder);
+                .HasOne<Account>(t => t.SourceAccount)
+                .WithMany(a => a.Transactions).OnDelete(deleteBehavior:DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Transaction>()
+            //.HasOne<Account>(t => t.AccountSource)
+            //.WithMany(a => a.TransactionsForSource);
+            //modelBuilder.Entity<Transaction>()
+            //.HasOne<Account>(t => t.AccountDestination)
+            //.WithMany(a => a.TransactionsForDestination);
+            //base.OnModelCreating(modelBuilder);
             try
             {
                 modelBuilder.Seed();
