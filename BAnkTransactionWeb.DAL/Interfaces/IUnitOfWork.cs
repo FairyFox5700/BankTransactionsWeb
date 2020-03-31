@@ -8,11 +8,11 @@ namespace BankTransactionWeb.DAL.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        IRepository<Person> personRepository { get; }
-        IRepository<Account> accountRepository { get; }
-        IRepository<Transaction> transactionRepository { get; }
-        IRepository<Company> companyRepository { get; }
-        IRepository<Shareholder> shareholderRepository { get; }
+        IPersonRepository PersonRepository { get; }
+        IAccountRepository AccountRepository { get; }
+        ITransactionRepository TransactionRepository { get; }
+        ICompanyRepository CompanyRepository { get; }
+        IShareholderRepository ShareholderRepository { get; }
         Task Save();
     }
 }

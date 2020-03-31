@@ -1,4 +1,5 @@
-﻿using BankTransactionWeb.DAL.Entities;
+﻿using BankTransactionWeb.DAL.EfCore;
+using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -7,31 +8,13 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.DAL.Repositories
 {
-    public class ShareholderRepository : IShareholderRepository
+    public class ShareholderRepository :BaseRepository<Shareholder>,  IShareholderRepository
     {
-        public void Add(Shareholder entity)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly BankTransactionContext context;
 
-        public void Delete(Shareholder entity)
+        public ShareholderRepository(BankTransactionContext context) : base(context)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IEnumerable<Shareholder>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Shareholder> GetById(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(Shareholder entity)
-        {
-            throw new NotImplementedException();
+            this.context = context;
         }
     }
 }

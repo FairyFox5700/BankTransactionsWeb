@@ -17,35 +17,75 @@ namespace BankTransactionWeb.DAL
         {
             this.context = context;
         }
-        private IRepository<Person> personRepository;
-        public IRepository<Person> PersonRepository
+
+        IPersonRepository personRepository;
+        public IPersonRepository PersonRepository
         {
             get
             {
                 if (personRepository == null)
                 {
-                    personRepository = new BaseRepository<Person>(context);
+                    personRepository = new PersonRepository(context);
                 }
                 return personRepository;
             }
         }
 
-        public IRepository<Account> accountRepository => throw new NotImplementedException();
 
-        public IRepository<Transaction> transactionRepository => throw new NotImplementedException();
-
-        public IRepository<Company> companyRepository => throw new NotImplementedException();
-
-        public IRepository<Shareholder> shareholderRepository => throw new NotImplementedException();
-
-        public void Dispose()
+        IAccountRepository accountRepository;
+        public IAccountRepository AccountRepository
         {
-            throw new NotImplementedException();
+            get
+            {
+                if (accountRepository == null)
+                {
+                    accountRepository = new AccountRepository(context);
+                }
+                return accountRepository;
+            }
         }
 
-        public Task Save()
+        ITransactionRepository transactionRepository ;
+        public ITransactionRepository TransactionRepository
         {
-            context.SaveChangesAsync();
+            get
+            {
+                if (transactionRepository == null)
+                {
+                    transactionRepository = new  TransactionRepository(context);
+                }
+                return transactionRepository;
+            }
+        }
+        ICompanyRepository companyRepository;
+        public ICompanyRepository CompanyRepository
+        {
+            get
+            {
+                if (companyRepository == null)
+                {
+                    companyRepository = new CompanyRepository(context);
+                }
+                return companyRepository;
+            }
+        }
+
+        IShareholderRepository shareholderRepository;
+        public IShareholderRepository ShareholderRepository
+        {
+            get
+            {
+                if (shareholderRepository == null)
+                {
+                    shareholderRepository = new ShareholderRepository(context);
+                }
+                return shareholderRepository;
+            }
+        }
+
+        public async Task Save()
+        {
+            await context.SaveChangesAsync();
         }
 
         private bool disposed = false;

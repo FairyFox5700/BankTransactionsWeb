@@ -19,17 +19,17 @@ namespace BankTransactionWeb.DAL.Repositories
             get { return dbSet ?? (dbSet = context.Set<TEntity>()); }
         }
 
-        public BaseRepository(BankTransactionContext context)
+        public  BaseRepository(BankTransactionContext context)
         {
             this.context = context;
         }
-        public void Add(TEntity entity)
+        public virtual void Add(TEntity entity)
         {
             dbSet.Add(entity);
             //await context.SaveChangesAsync();
         }
 
-        public void Delete(TEntity entity)
+        public virtual void Delete(TEntity entity)
         {
             //var entityToDelete =  dbSet.Find(id);
             //if(entityToDelete!=null)
@@ -39,18 +39,18 @@ namespace BankTransactionWeb.DAL.Repositories
             //}
         }
 
-        public async Task<IEnumerable<TEntity>> GetAll()
+        public virtual  async Task<IEnumerable<TEntity>> GetAll()
         {
             return await dbSet.ToListAsync();
         }
 
-        public async  Task<TEntity> GetById(int id)
+        public virtual async Task<TEntity> GetById(int id)
         {
             var entity = await dbSet.FindAsync(id);
             return entity;
         }
 
-        public void Update(TEntity entity)
+        public virtual void Update(TEntity entity)
         {
             dbSet.Update(entity);
             //await context.SaveChangesAsync();
