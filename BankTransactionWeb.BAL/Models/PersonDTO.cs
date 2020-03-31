@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BankTransactionWeb.BAL.Models
 {
-    public class PersonDTO
+    public class PersonDTO:BaseModel
     {
         public string Name { get; set; }
         public string Surname { get; set; }
