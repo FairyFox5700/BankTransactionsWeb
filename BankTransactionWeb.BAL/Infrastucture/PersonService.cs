@@ -35,10 +35,10 @@ namespace BankTransactionWeb.BAL.Infrastucture
             await unitOfWork.Save();
         }
 
-        public async Task<IEnumerable<PersonDTO>> GetAllPersons()
+        public async Task<List<PersonDTO>> GetAllPersons()
         {
             var persons = await unitOfWork.PersonRepository.GetAll();
-            return persons.Select(product => mapper.Map<PersonDTO>(persons));
+            return persons.Select(p => mapper.Map<PersonDTO>(p)).ToList();
         }
 
         public async  Task<PersonDTO> GetPersonById(int id)

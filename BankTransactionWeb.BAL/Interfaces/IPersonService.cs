@@ -8,7 +8,7 @@ namespace BankTransactionWeb.BAL.Interfaces
 {
    public interface IPersonService
     {
-        Task<IEnumerable<PersonDTO>> GetAllPersons();
+        Task<List<PersonDTO>> GetAllPersons();
         Task<PersonDTO> GetPersonById(int id);
         Task AddPerson(PersonDTO person);
         Task UpdatePerson(PersonDTO person);

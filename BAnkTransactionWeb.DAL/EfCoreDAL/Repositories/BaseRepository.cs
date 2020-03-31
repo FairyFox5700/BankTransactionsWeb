@@ -14,8 +14,8 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         private readonly BankTransactionContext context;
         DbSet<TEntity> dbSet;
 
-        private DbSet<TEntity> Entities
-        {
+        private DbSet<TEntity> DBSet
+        { 
             get { return dbSet ?? (dbSet = context.Set<TEntity>()); }
         }
 
@@ -25,7 +25,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         }
         public virtual void Add(TEntity entity)
         {
-            dbSet.Add(entity);
+            DBSet.Add(entity);
             //await context.SaveChangesAsync();
         }
 
@@ -34,25 +34,25 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
             //var entityToDelete =  dbSet.Find(id);
             //if(entityToDelete!=null)
             //{
-                dbSet.Remove(entity);
+            DBSet.Remove(entity);
                 //await context.SaveChangesAsync();
             //}
         }
 
         public virtual  async Task<IEnumerable<TEntity>> GetAll()
         {
-            return await dbSet.ToListAsync();
+            return await DBSet.ToListAsync();
         }
 
         public virtual async Task<TEntity> GetById(int id)
         {
-            var entity = await dbSet.FindAsync(id);
+            var entity = await DBSet.FindAsync(id);
             return entity;
         }
 
         public virtual void Update(TEntity entity)
         {
-            dbSet.Update(entity);
+            DBSet.Update(entity);
             //await context.SaveChangesAsync();
         }
     }

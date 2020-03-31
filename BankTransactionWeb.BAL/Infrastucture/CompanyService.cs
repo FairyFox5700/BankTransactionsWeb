@@ -54,5 +54,4 @@ namespace BankTransactionWeb.BAL.Infrastucture
             await unitOfWork.Save();
         }
     }
-    }
 }
