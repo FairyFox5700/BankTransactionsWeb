@@ -24,9 +24,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="InMemoryDAL\Interfaces\" />
-    <Folder Include="InMemoryDAL\Repositories\" />
-  </ItemGroup>
-
 </Project>
