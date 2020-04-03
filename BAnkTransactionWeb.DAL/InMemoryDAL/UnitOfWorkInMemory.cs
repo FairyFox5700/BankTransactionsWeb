@@ -1,5 +1,6 @@
 ﻿using BankTransactionWeb.DAL.InMemoryDAL.Repositories;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -96,6 +97,21 @@ namespace BankTransactionWeb.DAL.InMemoryDAL
              * when there is no reference to the object.
              * source https://stackoverflow.com/questions/45740218/necessity-of-dispose-method-mocking-ef-core-with-the-in-memory-provider
              */
+        }
+
+        public void CommitTransaction()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RollbackTransaction()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IDbContextTransaction> BeginTransaction()
+        {
+            throw new NotImplementedException();
         }
     }
 }

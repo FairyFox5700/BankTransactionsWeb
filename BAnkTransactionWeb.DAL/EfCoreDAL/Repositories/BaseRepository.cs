@@ -44,6 +44,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
             try
             {
                 var entity = await DBSet.FindAsync(id);
+                context.Entry(entity).State = EntityState.Detached;
                 return entity;
             }
             catch(Exception ex)
@@ -56,7 +57,6 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         public virtual void Update(TEntity entity)
         {
             DBSet.Update(entity);
-            //await context.SaveChangesAsync();
         }
 
         private bool disposed = false;

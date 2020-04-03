@@ -40,8 +40,7 @@ namespace BankTransactionWeb
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                loggerFactory.AddConsole(LogLevel.Information); 
-                loggerFactory.AddDebug();
+               
             }
             else
             {
