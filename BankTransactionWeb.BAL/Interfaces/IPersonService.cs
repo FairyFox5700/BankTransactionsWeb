@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Interfaces
 {
-   public interface IPersonService
+   public interface IPersonService: IDisposable
     {
         Task<List<PersonDTO>> GetAllPersons();
         Task<PersonDTO> GetPersonById(int id);
@@ -14,6 +14,5 @@ namespace BankTransactionWeb.BAL.Interfaces
         Task UpdatePerson(PersonDTO person);
         Task DeletePerson(PersonDTO person);
         Task<decimal> TotalBalanceOnAccounts(int id);
-        void Dispose();
     }
 }

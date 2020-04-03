@@ -1,0 +1,37 @@
+﻿@model BankTransactionWeb.ViewModel.AddAccountViewModel
+@{
+    ViewData["Title"] = "AddAccount";
+}
+
+
+    <form asp-controller="Account" asp-action="AddAccount" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
+        <div class="form-group row">
+            <label asp-for="Number" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="Number" class="form-contol" />
+                <span asp-validation-for="Number" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="Balance" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <input asp-for="Balance" class="form-contol" />
+                <span asp-validation-for="Balance" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label asp-for="PersonId" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-10">
+                <select asp-for="PersonId" asp-items="@Model.People">
+                    <option>Please select person</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input class="btn-success" type="submit" asp-controller="Account" asp-action="AddAccount" value="Confirm" />
+                <a asp-controller="Account" asp-action="GetAllAccounts"  class="btn btn-primary">Cancel</a>
+            </div>
+        </div>
+    </form>

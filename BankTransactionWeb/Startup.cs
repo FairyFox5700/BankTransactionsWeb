@@ -28,9 +28,10 @@ namespace BankTransactionWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages().AddRazorRuntimeCompilation();
-            IMapper mapper = new Mapper(AutoMapperConfig.ConfigureAutoMapper());
+            IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
             services.AddSingleton(mapper);
             services.AddDALServices();
+
 
         }
 

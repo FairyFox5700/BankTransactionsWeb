@@ -18,11 +18,11 @@ namespace BankTransactionWeb.Controllers
         private readonly ILogger<PersonController> logger;
         private readonly IMapper mapper;
 
-        public PersonController(IPersonService personService, ILogger<PersonController> logger)
+        public PersonController(IPersonService personService, ILogger<PersonController> logger, IMapper mapper)
         {
             this.personService = personService;
             this.logger = logger;
-
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -92,13 +92,14 @@ namespace BankTransactionWeb.Controllers
                 else
                 {
                     //var peron = Mapper.Map<PersonDTO>(personModel);
-                    var person = new PersonDTO()
-                    {
-                        Name = personModel.Name,
-                        Surname = personModel.Surname,
-                        LastName = personModel.LastName,
-                        DataOfBirth = personModel.DataOfBirth,
-                    };
+                    var person = mapper.Map<PersonDTO>(personModel);
+                    //var person = new PersonDTO()
+                    //{
+                    //    Name = personModel.Name,
+                    //    Surname = personModel.Surname,
+                    //    LastName = personModel.LastName,
+                    //    DataOfBirth = personModel.DataOfBirth,
+                    //};
                     await personService.AddPerson(person);
                     return RedirectToAction(nameof(GetAllPersons));
                 }
@@ -122,14 +123,15 @@ namespace BankTransactionWeb.Controllers
             }
             else
             {
-                var personModel = new UpdatePersonViewModel()
-                {
-                    Id = currentPerson.Id,
-                    Name = currentPerson.Name,
-                    Surname = currentPerson.Surname,
-                    LastName = currentPerson.LastName,
-                    DataOfBirth = currentPerson.DataOfBirth,
-                };
+                var personModel = mapper.Map<UpdatePersonViewModel>(currentPerson);
+                //var personModel = new UpdatePersonViewModel()
+                //{
+                //    Id = currentPerson.Id,
+                //    Name = currentPerson.Name,
+                //    Surname = currentPerson.Surname,
+                //    LastName = currentPerson.LastName,
+                //    DataOfBirth = currentPerson.DataOfBirth,
+                //};
                 return View(personModel);
             }
             

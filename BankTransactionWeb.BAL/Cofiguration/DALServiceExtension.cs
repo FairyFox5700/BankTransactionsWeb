@@ -26,15 +26,14 @@ namespace BankTransactionWeb.BAL.Cofiguration
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<ICompanyRepository, CompanyRepository>();
             services.AddTransient<IShareholderRepository, ShareholderRepository>();
-            services.AddTransient<ITransactionRepository,TransactionRepository>();
+            services.AddTransient<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddTransient<ICompanyService, CompanyService>();
             services.AddTransient<ITransactionService, TransactionService>();
-            services.AddTransient<IPersonService,PersonService>();
+            services.AddTransient<IPersonService, PersonService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IShareholderService, ShareholderService>();
-            IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
-            services.AddSingleton(mapper);
+
         }
     }
 }

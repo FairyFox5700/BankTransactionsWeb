@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Interfaces
 {
-    public interface IAccountService
+    public interface IAccountService : IDisposable
     {
         Task<IEnumerable<AccountDTO>> GetAllAccounts();
         Task<AccountDTO> GetAccountById(int id);

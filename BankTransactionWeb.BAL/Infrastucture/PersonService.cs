@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Infrastucture
 {
-    public class PersonService : IPersonService, IDisposable
+    public class PersonService : IPersonService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
@@ -47,17 +47,10 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             try
             {
-            var personMapped = mapper.Map<Person>(person);
-                if (personMapped == null)
-                {
-                    logger.LogError($"In method {nameof(DeletePerson)} instance of person is not mapped properly");
-                }
-                else
-                {
-                    unitOfWork.PersonRepository.Delete(personMapped);
-                    await unitOfWork.Save();
-                    logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully added");
-                }
+                var personMapped = mapper.Map<Person>(person);
+                unitOfWork.PersonRepository.Delete(personMapped);
+                await unitOfWork.Save();
+                logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully added");
             }
             catch (Exception ex)
             {
