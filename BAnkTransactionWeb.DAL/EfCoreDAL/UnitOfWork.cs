@@ -2,6 +2,7 @@
 using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -86,6 +87,21 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
         public async Task Save()
         {
             await context.SaveChangesAsync();
+        }
+
+        public async Task<IDbContextTransaction> BeginTransaction() 
+        {
+            return await context.Database.BeginTransactionAsync();
+           // _dbFactory.GetDataContext.Database.BeginTransaction(); 
+        }
+
+        public void  RollbackTransaction()
+        {
+            context.Database.RollbackTransaction();
+        }
+        public void CommitTransaction() 
+        {
+            context.Database.CommitTransaction();
         }
 
         private bool disposed = false;

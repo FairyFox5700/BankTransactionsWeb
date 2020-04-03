@@ -14,5 +14,9 @@ namespace BankTransactionWeb.DAL.Interfaces
         ICompanyRepository CompanyRepository { get; }
         IShareholderRepository ShareholderRepository { get; }
         Task Save();
+        void CommitTransaction();
+        void RollbackTransaction();
+        Task<IDbContextTransaction> BeginTransaction();
+
     }
 }

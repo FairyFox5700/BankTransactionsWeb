@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using BankTransactionWeb.BAL;
 using BankTransactionWeb.BAL.Cofiguration;
+using BankTransactionWeb.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +27,8 @@ namespace BankTransactionWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages().AddRazorRuntimeCompilation();
+            IMapper mapper = new Mapper(AutoMapperConfig.ConfigureAutoMapper());
+            services.AddSingleton(mapper);
             services.AddDALServices();
         }
 
