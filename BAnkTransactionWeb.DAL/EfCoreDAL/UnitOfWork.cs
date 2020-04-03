@@ -92,7 +92,6 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
         public async Task<IDbContextTransaction> BeginTransaction() 
         {
             return await context.Database.BeginTransactionAsync();
-           // _dbFactory.GetDataContext.Database.BeginTransaction(); 
         }
 
         public void  RollbackTransaction()

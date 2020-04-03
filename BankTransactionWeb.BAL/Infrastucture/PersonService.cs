@@ -3,6 +3,7 @@ using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,21 +12,42 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Infrastucture
 {
-    public class PersonService : IPersonService
+    public class PersonService : IPersonService, IDisposable
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
+        private readonly ILogger<PersonService> logger;
 
-        public PersonService(IUnitOfWork unitOfWork, IMapper mapper)
+        public PersonService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<PersonService> logger)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.logger = logger;
         }
         public async Task AddPerson(PersonDTO person)
         {
-            var personMapped = mapper.Map<Person>(person);
-            unitOfWork.PersonRepository.Add(personMapped);
-            await unitOfWork.Save();
+            try
+            {
+                var personMapped = mapper.Map<Person>(person);
+                if(personMapped==null)
+                {
+                    logger.LogError($"In method {nameof(AddPerson)} instance of person is not mapped properly");
+                }
+                else
+                {
+                    unitOfWork.PersonRepository.Add(personMapped);
+                    await unitOfWork.Save();
+                    logger.LogInformation($"In method {nameof(AddPerson)} instance of person successfully added");
+                }
+            }
+            catch(Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(AddPerson)}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+               
+            }
+
         }
 
         public async Task DeletePerson(PersonDTO person)
@@ -33,6 +55,11 @@ namespace BankTransactionWeb.BAL.Infrastucture
             var personMapped = mapper.Map<Person>(person);
             unitOfWork.PersonRepository.Delete(personMapped);
             await unitOfWork.Save();
+        }
+
+        public void Dispose()
+        {
+            unitOfWork.Dispose();
         }
 
         public async Task<List<PersonDTO>> GetAllPersons()

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
 {
-    public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
+    public abstract class BaseRepository<TEntity> : IDisposable, IRepository<TEntity> where TEntity : BaseEntity
     {
         private readonly BankTransactionContext context;
         DbSet<TEntity> dbSet;
@@ -31,12 +31,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
 
         public virtual void Delete(TEntity entity)
         {
-            //var entityToDelete =  dbSet.Find(id);
-            //if(entityToDelete!=null)
-            //{
             DBSet.Remove(entity);
-                //await context.SaveChangesAsync();
-            //}
         }
 
         public virtual  async Task<IEnumerable<TEntity>> GetAll()
@@ -46,14 +41,42 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
 
         public virtual async Task<TEntity> GetById(int id)
         {
-            var entity = await DBSet.FindAsync(id);
-            return entity;
+            try
+            {
+                var entity = await DBSet.FindAsync(id);
+                return entity;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+            
         }
 
         public virtual void Update(TEntity entity)
         {
             DBSet.Update(entity);
             //await context.SaveChangesAsync();
+        }
+
+        private bool disposed = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposed)
+            {
+                if (disposing)
+                {
+                    context.Dispose();
+                }
+            }
+            this.disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

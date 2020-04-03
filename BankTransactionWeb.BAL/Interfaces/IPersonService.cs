@@ -14,5 +14,6 @@ namespace BankTransactionWeb.BAL.Interfaces
         Task UpdatePerson(PersonDTO person);
         Task DeletePerson(PersonDTO person);
         Task<decimal> TotalBalanceOnAccounts(int id);
+        void Dispose();
     }
 }

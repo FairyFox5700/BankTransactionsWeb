@@ -218,6 +218,14 @@ namespace BankTransactionWeb.Controllers
                     $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 return StatusCode(500, "Internal server error");
             }
+
+        }
+
+
+        protected override void Dispose(bool disposing)
+        {
+            personService.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
