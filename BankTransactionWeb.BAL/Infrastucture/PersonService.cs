@@ -29,20 +29,13 @@ namespace BankTransactionWeb.BAL.Infrastucture
             try
             {
                 var personMapped = mapper.Map<Person>(person);
-                if(personMapped==null)
-                {
-                    logger.LogError($"In method {nameof(AddPerson)} instance of person is not mapped properly");
-                }
-                else
-                {
-                    unitOfWork.PersonRepository.Add(personMapped);
-                    await unitOfWork.Save();
-                    logger.LogInformation($"In method {nameof(AddPerson)} instance of person successfully added");
-                }
+                unitOfWork.PersonRepository.Add(personMapped);
+                await unitOfWork.Save();
+                logger.LogInformation($"In method {nameof(AddPerson)} instance of person successfully added");
             }
             catch(Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(AddPerson)}. The exception is {ex.Message}. " +
+                logger.LogError($"Catch an exception in method {nameof(AddPerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
                
@@ -52,9 +45,27 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task DeletePerson(PersonDTO person)
         {
+            try
+            {
             var personMapped = mapper.Map<Person>(person);
-            unitOfWork.PersonRepository.Delete(personMapped);
-            await unitOfWork.Save();
+                if (personMapped == null)
+                {
+                    logger.LogError($"In method {nameof(DeletePerson)} instance of person is not mapped properly");
+                }
+                else
+                {
+                    unitOfWork.PersonRepository.Delete(personMapped);
+                    await unitOfWork.Save();
+                    logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully added");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(DeletePerson)} in class {nameof(PersonService)}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+
+            }
         }
 
         public void Dispose()
@@ -64,18 +75,42 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task<List<PersonDTO>> GetAllPersons()
         {
-            var persons = await unitOfWork.PersonRepository.GetAll();
-            return persons.Select(p => mapper.Map<PersonDTO>(p)).ToList();
+            try
+            {
+                var persons = await unitOfWork.PersonRepository.GetAll();
+                return persons.Select(p => mapper.Map<PersonDTO>(p)).ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(GetAllPersons)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+
+            }
+
         }
 
         public async  Task<PersonDTO> GetPersonById(int id)
         {
-            var personFinded = await unitOfWork.PersonRepository.GetById(id);
-            return  mapper.Map<PersonDTO>(personFinded);
+            try
+            {
+                var personFinded = await unitOfWork.PersonRepository.GetById(id);
+                return mapper.Map<PersonDTO>(personFinded);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(GetPersonById)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+
+            }
         }
 
         public async Task<decimal> TotalBalanceOnAccounts(int id)
         {
+            try
+            {
+
             decimal totalBalance = 0;
             var currentPerson = await unitOfWork.PersonRepository.GetById(id);
             if (currentPerson != null)
@@ -83,13 +118,31 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 totalBalance = currentPerson.Accounts.Select(ac => ac.Balance).Sum();
             }
             return totalBalance;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(TotalBalanceOnAccounts)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+
+            }
         }
 
         public async Task UpdatePerson(PersonDTO person)
         {
+            try
+            {
             var personMapped = mapper.Map<Person>(person);
             unitOfWork.PersonRepository.Update(personMapped);
             await unitOfWork.Save();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(UpdatePerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+
+            }
         }
     }
 }
