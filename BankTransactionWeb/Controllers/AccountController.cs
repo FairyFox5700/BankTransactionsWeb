@@ -134,7 +134,8 @@ namespace BankTransactionWeb.Controllers
                         }
                         else
                         {
-                            await accountService.UpdateAccount(account);
+                            var updatedAccount= mapper.Map<UpdateAccountViewModel, AccountDTO>(accountModel, account);
+                            await accountService.UpdateAccount(updatedAccount);
                             return RedirectToAction(nameof(GetAllAccounts));
                         }
                     }

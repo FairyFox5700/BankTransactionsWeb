@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Interfaces
 {
-    public interface ICompanyService
+    public interface ICompanyService:IDisposable
     {
         Task<IEnumerable<CompanyDTO>> GetAllCompanies();
         Task<CompanyDTO> GetCompanyById(int id);

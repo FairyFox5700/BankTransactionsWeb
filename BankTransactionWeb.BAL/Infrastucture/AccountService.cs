@@ -86,7 +86,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
             try
             {
                 var accounts= await unitOfWork.AccountRepository.GetAll();
-            return accounts.Select(account => mapper.Map<AccountDTO>(account));
+            return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
             }
             catch (Exception ex)
             {

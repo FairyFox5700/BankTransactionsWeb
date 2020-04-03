@@ -36,6 +36,13 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<AddAccountViewModel, AccountDTO>();
                 confg.CreateMap<AccountDTO, UpdateAccountViewModel>();
                 confg.CreateMap<UpdateAccountViewModel, AccountDTO>();
+                //for company
+                confg.CreateMap<UpdateCompanyViewModel, CompanyDTO>();
+                confg.CreateMap<CompanyDTO, UpdateCompanyViewModel>();
+                confg.CreateMap<AddCompanyViewModel, CompanyDTO>();
+                confg.CreateMap<CompanyDTO, AddCompanyViewModel>();
+                //for shareholder
+                //for transaction
             });
             return configuration;
         }

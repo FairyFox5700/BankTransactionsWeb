@@ -93,13 +93,6 @@ namespace BankTransactionWeb.Controllers
                 {
                     //var peron = Mapper.Map<PersonDTO>(personModel);
                     var person = mapper.Map<PersonDTO>(personModel);
-                    //var person = new PersonDTO()
-                    //{
-                    //    Name = personModel.Name,
-                    //    Surname = personModel.Surname,
-                    //    LastName = personModel.LastName,
-                    //    DataOfBirth = personModel.DataOfBirth,
-                    //};
                     await personService.AddPerson(person);
                     return RedirectToAction(nameof(GetAllPersons));
                 }
@@ -124,14 +117,6 @@ namespace BankTransactionWeb.Controllers
             else
             {
                 var personModel = mapper.Map<UpdatePersonViewModel>(currentPerson);
-                //var personModel = new UpdatePersonViewModel()
-                //{
-                //    Id = currentPerson.Id,
-                //    Name = currentPerson.Name,
-                //    Surname = currentPerson.Surname,
-                //    LastName = currentPerson.LastName,
-                //    DataOfBirth = currentPerson.DataOfBirth,
-                //};
                 return View(personModel);
             }
             
@@ -153,7 +138,6 @@ namespace BankTransactionWeb.Controllers
                 {
                     logger.LogError("Person model send by client is not valid.");
                     return View(personModel);
-                    //return BadRequest("Person model is not valid.");
                 }
                 else
                 {
@@ -167,7 +151,8 @@ namespace BankTransactionWeb.Controllers
                         }
                         else
                         {
-                            await personService.UpdatePerson(person);
+                            var updatedPerson = mapper.Map<UpdatePersonViewModel, PersonDTO>(personModel,person);
+                            await personService.UpdatePerson(updatedPerson);
                             return RedirectToAction(nameof(GetAllPersons));
                         }
                         }
@@ -210,7 +195,6 @@ namespace BankTransactionWeb.Controllers
                 catch (DbUpdateException ex)
                 {
                     logger.LogError($"Unable to update person becuase of {ex.Message}");
-                    //return error mesage
                     return StatusCode(500, "Internal server error");
                 }
             }
