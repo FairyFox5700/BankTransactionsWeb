@@ -44,16 +44,17 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task DeleteAccount(AccountDTO account)
         {
-            var accountMapped = mapper.Map<Account>(account);
-            unitOfWork.AccountRepository.Delete(accountMapped);
-            await unitOfWork.Save();
+           
             try
             {
+                var accountMapped = mapper.Map<Account>(account);
+                unitOfWork.AccountRepository.Delete(accountMapped);
+                await unitOfWork.Save();
                 logger.LogInformation($"In method {nameof(DeleteAccount)} instance of account successfully added");
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(DeleteAccount)} in class {nameof(PersonService)}. The exception is {ex.Message}. " +
+                logger.LogError($"Catch an exception in method {nameof(DeleteAccount)} in class {this.GetType()}. The exception is {ex.Message}. " +
                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
 
@@ -67,10 +68,10 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task<AccountDTO> GetAccountById(int id)
         {
-                try
-                {
+            try
+            {
                 var accountFinded = await unitOfWork.AccountRepository.GetById(id);
-            return mapper.Map<AccountDTO>(accountFinded);
+                return mapper.Map<AccountDTO>(accountFinded);
             }
             catch (Exception ex)
             {

@@ -1,0 +1,40 @@
+﻿@model List<BankTransactionWeb.ViewModel.TransactionListViewModel>
+@{
+    ViewData["Title"] = "GetAllTransactions";
+}
+
+<form asp-controller="Transaction" asp-action="GetAllTransactions" method="get">
+    @*<h4>Transactions count today: @ViewBag.CountOfTransactionPerDay</h4>*@
+    <button class="btn-info" asp-action="AddTransaction" asp-controller="Transaction">Add new</button>
+    <br />
+    <br />
+    <table class="table table-striped table-light">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Account Sorce</th>
+                <th scope="col">Account Destination</th>
+                <th scope="col">Date of transfering</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Options</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                <tr>
+                    <th scope="row">@(i + 1)</th>
+                    <td>@Model[i]?.AccountSourceNumber </td>
+                    <td>@Model[i]?.AccountDestinationeNumber</td>
+                    <td>@Model[i]?.DateOftransfering</td>
+                    <td>@Model[i]?.Amount </td>
+                    <td>
+                        <button class="btn-primary" asp-action="UpdateTransaction" asp-controller="Transaction" asp-route-id="@Model[i]?.AccountSourceId">Update</button>
+                        <button class="btn-danger" asp-action="DeleteTransaction" asp-controller="Transaction" asp-route-id="@Model[i]?.AccountSourceId">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
+

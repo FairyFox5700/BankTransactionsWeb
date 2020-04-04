@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Interfaces
 {
-    public interface IShareholderService
+    public interface IShareholderService:IDisposable
     {
-        Task<IEnumerable<ShareholderDTO>> GetAllCompanies();
+        Task<IEnumerable<ShareholderDTO>> GetAllShareholders();
         Task<ShareholderDTO> GetShareholderById(int id);
         Task AddShareholder(ShareholderDTO shareholder);
         Task UpdateShareholder(ShareholderDTO shareholder);

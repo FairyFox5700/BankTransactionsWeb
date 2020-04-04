@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Interfaces
 {
-    public interface ITransactionService
+    public interface ITransactionService:IDisposable
     {
-        Task<IEnumerable<TransactionDTO>> GetAllCompanies();
+        Task<IEnumerable<TransactionDTO>> GetAllTransactions();
         Task<TransactionDTO> GetTransactionById(int id);
         Task AddTransaction(TransactionDTO transaction);
         Task UpdateTransaction(TransactionDTO transaction);
