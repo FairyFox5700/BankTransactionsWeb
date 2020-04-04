@@ -26,11 +26,13 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllPersons()
+        public async Task<IActionResult> GetAllPersons(string name, string surname, string lastname,
+            string accountNumber, string accountTransaction, string compnayName)
         {
             try
             {
-                var persons = await personService.GetAllPersons();//maybe sort them
+                var persons = await personService.GetAllPersons(name, surname, lastname, 
+                    accountNumber,accountTransaction,compnayName);//maybe sort them
                 
                 logger.LogInformation("Successfully returned all persons");
                 return View(persons);

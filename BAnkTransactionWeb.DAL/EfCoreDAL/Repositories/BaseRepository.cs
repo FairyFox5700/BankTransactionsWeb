@@ -25,12 +25,17 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         }
         public virtual void Add(TEntity entity)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
             DBSet.Add(entity);
-            //await context.SaveChangesAsync();
         }
 
         public virtual void Delete(TEntity entity)
         {
+            if (entity == null) throw new ArgumentNullException(nameof(entity));
+            if (context.Entry<TEntity>(entity).State == EntityState.Detached)
+            {
+                DBSet.Attach(entity);
+            }
             DBSet.Remove(entity);
         }
 
@@ -56,6 +61,10 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
 
         public virtual void Update(TEntity entity)
         {
+            if(context.Entry<TEntity>(entity).State ==EntityState.Detached)
+            {
+                DBSet.Attach(entity);
+            }
             DBSet.Update(entity);
         }
 

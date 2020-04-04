@@ -1,4 +1,5 @@
 ﻿@model List<BankTransactionWeb.BAL.Models.ShareholderDTO>
+@inject BankTransactionWeb.ViewModel.ViewModelFiltering.SearchShareholdersViewModel SearchModel
 @{
     ViewData["Title"] = "GetAllShareholders";
 }
@@ -6,6 +7,19 @@
     <button class="btn-dark" asp-action="AddShareholder" asp-controller="Shareholder">Add new</button>
     <br />
     <br />
+    <div class="form-row form-inline">
+        <h3> Search by paramaters</h3>
+        <label asp-for="@SearchModel.CompanyName" class="col-sm-2 col-form-label"></label>
+        <div class="col-6">
+            <input asp-for="@SearchModel.CompanyName" class="form-contol" />
+        </div>
+        <br/>
+        <label asp-for="@SearchModel.DateOfCompnayCreation" class="col-sm-2 col-form-label"></label>
+        <div class="col-6">
+            <input asp-for="@SearchModel.DateOfCompnayCreation" class="form-contol" />
+        </div>
+    </div>
+
     <table class="table table-striped table-light">
         <thead>
             <tr>

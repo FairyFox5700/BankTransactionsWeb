@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BankTransactionWeb.BAL.Cofiguration;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
@@ -6,8 +7,8 @@ using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Infrastucture
@@ -65,12 +66,30 @@ namespace BankTransactionWeb.BAL.Infrastucture
             unitOfWork.Dispose();
         }
 
-        public async Task<IEnumerable<ShareholderDTO>> GetAllShareholders()
+        public async Task<IEnumerable<ShareholderDTO>> GetAllShareholders(string companyName=null, string dateOfCompanyCreation=null)
         {
             try
             {
                 var shareholders = (await unitOfWork.ShareholderRepository.GetAll());
-               return shareholders.Select(shareholder => mapper.Map<ShareholderDTO>(shareholder)).ToList();
+                if (!String.IsNullOrEmpty(companyName))
+                {
+                    shareholders = shareholders.Where(s => s.Company.Name.Contains(companyName));
+                }
+                if (!String.IsNullOrEmpty(dateOfCompanyCreation))
+                {
+                    try
+                    {
+                        var dataPerced = DateTime.Parse(dateOfCompanyCreation, CultureInfo.InvariantCulture);
+                        shareholders = shareholders.Where(s => s.Company.DateOfCreation.EqualsUpToSeconds(dataPerced));
+                    }
+                    catch (FormatException exe)
+                    {
+                        logger.LogError($"Unable to parce date in method {nameof(GetAllShareholders)} class {this.GetType()}. Value is {dateOfCompanyCreation}");
+                        throw exe;
+                    }
+
+                }
+                return shareholders.Select(shareholder => mapper.Map<ShareholderDTO>(shareholder)).ToList();
             }
             catch (Exception ex)
             {
@@ -81,12 +100,16 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
         }
 
+
+
+
+
         public async Task<ShareholderDTO> GetShareholderById(int id)
         {
             try
             {
                 var shareholderFinded = await unitOfWork.ShareholderRepository.GetById(id);
-            return mapper.Map<ShareholderDTO>(shareholderFinded);
+                return mapper.Map<ShareholderDTO>(shareholderFinded);
             }
             catch (Exception ex)
             {
@@ -103,8 +126,8 @@ namespace BankTransactionWeb.BAL.Infrastucture
             {
 
                 var shareholderMapped = mapper.Map<Shareholder>(shareholder);
-            unitOfWork.ShareholderRepository.Update(shareholderMapped);
-            await unitOfWork.Save();
+                unitOfWork.ShareholderRepository.Update(shareholderMapped);
+                await unitOfWork.Save();
             }
             catch (Exception ex)
             {
@@ -113,6 +136,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 throw ex;
 
             }
-}
+        }
     }
 }

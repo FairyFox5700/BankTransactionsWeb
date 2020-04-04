@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Infrastucture
@@ -18,7 +17,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
         private readonly IMapper mapper;
         private readonly ILogger<TransactionService> logger;
 
-        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper,ILogger<TransactionService> logger)
+        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<TransactionService> logger)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
@@ -48,8 +47,8 @@ namespace BankTransactionWeb.BAL.Infrastucture
             try
             {
                 var transactionMapped = mapper.Map<Transaction>(transaction);
-            unitOfWork.TransactionRepository.Delete(transactionMapped);
-            await unitOfWork.Save();
+                unitOfWork.TransactionRepository.Delete(transactionMapped);
+                await unitOfWork.Save();
                 logger.LogInformation($"In method {nameof(DeleteTransaction)} instance of transaction successfully added");
             }
             catch (Exception ex)
@@ -68,13 +67,13 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
                 var transactions = (await unitOfWork.TransactionRepository.GetAll()).ToList();
                 var listOfTransaction = new List<TransactionDTO>();
-                foreach(var transaction in transactions)
+                foreach (var transaction in transactions)
                 {
                     var mappedTransaction = mapper.Map<TransactionDTO>(transaction);
                     mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
                     mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
                     listOfTransaction.Add(mappedTransaction);
-                
+
                 }
 
                 return listOfTransaction;
@@ -94,7 +93,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
             {
 
                 var transactionFinded = await unitOfWork.TransactionRepository.GetById(id);
-            return mapper.Map<TransactionDTO>(transactionFinded);
+                return mapper.Map<TransactionDTO>(transactionFinded);
             }
             catch (Exception ex)
             {
@@ -109,9 +108,9 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             try
             {
-            var transactionMapped = mapper.Map<Transaction>(transaction);
-            unitOfWork.TransactionRepository.Update(transactionMapped);
-            await unitOfWork.Save();
+                var transactionMapped = mapper.Map<Transaction>(transaction);
+                unitOfWork.TransactionRepository.Update(transactionMapped);
+                await unitOfWork.Save();
             }
             catch (Exception ex)
             {

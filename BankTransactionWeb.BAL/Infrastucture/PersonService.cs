@@ -66,11 +66,38 @@ namespace BankTransactionWeb.BAL.Infrastucture
             unitOfWork.Dispose();
         }
 
-        public async Task<List<PersonDTO>> GetAllPersons()
-        {
+        public async Task<List<PersonDTO>> GetAllPersons(string name=null, string surname = null, string lastname = null,
+            string accountNumber = null, string transactionNumber = null, string companyName = null)
+        { 
             try
             {
                 var persons = await unitOfWork.PersonRepository.GetAll();
+                if (!String.IsNullOrEmpty(name))
+                {
+                    persons = persons.Where(s => s.Name.Contains(name));
+                }
+                if (!String.IsNullOrEmpty(name))
+                {
+                    persons = persons.Where(s => s.Surname.Contains(surname));
+                }
+                if (!String.IsNullOrEmpty(lastname))
+                {
+                    persons = persons.Where(s => s.LastName.Contains(lastname));
+                }
+                if (!String.IsNullOrEmpty(accountNumber))
+                {
+                    persons = persons.Where(s => s.Accounts.Select(e => e.Number).Contains(accountNumber)); 
+                }
+                if (!String.IsNullOrEmpty(transactionNumber))
+                {
+                    persons = persons.Where(p=>p.Accounts.Contains(p.Accounts.Where
+                        (a=>a.Transactions.Contains(a.Transactions.Where
+                        (e=>e.Id.ToString()==transactionNumber).FirstOrDefault())).FirstOrDefault()));
+                }
+                if (!String.IsNullOrEmpty(companyName))
+                {
+                    persons = (await unitOfWork.ShareholderRepository.GetAll()).Where(sh => sh.Company.Name.Contains(companyName)).Select(sh=>sh.Person);
+                }
                 return persons.Select(p => mapper.Map<PersonDTO>(p)).ToList();
             }
             catch (Exception ex)
@@ -83,11 +110,14 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         }
 
+
+
         public async  Task<PersonDTO> GetPersonById(int id)
         {
             try
             {
                 var personFinded = await unitOfWork.PersonRepository.GetById(id);
+               
                 return mapper.Map<PersonDTO>(personFinded);
             }
             catch (Exception ex)
