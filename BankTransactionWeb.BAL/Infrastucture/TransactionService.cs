@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BankTransactionWeb.BAL.Cofiguration;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
@@ -133,6 +134,25 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 throw ex;
 
             }
+        }
+
+
+        public async Task ExecuteTransaction(int accountSourceId, int accountDestinationNumber, decimal amount)
+        {
+            var source = (await unitOfWork.AccountRepository.GetAll()).Where(a => a.Id == accountSourceId).FirstOrDefault();
+            var destination = (await unitOfWork.AccountRepository.GetAll()).Where(a => a.Number== accountDestinationNumber).FirstOrDefault();
+            if(source==null) throw new ValidationException("Source account is not founded", "");
+            if(destination==null) throw new ValidationException("Destination account is not founded", "");
+            if((source.Balance-=amount)>=0)
+            {
+                source.Balance -= amount;
+                destination.Balance += amount;
+            }
+            else
+            {
+                throw new ValidationException("Not enough money on your account", "");
+            }
+            
         }
 
         public void Dispose()

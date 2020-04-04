@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using BankTransactionWeb.BAL.Cofiguration;
 using BankTransactionWeb.BAL.Infrastucture;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
@@ -189,6 +190,39 @@ namespace BankTransactionWeb.Controllers
                 return StatusCode(500, "Internal server error");
             }
 
+        }
+        [HttpGet]
+        public async Task<IActionResult> ExecuteTransaction()
+        {
+            var executeTransactionVM = new ExecuteTransactionViewModel()
+            {
+                Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number")
+            };
+
+            return View(executeTransactionVM);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ExecuteTransaction([FromForm]ExecuteTransactionViewModel executeTransactionViewModel)
+        {
+            try
+            {
+                if(ModelState.IsValid)
+                {
+                    await transactionService.ExecuteTransaction(executeTransactionViewModel.AccountSourceId, 
+                        executeTransactionViewModel.AccountDestinationNumber, executeTransactionViewModel.Amount);
+                    return RedirectToAction(nameof(GetAllTransactions));
+                }
+                else
+                {
+                    return View(executeTransactionViewModel);
+                }
+            }
+            catch(ValidationException vex)
+            {
+                return Content(vex.Message);
+            }
         }
 
 

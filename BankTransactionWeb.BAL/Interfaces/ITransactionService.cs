@@ -14,5 +14,6 @@ namespace BankTransactionWeb.BAL.Interfaces
         Task UpdateTransaction(TransactionDTO transaction);
         Task DeleteTransaction(TransactionDTO transaction);
         Task<int> TransActionCountByData(DateTime dataOfTrnsaction);
+        Task ExecuteTransaction(int accountSourceId, int accountDestinationNumber, decimal amount);
     }
 }
