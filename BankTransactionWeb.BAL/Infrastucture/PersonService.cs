@@ -76,7 +76,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 {
                     persons = persons.Where(s => s.Name.Contains(name));
                 }
-                if (!String.IsNullOrEmpty(name))
+                if (!String.IsNullOrEmpty(surname))
                 {
                     persons = persons.Where(s => s.Surname.Contains(surname));
                 }

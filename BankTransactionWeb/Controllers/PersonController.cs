@@ -27,15 +27,23 @@ namespace BankTransactionWeb.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAllPersons(string name, string surname, string lastname,
-            string accountNumber, string accountTransaction, string compnayName)
+            string accountNumber, string accountTransaction, string companyName)
         {
             try
             {
-                var persons = await personService.GetAllPersons(name, surname, lastname, 
-                    accountNumber,accountTransaction,compnayName);//maybe sort them
-                
+                var listOfPersonsVM = new PersonListViewModel()
+                {
+                    Persons =  await personService.GetAllPersons(name, surname, lastname, 
+                    accountNumber,accountTransaction,companyName),
+                    Name = name,
+                    SurName = surname,
+                    LastName = lastname,
+                    AccoutNumber = accountNumber,
+                    AccountTransactionNumber = accountTransaction,
+                    CompanyName = companyName
+                };
                 logger.LogInformation("Successfully returned all persons");
-                return View(persons);
+                return View(listOfPersonsVM);
             }
             catch (Exception ex)
             {

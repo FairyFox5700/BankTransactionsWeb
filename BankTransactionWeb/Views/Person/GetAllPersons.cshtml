@@ -1,38 +1,69 @@
-﻿@model List<BankTransactionWeb.BAL.Models.PersonDTO>
+﻿@model BankTransactionWeb.ViewModel.PersonListViewModel
 @{
     ViewData["Title"] = "Add person";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
     <form asp-controller="Person" asp-action="GetAllPersons" method="get">
-    <button class="btn-dark" asp-action="AddPerson" asp-controller="Person">Add new</button>
-    <br />
-    <br />
-    <table class="table table-striped table-light">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Surname</th>
-                <th scope="col">Last name</th>
-                <th scope="col">Date of birth</th>
-                <th scope="col">Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Count(); i++)
-            {
+        <button class="btn-dark" asp-action="AddPerson" asp-controller="Person">Add new</button>
+        <br />
+        <br />
+        <h3> Search by parameters</h3>
+        <br />
+        <div class="form-row align-items-center">
+            <div class="col-auto my-1">
+                <label asp-for="Name" class="dark control-label"></label>
+                <input asp-for="Name" class="form-contol"  />
+            </div>
+            <div class="col-auto my-1">
+                <label asp-for="SurName" class="dark control-label"></label>
+                <input asp-for="SurName" class="form-contol"  />
+            </div>
+            <div class="col-auto my-1">
+                <label asp-for="LastName" class="dark control-label"></label>
+                <input asp-for="LastName" class="form-contol"  />
+            </div>
+            <div class="col-auto my-1">
+                <label asp-for="AccoutNumber" class="dark control-label"></label>
+                <input asp-for="AccoutNumber" class="form-contol" />
+            </div>
+            <div class="col-auto my-1">
+                <label asp-for="AccountTransactionNumber" class="dark control-label"></label>
+                <input asp-for="AccountTransactionNumber" class="form-contol"  />
+            </div>
+            <div class="col-auto my-1">
+            <label asp-for="CompanyName" class="dark control-label"></label>
+            <input asp-for="CompanyName" class="form-contol"  />
+        </div>
+            <div class="col-auto my-1">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </div>
+        <table class="table table-striped table-light">
+            <thead>
                 <tr>
-                    <th scope="row">@(i + 1)</th>
-                    <td>@Model[i].Name </td>
-                    <td>@Model[i].Surname </td>
-                    <td>@Model[i].LastName</td>
-                    <td>@Model[i].DataOfBirth </td>
-                    <td>
-                        <button class="btn-primary" asp-action="UpdatePerson" asp-controller="Person" asp-route-id="@Model[i].Id">Update</button>
-                        <button class="btn-danger" asp-action="DeletePerson" asp-controller="Person" asp-route-id="@Model[i].Id">Delete</button>
-                    </td>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">Last name</th>
+                    <th scope="col">Date of birth</th>
+                    <th scope="col">Options</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</form>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Persons.Count(); i++)
+                {
+                    <tr>
+                        <th scope="row">@(i + 1)</th>
+                        <td>@Model.Persons[i].Name </td>
+                        <td>@Model.Persons[i].Surname </td>
+                        <td>@Model.Persons[i].LastName</td>
+                        <td>@Model.Persons[i].DataOfBirth </td>
+                        <td>
+                            <button class="btn-primary" asp-action="UpdatePerson" asp-controller="Person" asp-route-id="@Model.Persons[i].Id">Update</button>
+                            <button class="btn-danger" asp-action="DeletePerson" asp-controller="Person" asp-route-id="@Model.Persons[i].Id">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
