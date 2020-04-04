@@ -27,7 +27,8 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
             try
             {
                 var entity = await context.Shareholders.Include(c => c.Company).Include(e => e.Person).FirstOrDefaultAsync(e => e.Id == id);
-                context.Entry(entity).State = EntityState.Detached;
+
+                //context.Entry(entity).State = EntityState.Detached;
                 return entity;
             }
             catch (Exception ex)

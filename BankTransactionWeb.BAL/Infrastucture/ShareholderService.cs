@@ -66,7 +66,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
             unitOfWork.Dispose();
         }
 
-        public async Task<IEnumerable<ShareholderDTO>> GetAllShareholders(string companyName=null, string dateOfCompanyCreation=null)
+        public async Task<IEnumerable<ShareholderDTO>> GetAllShareholders(string companyName=null, DateTime? dateOfCompanyCreation=null)
         {
             try
             {
@@ -75,18 +75,19 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 {
                     shareholders = shareholders.Where(s => s.Company.Name.Contains(companyName));
                 }
-                if (!String.IsNullOrEmpty(dateOfCompanyCreation))
+                if (dateOfCompanyCreation!=null)
                 {
-                    try
-                    {
-                        var dataPerced = DateTime.Parse(dateOfCompanyCreation, CultureInfo.InvariantCulture);
-                        shareholders = shareholders.Where(s => s.Company.DateOfCreation.EqualsUpToSeconds(dataPerced));
-                    }
-                    catch (FormatException exe)
-                    {
-                        logger.LogError($"Unable to parce date in method {nameof(GetAllShareholders)} class {this.GetType()}. Value is {dateOfCompanyCreation}");
-                        throw exe;
-                    }
+                    shareholders = shareholders.Where(s => s.Company.DateOfCreation.EqualsUpToSeconds(dateOfCompanyCreation??DateTime.Now));
+                    //try
+                    //{
+                    //var dataPerced = DateTime.Parse(dateOfCompanyCreation, CultureInfo.InvariantCulture);
+                    //   
+                    //}
+                    //catch (FormatException exe)
+                    //{
+                    //    logger.LogError($"Unable to parce date in method {nameof(GetAllShareholders)} class {this.GetType()}. Value is {dateOfCompanyCreation}");
+                    //    throw exe;
+                    //}
 
                 }
                 return shareholders.Select(shareholder => mapper.Map<ShareholderDTO>(shareholder)).ToList();

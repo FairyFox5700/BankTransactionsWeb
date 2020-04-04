@@ -32,12 +32,18 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         public virtual void Delete(TEntity entity)
         {
             if (entity == null) throw new ArgumentNullException(nameof(entity));
-            if (context.Entry<TEntity>(entity).State == EntityState.Detached)
+            if (context.Entry(entity).State == EntityState.Detached)
             {
                 DBSet.Attach(entity);
             }
             DBSet.Remove(entity);
         }
+        //    if (context.Entry<TEntity>(entity).State == EntityState.Detached)
+        //    {
+        //        DBSet.Attach(entity);
+        //    }
+        //    DBSet.Remove(entity);
+        //}
 
         public virtual  async Task<IEnumerable<TEntity>> GetAll()
         {
@@ -46,27 +52,42 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
 
         public virtual async Task<TEntity> GetById(int id)
         {
-            try
-            {
-                var entity = await DBSet.FindAsync(id);
-                context.Entry(entity).State = EntityState.Detached;
-                return entity;
-            }
-            catch(Exception ex)
-            {
-                throw ex;
-            }
-            
+            return await DBSet.FindAsync(id);
+            //try
+            //{
+            //    var entity = await DBSet.FindAsync(id);
+            //    context.Entry(entity).State = EntityState.Detached;
+            //    return entity;
+            //}
+            //catch(Exception ex)
+            //{
+            //    throw ex;
+            //}
+
         }
 
         public virtual void Update(TEntity entity)
         {
-            if(context.Entry<TEntity>(entity).State ==EntityState.Detached)
-            {
-                DBSet.Attach(entity);
-            }
-            DBSet.Update(entity);
+            DBSet.Attach(entity);
+            context.Entry(entity).State = EntityState.Modified;
+            //var existingEntity = DBSet.Find(entity);
+            //if (existingEntity != null)
+            //{
+            //    //already in context
+            //    var attachedEntry = context.Entry(existingEntity);
+            //    attachedEntry.CurrentValues.SetValues(entity);
+            //}
+            //else
+            //{
+            //    DBSet.Update(entity);
+            //}
         }
+        //    if(context.Entry<TEntity>(entity).State ==EntityState.Detached)
+        //    {
+        //        DBSet.Attach(entity);
+        //    }
+        //    DBSet.Update(entity);
+        //}
 
         private bool disposed = false;
 

@@ -27,7 +27,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
         {
             modelBuilder.Entity<Transaction>()
                 .HasOne<Account>(t => t.SourceAccount)
-                .WithMany(a => a.Transactions).OnDelete(deleteBehavior:DeleteBehavior.Restrict);
+                .WithMany(a => a.Transactions);
             try
             {
                 modelBuilder.Seed();

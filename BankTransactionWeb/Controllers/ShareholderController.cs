@@ -6,7 +6,6 @@ using AutoMapper;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.ViewModel;
-using BankTransactionWeb.ViewModel.ViewModelFiltering;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -34,13 +33,20 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllShareholders(string companyName, string dateOfCompanyCreation)
+        public async Task<IActionResult> GetAllShareholders(string companyName, DateTime? dateOfCompanyCreation=null)
         {
             try
             {
-                var shareholders = (await shareholderService.GetAllShareholders(companyName,dateOfCompanyCreation));//maybe sort them
+                var sh = await shareholderService.GetAllShareholders(companyName, dateOfCompanyCreation);
+               var listOfShareholdersVM = new ShareholdersListViewModel()
+                {
+                   
+                    Shareholders = (sh).ToList(),
+                    CompanyName = companyName,
+                    DateOfCompanyCreation = dateOfCompanyCreation
+                };
                 logger.LogInformation("Successfully returned all shareholders");
-                return View(shareholders);
+                return View(listOfShareholdersVM);
             }
             catch (Exception ex)
             {
