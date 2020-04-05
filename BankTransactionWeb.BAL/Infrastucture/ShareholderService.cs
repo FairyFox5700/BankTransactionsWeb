@@ -78,17 +78,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 if (dateOfCompanyCreation!=null)
                 {
                     shareholders = shareholders.Where(s => s.Company.DateOfCreation.EqualsUpToSeconds(dateOfCompanyCreation??DateTime.Now));
-                    //try
-                    //{
-                    //var dataPerced = DateTime.Parse(dateOfCompanyCreation, CultureInfo.InvariantCulture);
-                    //   
-                    //}
-                    //catch (FormatException exe)
-                    //{
-                    //    logger.LogError($"Unable to parce date in method {nameof(GetAllShareholders)} class {this.GetType()}. Value is {dateOfCompanyCreation}");
-                    //    throw exe;
-                    //}
-
                 }
                 return shareholders.Select(shareholder => mapper.Map<ShareholderDTO>(shareholder)).ToList();
             }

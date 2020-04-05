@@ -77,7 +77,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
                 }
 
-                return listOfTransaction;
+                return listOfTransaction.ToList();
             }
             catch (Exception ex)
             {
@@ -140,7 +140,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
         public async Task ExecuteTransaction(int accountSourceId, int accountDestinationNumber, decimal amount)
         {
             var source = (await unitOfWork.AccountRepository.GetAll()).Where(a => a.Id == accountSourceId).FirstOrDefault();
-            var destination = (await unitOfWork.AccountRepository.GetAll()).Where(a => a.Number== accountDestinationNumber).FirstOrDefault();
+            var destination = (await unitOfWork.AccountRepository.GetAll()).Where(a => a.Number== accountDestinationNumber.ToString()).FirstOrDefault();
             if(source==null) throw new ValidationException("Source account is not founded", "");
             if(destination==null) throw new ValidationException("Destination account is not founded", "");
             if((source.Balance-=amount)>=0)

@@ -3,7 +3,7 @@ using System;
 
 namespace BankTransactionWeb.BAL.Models
 {
-    public class TransactionDTO
+    public class TransactionDTO:BaseModel
     {
         public int AccountSourceId { get; set; }
         public Account SourceAccount { get; set; }
