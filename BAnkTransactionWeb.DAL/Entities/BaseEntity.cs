@@ -8,7 +8,7 @@ namespace BankTransactionWeb.DAL.Entities
 {
    public abstract class BaseEntity
     {
-        [ScaffoldColumn(false)]
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get;set; }
     }

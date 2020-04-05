@@ -8,7 +8,7 @@ using System.Text;
 
 namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
 {
-   public class BankTransactionContext : IdentityDbContext
+   public class BankTransactionContext : IdentityDbContext<ApplicationUser>
     {
         private readonly ILogger<BankTransactionContext> logger;
 
@@ -29,6 +29,9 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
             modelBuilder.Entity<Transaction>()
                 .HasOne<Account>(t => t.SourceAccount)
                 .WithMany(a => a.Transactions);
+            modelBuilder.Entity<Person>().HasOne(p => p.ApplicationUser)
+                .WithOne(u => u.Person)
+                .HasForeignKey<Person>(p => p.AplicationUserId);
             try
             {
                 modelBuilder.Seed();
@@ -37,6 +40,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
             {
                 logger.LogError(ex, "An error occurred seeding the Database.");
             }
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

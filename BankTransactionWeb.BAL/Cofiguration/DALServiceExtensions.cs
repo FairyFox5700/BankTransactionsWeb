@@ -4,9 +4,11 @@ using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.DAL.EfCoreDAL;
 using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
 using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
+using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.InMemoryDAL;
 using BankTransactionWeb.DAL.InMemoryDAL.Repositories;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +44,12 @@ namespace BankTransactionWeb.BAL.Cofiguration
             services.AddTransient<IPersonService, PersonService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IShareholderService, ShareholderService>();
+            
+
+
 
         }
+
+       
     }
 }

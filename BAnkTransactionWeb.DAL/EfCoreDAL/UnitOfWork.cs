@@ -1,7 +1,9 @@
 ﻿using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
 using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
 using BankTransactionWeb.DAL.Entities;
+using BankTransactionWeb.DAL.Identity;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -83,6 +85,12 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
                 return shareholderRepository;
             }
         }
+        ApplicationUserManager appUserManager;
+        ApplicationRoleManager appRoleManager;
+        public ApplicationUserManager AppUserManager
+       => throw new NotImplementedException();
+
+        public ApplicationRoleManager AppRoleManager => throw new NotImplementedException();
 
         public async Task Save()
         {

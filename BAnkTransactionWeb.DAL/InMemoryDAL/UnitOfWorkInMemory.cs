@@ -1,4 +1,5 @@
-﻿using BankTransactionWeb.DAL.InMemoryDAL.Repositories;
+﻿using BankTransactionWeb.DAL.Identity;
+using BankTransactionWeb.DAL.InMemoryDAL.Repositories;
 using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
@@ -81,6 +82,10 @@ namespace BankTransactionWeb.DAL.InMemoryDAL
                 return shareholderRepository;
             }
         }
+
+        public ApplicationUserManager AppUserManager => throw new NotImplementedException();
+
+        public ApplicationRoleManager AppRoleManager => throw new NotImplementedException();
 
         public async Task Save()
         {

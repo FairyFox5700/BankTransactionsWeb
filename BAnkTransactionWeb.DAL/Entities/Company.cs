@@ -12,5 +12,6 @@ namespace BankTransactionWeb.DAL.Entities
         public string Name { get; set; }
         public DateTime DateOfCreation { get; set; }
         public virtual ICollection<Shareholder> Shareholders { get; set; }
+       
     }
 }
