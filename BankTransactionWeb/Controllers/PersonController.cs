@@ -53,31 +53,7 @@ namespace BankTransactionWeb.Controllers
             }
         }
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetPersonById(int id = 1)
-        //{
-        //    try
-        //    {
-        //        var person = await personService.GetPersonById(id);//maybe sort them
-        //        if (person == null)
-        //        {
-        //            logger.LogInformation($"Person with id {id} not find");
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            logger.LogInformation($"Successfully returned person with id: {id}");
-        //            return Ok(person);
-        //        }
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.LogError($"Catch an exception in method {nameof(GetPersonById)}. The exception is {ex.Message}. " +
-        //            $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-        //        return StatusCode(500, "Internal server error");
-        //    }
-        //}
         public IActionResult  AddPerson()
         {
             return View();
@@ -101,7 +77,6 @@ namespace BankTransactionWeb.Controllers
                 }
                 else
                 {
-                    //var peron = Mapper.Map<PersonDTO>(personModel);
                     var person = mapper.Map<PersonDTO>(personModel);
                     await personService.AddPerson(person);
                     return RedirectToAction(nameof(GetAllPersons));
@@ -225,3 +200,28 @@ namespace BankTransactionWeb.Controllers
         }
     }
 }
+//[HttpGet("{id}")]
+//public async Task<IActionResult> GetPersonById(int id = 1)
+//{
+//    try
+//    {
+//        var person = await personService.GetPersonById(id);//maybe sort them
+//        if (person == null)
+//        {
+//            logger.LogInformation($"Person with id {id} not find");
+//            return NotFound();
+//        }
+//        else
+//        {
+//            logger.LogInformation($"Successfully returned person with id: {id}");
+//            return Ok(person);
+//        }
+
+//    }
+//    catch (Exception ex)
+//    {
+//        logger.LogError($"Catch an exception in method {nameof(GetPersonById)}. The exception is {ex.Message}. " +
+//            $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+//        return StatusCode(500, "Internal server error");
+//    }
+//}

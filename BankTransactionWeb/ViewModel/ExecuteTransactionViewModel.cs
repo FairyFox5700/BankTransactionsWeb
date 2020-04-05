@@ -10,7 +10,7 @@ namespace BankTransactionWeb.ViewModel
         [Required]
         [MinLength(16, ErrorMessage ="Length must be not less then 16 numbers")]
         [MaxLength(16, ErrorMessage = "Length must be not more then 16 numbers")]
-        public int AccountDestinationNumber { get; set; }
+        public string AccountDestinationNumber { get; set; }
         public SelectList Accounts { get; set; }
         [Range(0, 99999999999)]
         [DataType(DataType.Currency)]

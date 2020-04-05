@@ -1,4 +1,5 @@
 ﻿using BankTransactionWeb.DAL.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
 {
-   public class BankTransactionContext :DbContext
+   public class BankTransactionContext : IdentityDbContext
     {
         private readonly ILogger<BankTransactionContext> logger;
 

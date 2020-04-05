@@ -30,7 +30,6 @@ namespace BankTransactionWeb.Controllers
             this.mapper = mapper;
         }
 
-
         [HttpGet]
         public async Task<IActionResult> GetAllTransactions()
         {
@@ -208,7 +207,10 @@ namespace BankTransactionWeb.Controllers
         {
             try
             {
-                if(ModelState.IsValid)
+                executeTransactionViewModel.Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number");
+
+
+                if (ModelState.IsValid)
                 {
                     await transactionService.ExecuteTransaction(executeTransactionViewModel.AccountSourceId, 
                         executeTransactionViewModel.AccountDestinationNumber, executeTransactionViewModel.Amount);
@@ -221,7 +223,8 @@ namespace BankTransactionWeb.Controllers
             }
             catch(ValidationException vex)
             {
-                return Content(vex.Message);
+                ModelState.AddModelError("", vex.Message);
+                return View(executeTransactionViewModel);
             }
         }
 
