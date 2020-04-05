@@ -7,6 +7,7 @@ namespace BankTransactionWeb.ViewModel
 {
     public class TransactionListViewModel
     {
+        public int Id { get; set; }
         public int AccountSourceId { get; set; }
         public string  AccountSourceNumber {get;set;}
         public string  AccountDestinationeNumber { get; set; }

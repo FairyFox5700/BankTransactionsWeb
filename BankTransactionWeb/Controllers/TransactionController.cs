@@ -102,7 +102,7 @@ namespace BankTransactionWeb.Controllers
             else
             {
                 var transactionModel = mapper.Map<UpdateTransactionViewModel>(currentTransaction);
-                transactionModel.Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Name");
+                transactionModel.Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number");
                 return View(transactionModel);
             }
 

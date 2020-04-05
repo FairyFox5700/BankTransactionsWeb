@@ -29,8 +29,8 @@
                     <td>@Model[i]?.DateOftransfering</td>
                     <td>@Model[i]?.Amount </td>
                     <td>
-                        <button class="btn-primary" asp-action="UpdateTransaction" asp-controller="Transaction" asp-route-id="@Model[i]?.AccountSourceId">Update</button>
-                        <button class="btn-danger" asp-action="DeleteTransaction" asp-controller="Transaction" asp-route-id="@Model[i]?.AccountSourceId">Delete</button>
+                        <button class="btn-primary" asp-action="UpdateTransaction" asp-controller="Transaction" asp-route-id="@Model[i]?.Id">Update</button>
+                        <button class="btn-danger" asp-action="DeleteTransaction" asp-controller="Transaction" asp-route-id="@Model[i]?.Id">Delete</button>
                     </td>
                 </tr>
             }
