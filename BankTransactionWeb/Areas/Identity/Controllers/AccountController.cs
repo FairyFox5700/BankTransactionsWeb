@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BankTransactionWeb.Areas.Identity.Models.ViewModels;
 using BankTransactionWeb.BAL.Infrastucture;
+using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.Controllers;
 using BankTransactionWeb.DAL.Entities;
@@ -18,15 +19,14 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
     public class AccountController : Controller
     {
 
-
         private readonly UserManager<ApplicationUser> appUserManager;
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger<AccountController> logger;
-        private readonly PersonService personService;
+        private readonly IPersonService personService;
         private readonly IMapper mapper;
-        public AccountController(UserManager<ApplicationUser> appUserManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger, PersonService personService, IMapper mapper)
+        public AccountController(UserManager<ApplicationUser> appUserManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger, IPersonService personService, IMapper mapper)
         {
-            //this.appUserManager = appUserManager;
+            this.appUserManager = appUserManager;
             this.signInManager = signInManager;
             this.logger = logger;
             this.personService = personService;
@@ -92,7 +92,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                 return View(model);
             }
 
-            return View(model);
+         
         }
 
 
@@ -128,7 +128,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
             //        return RedirectToLocal(returnUrl);
             //    }
             //       AddModelErrors(result);
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            //ModelState.AddModelError(string.Empty, "Invalid login attempt.");
 
             if (ModelState.IsValid)
             {

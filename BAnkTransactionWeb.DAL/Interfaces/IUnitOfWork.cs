@@ -1,4 +1,5 @@
 ﻿using BankTransactionWeb.DAL.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ namespace BankTransactionWeb.DAL.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
+        UserManager<ApplicationUser> UserManager { get; }
         IPersonRepository PersonRepository { get; }
         IAccountRepository AccountRepository { get; }
         ITransactionRepository TransactionRepository { get; }
