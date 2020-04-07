@@ -3,11 +3,14 @@ using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Identity;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.DAL.EfCoreDAL
@@ -16,9 +19,13 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
     {
         private readonly BankTransactionContext context;
 
-        public UnitOfWork(BankTransactionContext context)
+        public UnitOfWork(BankTransactionContext context, ApplicationUserManager applicationUserManager, ApplicationRoleManager applicationRoleManager)//, ApplicationUserManager applicationUserManager, ApplicationRoleManager applicationRoleManager
         {
             this.context = context;
+            this.AppUserManager = applicationUserManager;
+            this.AppRoleManager = applicationRoleManager;
+            //= new ApplicationUserManager(new UserStore<ApplicationUser>(context), new Options<IdentityOptions()>, new PasswordHasher<ApplicationUser>(), new IEnumerable<UserValidator<ApplicationUser>>(), new IEnumerable<PasswordValidator<ApplicationUser>>(), new ILookupNormalizer(), new IdentityErrorDescriber(), new IServiceProvider, new Logger<UserManager<ApplicationUser>>()); )
+
         }
 
         IPersonRepository personRepository;
@@ -48,14 +55,14 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
             }
         }
 
-        ITransactionRepository transactionRepository ;
+        ITransactionRepository transactionRepository;
         public ITransactionRepository TransactionRepository
         {
             get
             {
                 if (transactionRepository == null)
                 {
-                    transactionRepository = new  TransactionRepository(context);
+                    transactionRepository = new TransactionRepository(context);
                 }
                 return transactionRepository;
             }
@@ -85,31 +92,31 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
                 return shareholderRepository;
             }
         }
-        ApplicationUserManager appUserManager;
-        ApplicationRoleManager appRoleManager;
-        public ApplicationUserManager AppUserManager
-       => throw new NotImplementedException();
 
-        public ApplicationRoleManager AppRoleManager => throw new NotImplementedException();
+
 
         public async Task Save()
         {
             await context.SaveChangesAsync();
         }
 
-        public async Task<IDbContextTransaction> BeginTransaction() 
+        public async Task<IDbContextTransaction> BeginTransaction()
         {
             return await context.Database.BeginTransactionAsync();
         }
 
-        public void  RollbackTransaction()
+        public void RollbackTransaction()
         {
             context.Database.RollbackTransaction();
         }
-        public void CommitTransaction() 
+        public void CommitTransaction()
         {
             context.Database.CommitTransaction();
         }
+
+        public ApplicationUserManager AppUserManager { get; }
+
+        public ApplicationRoleManager AppRoleManager { get; }
 
         private bool disposed = false;
 
@@ -120,13 +127,17 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
                 if (disposing)
                 {
                     context.Dispose();
+
                 }
+                this.disposed = true;
             }
-            this.disposed = true;
         }
 
         public void Dispose()
         {
+            AppUserManager.Dispose();
+            AppRoleManager.Dispose();
+            context.Dispose();
             Dispose(true);
             GC.SuppressFinalize(this);
         }

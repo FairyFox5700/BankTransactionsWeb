@@ -1,6 +1,8 @@
-﻿namespace BankTransactionWeb.DAL.Identity
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace BankTransactionWeb.DAL.Identity
 {
-    public class ApplicationRole
+    public class ApplicationRole :IdentityRole
     {
     }
 }

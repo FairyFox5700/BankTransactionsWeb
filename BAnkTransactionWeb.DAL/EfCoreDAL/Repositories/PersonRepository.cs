@@ -16,5 +16,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         }
 
        
+
+
     }
 }

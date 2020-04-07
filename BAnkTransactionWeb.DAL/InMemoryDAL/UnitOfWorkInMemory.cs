@@ -1,6 +1,8 @@
-﻿using BankTransactionWeb.DAL.Identity;
+﻿using BankTransactionWeb.DAL.Entities;
+using BankTransactionWeb.DAL.Identity;
 using BankTransactionWeb.DAL.InMemoryDAL.Repositories;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -86,6 +88,10 @@ namespace BankTransactionWeb.DAL.InMemoryDAL
         public ApplicationUserManager AppUserManager => throw new NotImplementedException();
 
         public ApplicationRoleManager AppRoleManager => throw new NotImplementedException();
+
+       
+
+ 
 
         public async Task Save()
         {

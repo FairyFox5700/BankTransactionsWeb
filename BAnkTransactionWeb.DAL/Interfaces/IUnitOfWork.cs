@@ -1,5 +1,6 @@
 ﻿using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
