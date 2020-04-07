@@ -1,5 +1,4 @@
 ﻿using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Identity;
 using BankTransactionWeb.DAL.InMemoryDAL.Repositories;
 using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.DAL.InMemoryDAL
 {
+
     public class UnitOfWorkInMemory : IUnitOfWork
     {
         private readonly InMemoryContainer context;
@@ -85,13 +85,10 @@ namespace BankTransactionWeb.DAL.InMemoryDAL
             }
         }
 
-        public ApplicationUserManager AppUserManager => throw new NotImplementedException();
-
-        public ApplicationRoleManager AppRoleManager => throw new NotImplementedException();
-
        
+        UserManager<ApplicationUser> IUnitOfWork.AppUserManager => throw new NotImplementedException();
 
- 
+        RoleManager<IdentityRole> IUnitOfWork.AppRoleManager => throw new NotImplementedException();
 
         public async Task Save()
         {

@@ -2,7 +2,6 @@
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Identity;
 using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -83,7 +82,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 var role = await unitOfWork.AppRoleManager.FindByNameAsync(roleName);
                 if (role == null)
                 {
-                    role = new ApplicationRole() { Name = roleName };
+                    role = new IdentityRole() { Name = roleName };
                     await unitOfWork.AppRoleManager.CreateAsync(role);
                 }
             }

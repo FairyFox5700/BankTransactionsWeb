@@ -1,7 +1,7 @@
 ﻿using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
 using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
 using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Identity;
+
 using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,7 +19,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
     {
         private readonly BankTransactionContext context;
 
-        public UnitOfWork(BankTransactionContext context, ApplicationUserManager applicationUserManager, ApplicationRoleManager applicationRoleManager)//, ApplicationUserManager applicationUserManager, ApplicationRoleManager applicationRoleManager
+        public UnitOfWork(BankTransactionContext context, UserManager<ApplicationUser> applicationUserManager, RoleManager<IdentityRole> applicationRoleManager)//, ApplicationUserManager applicationUserManager, ApplicationRoleManager applicationRoleManager
         {
             this.context = context;
             this.AppUserManager = applicationUserManager;
@@ -114,9 +114,9 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
             context.Database.CommitTransaction();
         }
 
-        public ApplicationUserManager AppUserManager { get; }
+        public UserManager<ApplicationUser> AppUserManager { get; }
 
-        public ApplicationRoleManager AppRoleManager { get; }
+        public RoleManager<IdentityRole> AppRoleManager { get; }
 
         private bool disposed = false;
 

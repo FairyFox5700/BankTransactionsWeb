@@ -4,7 +4,6 @@ using BankTransactionWeb.BAL.Cofiguration;
 using BankTransactionWeb.Configuration;
 using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
 using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,8 +36,8 @@ namespace BankTransactionWeb
 
             IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
             services.AddSingleton(mapper);
-           
-            services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<BankTransactionContext>()
+            services.AddDALServices();
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<BankTransactionContext>()
             .AddDefaultTokenProviders();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                .AddCookie();
@@ -71,9 +70,7 @@ namespace BankTransactionWeb
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
-            services.AddScoped<UserManager<ApplicationUser>, ApplicationUserManager>();
-            services.AddScoped<RoleManager<ApplicationRole>, ApplicationRoleManager>();
-            services.AddDALServices();
+      
             //services.AddScoped<UserStore<ApplicationUser, ApplicationRole, BankTransactionContext, string>, ApplicationUserStore>();
             //services.AddScoped<UserManager<ApplicationUser>, ApplicationUserManager>();
             //services.AddScoped<SignInManager<ApplicationUser>, ApplicationSignInManager>();
