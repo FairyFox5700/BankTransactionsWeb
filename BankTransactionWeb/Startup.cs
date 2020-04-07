@@ -6,8 +6,11 @@ using AutoMapper;
 using BankTransactionWeb.BAL;
 using BankTransactionWeb.BAL.Cofiguration;
 using BankTransactionWeb.Configuration;
+using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
+using BankTransactionWeb.DAL.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,7 +34,15 @@ namespace BankTransactionWeb
             IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
             services.AddSingleton(mapper);
             services.AddDALServices();
-
+            //services.AddScoped < UserManager<ApplicationUser>>();
+          
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = false;
+            })
+            .AddEntityFrameworkStores<BankTransactionContext>()
+            .AddDefaultTokenProviders().AddUserManager<UserManager<ApplicationUser>>();
+           ///var UserManager = provider.GetRequiredService<UserManager<ApplicationUser>>();
 
         }
 
@@ -41,8 +52,9 @@ namespace BankTransactionWeb
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-               
+
             }
+           
             else
             {
                 app.UseExceptionHandler("/Home/Error");

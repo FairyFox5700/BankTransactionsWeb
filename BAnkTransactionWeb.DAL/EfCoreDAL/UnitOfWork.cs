@@ -2,6 +2,7 @@
 using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,10 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
     {
         private readonly BankTransactionContext context;
 
-        public UnitOfWork(BankTransactionContext context)
+        public UnitOfWork(BankTransactionContext context,UserManager<ApplicationUser> userManager)
         {
             this.context = context;
+            UserManager = userManager;
         }
 
         IPersonRepository personRepository;
@@ -83,6 +85,8 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
                 return shareholderRepository;
             }
         }
+
+        public UserManager<ApplicationUser> UserManager { get; }
 
         public async Task Save()
         {
