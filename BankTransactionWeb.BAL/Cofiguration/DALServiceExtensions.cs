@@ -42,6 +42,7 @@ namespace BankTransactionWeb.BAL.Cofiguration
             services.AddTransient<IPersonService, PersonService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IShareholderService, ShareholderService>();
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
 
         }
     }

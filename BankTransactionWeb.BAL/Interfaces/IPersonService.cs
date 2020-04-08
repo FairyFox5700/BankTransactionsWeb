@@ -9,15 +9,13 @@ namespace BankTransactionWeb.BAL.Interfaces
 {
    public interface IPersonService: IDisposable
     {
-        Task SignOutPerson();
-        Task<SignInResult> LoginPerson(PersonDTO person);
-        Task<IdentityResult> RegisterPerson(PersonDTO person);
+       
         Task<List<PersonDTO>> GetAllPersons(string name = null, string surname = null, string lastname = null,
             string accountNumber = null, string transactionNumber = null, string companyName = null);
         Task<PersonDTO> GetPersonById(int id);
         Task AddPerson(PersonDTO person);
-        Task UpdatePerson(PersonDTO person);
-        Task DeletePerson(PersonDTO person);
+        Task<IdentityResult> UpdatePerson(PersonDTO person);
+        Task<IdentityResult> DeletePerson(PersonDTO person);
         Task<decimal> TotalBalanceOnAccounts(int id);
     }
 }

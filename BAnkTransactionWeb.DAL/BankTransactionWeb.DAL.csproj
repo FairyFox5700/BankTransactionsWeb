@@ -9,6 +9,8 @@
     <Compile Remove="EfCoreDAL\Migrations\20200331083000_DeletedNoUndersatndableRelationship.Designer.cs" />
     <Compile Remove="EfCoreDAL\Migrations\20200331083240_DeletedNoUndersatndableRelationship.cs" />
     <Compile Remove="EfCoreDAL\Migrations\20200331083240_DeletedNoUndersatndableRelationship.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200408073237_ChangedContextForAppUser.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200408073237_ChangedContextForAppUser.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

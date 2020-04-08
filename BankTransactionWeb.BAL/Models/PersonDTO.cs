@@ -15,16 +15,18 @@ namespace BankTransactionWeb.BAL.Models
         public string ConfirmPassword { get; set; }
         public string UserName { get; set; }
         public bool RememberMe { get; set; }
-        private List<AccountDTO> accounts;
-        public List<AccountDTO> Accounts 
-        { get
-            {
-                return accounts ?? (accounts = new List<AccountDTO>());
-            }
-            set
-            {
-                accounts = value;
-            }
-        }
+        public string PhoneNumber { get; set; }
+        public string ApplicationUserId { get; set; }
+        //private List<AccountDTO> accounts;
+        //public List<AccountDTO> Accounts 
+        //{ get
+        //    {
+        //        return accounts ?? (accounts = new List<AccountDTO>());
+        //    }
+        //    set
+        //    {
+        //        accounts = value;
+        //    }
+        //}
     }
 }

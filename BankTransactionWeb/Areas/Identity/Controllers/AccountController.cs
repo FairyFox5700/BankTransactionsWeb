@@ -15,22 +15,22 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Areas.Identity.Controllers
 {
+    [Authorize]
     [Area("Identity")]
     public class AccountController : Controller
     {
 
-        //private readonly UserManager<ApplicationUser> appUserManager;
-        //private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger<AccountController> logger;
         private readonly IPersonService personService;
         private readonly IMapper mapper;
-        public AccountController(ILogger<AccountController> logger, IPersonService personService, IMapper mapper)
+        private readonly IAuthenticationService authService;
+
+        public AccountController(ILogger<AccountController> logger, IPersonService personService, IMapper mapper, IAuthenticationService authService)
         {
-            //this.appUserManager = appUserManager;
-            //this.signInManager = signInManager;
             this.logger = logger;
             this.personService = personService;
             this.mapper = mapper;
+            this.authService = authService;
         }
 
         [HttpGet]
@@ -43,41 +43,42 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [HttpGet]
         [AllowAnonymous]
         
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login(string returnUrl =null)
         {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
+            return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var person = mapper.Map<PersonDTO>(model);
-            var result = await personService.LoginPerson(person);
-            if (result.Succeeded)
+            if(ModelState.IsValid)
             {
-                logger.LogInformation("User  succesfully logged in.");
-                return RedirectToLocal(returnUrl);
+                var person = mapper.Map<PersonDTO>(model);
+                var result = await authService.LoginPerson(person);
+                if (result.Succeeded)
+                {
+                    logger.LogInformation("User  succesfully logged in.");
+                    return RedirectToLocal(model.ReturnUrl);
+                }
+                if (result.IsLockedOut)
+                {
+                    logger.LogWarning("User account locked out.");
+                    return RedirectToAction(nameof(Lockout));
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return View(model);
+                }
             }
-            if (result.IsLockedOut)
-            {
-                logger.LogWarning("User account locked out.");
-                return RedirectToAction(nameof(Lockout));
-            }
-
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                return View(model);
-            }
+            return View(model);
+           
 
          
         }
-
-
 
         [HttpGet]
         [AllowAnonymous]
@@ -87,11 +88,12 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await personService.SignOutPerson();
+            await authService.SignOutPerson();
             logger.LogInformation("User successfully logged out.");
-            return RedirectToAction("index", "home");
+            return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
         }
 
 
@@ -104,25 +106,19 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
             if (ModelState.IsValid)
             {
                 var person = mapper.Map<PersonDTO>(model);
-                var result = await personService.RegisterPerson(person);
-                //var user = new ApplicationUser
-                //{
-                //    UserName = model.Email,
-                //    Email = model.Email
-                //};
-                //var result = await appUserManager.CreateAsync(user, model.Password);
+                var result = await authService.RegisterPerson(person);
+                if (result == null)
+                {
+                    ModelState.AddModelError("RegiterFailed", "There is alreasy user with this login");
+                    return View(model);
+                }
                 if (result.Succeeded)
                 {
                     logger.LogInformation("Successfully created new user.");
-
-                    //await signInManager.SignInAsync(user, isPersistent: false);
                     logger.LogInformation("User signed in a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
-                if(result==null)
-                {
-                    ModelState.AddModelError("RegiterFailed", "There is alreasy user with this login");
-                }
+               
                 AddModelErrors(result);
             }
             return View(model);
@@ -145,13 +141,13 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         /// <returns></returns>
         private IActionResult RedirectToLocal(string returnUrl)
         {
-            if (Url.IsLocalUrl(returnUrl))
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
             }
         }
     }

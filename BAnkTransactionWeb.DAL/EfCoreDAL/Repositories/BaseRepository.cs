@@ -53,16 +53,6 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         public virtual async Task<TEntity> GetById(int id)
         {
             return await DBSet.FindAsync(id);
-            //try
-            //{
-            //    var entity = await DBSet.FindAsync(id);
-            //    context.Entry(entity).State = EntityState.Detached;
-            //    return entity;
-            //}
-            //catch(Exception ex)
-            //{
-            //    throw ex;
-            //}
 
         }
 

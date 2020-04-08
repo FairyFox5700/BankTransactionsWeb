@@ -24,43 +24,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
             this.mapper = mapper;
             this.logger = logger;
         }
-        public async Task<IdentityResult> RegisterPerson(PersonDTO person)
-        {
-            ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
-            if (user == null)
-            {
-                user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
-                var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
-                if (result.Errors.Count() > 0)
-                    return result;
-                var personMapped = mapper.Map<Person>(person);
-                personMapped.ApplicationUserId = user.Id;
-                unitOfWork.PersonRepository.Add(personMapped);
-                await unitOfWork.Save();
-                await SignInPerson(user);
-                return result;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public async Task<SignInResult> LoginPerson(PersonDTO person)
-        {
-            var result = await unitOfWork.SignInManager.PasswordSignInAsync(person.Email, person.Password, person.RememberMe, lockoutOnFailure: true);
-            return result;
-        }
-
-        public async Task SignOutPerson()
-        {
-            await unitOfWork.SignInManager.SignOutAsync();
-        }
-        private async Task SignInPerson(ApplicationUser user)
-            {
-            await unitOfWork.SignInManager.SignInAsync(user, isPersistent: false);
-        }
-
+        //REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public async Task AddPerson(PersonDTO person)
         {
             try
@@ -80,14 +44,23 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         }
 
-        public async Task DeletePerson(PersonDTO person)
+        //Unit of work transaction
+        public async Task<IdentityResult> DeletePerson(PersonDTO person)
         {
             try
             {
-                var personMapped = mapper.Map<Person>(person);
-                unitOfWork.PersonRepository.Delete(personMapped);
-                await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully added");
+                var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserId);
+                if (user != null)
+                {
+                    var personMapped = mapper.Map<Person>(person);
+                    unitOfWork.PersonRepository.Delete(personMapped);
+                    var result = await unitOfWork.UserManager.DeleteAsync(user);
+                    await unitOfWork.Save();
+                    logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully deleted");
+                    return result;
+
+                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -97,6 +70,23 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
             }
         }
+        //public async Task DeletePerson(PersonDTO person)
+        //{
+        //    try
+        //    {
+        //        var personMapped = mapper.Map<Person>(person);
+        //        unitOfWork.PersonRepository.Delete(personMapped);
+        //        await unitOfWork.Save();
+        //        logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully added");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.LogError($"Catch an exception in method {nameof(DeletePerson)} in class {nameof(PersonService)}. The exception is {ex.Message}. " +
+        //           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+        //        throw ex;
+
+        //    }
+        //}
 
         public void Dispose()
         {
@@ -147,14 +137,11 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         }
 
-
-
         public async Task<PersonDTO> GetPersonById(int id)
         {
             try
             {
                 var personFinded = await unitOfWork.PersonRepository.GetById(id);
-
                 return mapper.Map<PersonDTO>(personFinded);
             }
             catch (Exception ex)
@@ -165,6 +152,9 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
             }
         }
+
+
+        
 
         public async Task<decimal> TotalBalanceOnAccounts(int id)
         {
@@ -188,13 +178,25 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
         }
 
-        public async Task UpdatePerson(PersonDTO person)
+        //Related data transaction
+        public async Task<IdentityResult> UpdatePerson(PersonDTO person)
         {
             try
             {
-                var personMapped = mapper.Map<Person>(person);
-                unitOfWork.PersonRepository.Update(personMapped);
-                await unitOfWork.Save();
+                var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserId);
+                if(user!=null)
+                {
+                    var userMapped = mapper.Map<ApplicationUser>(person);
+                    var personMapped = mapper.Map<Person>(person);
+                    
+                    var result = await unitOfWork.UserManager.UpdateAsync(userMapped);
+                   // await unitOfWork.Save();
+                    unitOfWork.PersonRepository.Update(personMapped);
+                    await unitOfWork.Save();
+                    return result;
+                }
+                return null;
+               
             }
             catch (Exception ex)
             {
@@ -206,3 +208,38 @@ namespace BankTransactionWeb.BAL.Infrastucture
         }
     }
 }
+
+//public async Task<PersonDTO> GetPersonById(int id)
+//{
+//    try
+//    {
+//        var personFinded = await unitOfWork.PersonRepository.GetById(id);
+
+//        return mapper.Map<PersonDTO>(personFinded);
+//    }
+//    catch (Exception ex)
+//    {
+//        logger.LogError($"Catch an exception in method {nameof(GetPersonById)} in class {this.GetType()}. The exception is {ex.Message}. " +
+//           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+//        throw ex;
+
+//    }
+//}
+
+
+//public async Task UpdatePerson(PersonDTO person)
+//{
+//    try
+//    {
+//        var personMapped = mapper.Map<Person>(person);
+//        unitOfWork.PersonRepository.Update(personMapped);
+//        await unitOfWork.Save();
+//    }
+//    catch (Exception ex)
+//    {
+//        logger.LogError($"Catch an exception in method {nameof(UpdatePerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
+//           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+//        throw ex;
+
+//    }
+//}
