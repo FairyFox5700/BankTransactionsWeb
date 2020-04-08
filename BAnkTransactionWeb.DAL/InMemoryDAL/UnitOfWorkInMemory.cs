@@ -86,6 +86,8 @@ namespace BankTransactionWeb.DAL.InMemoryDAL
 
         public UserManager<ApplicationUser> UserManager => throw new NotImplementedException();
 
+        public SignInManager<ApplicationUser> SignInManager => throw new NotImplementedException();
+
         public async Task Save()
         {
              await Task.FromResult(0)

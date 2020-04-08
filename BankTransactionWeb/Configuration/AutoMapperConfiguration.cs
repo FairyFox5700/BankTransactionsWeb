@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BankTransactionWeb.Areas.Identity.Models.ViewModels;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.ViewModel;
@@ -56,6 +57,9 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<AddTransactionViewModel, TransactionDTO>();
                 confg.CreateMap<UpdateTransactionViewModel, TransactionDTO>();
                 confg.CreateMap<TransactionDTO, UpdateTransactionViewModel>();
+                //Identity
+                confg.CreateMap<RegisterViewModel, PersonDTO>();
+                confg.CreateMap<PersonDTO, RegisterViewModel>();
             });
             return configuration;
         }

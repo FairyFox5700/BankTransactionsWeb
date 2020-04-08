@@ -3,11 +3,11 @@ using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Infrastucture
@@ -24,6 +24,43 @@ namespace BankTransactionWeb.BAL.Infrastucture
             this.mapper = mapper;
             this.logger = logger;
         }
+        public async Task<IdentityResult> RegisterPerson(PersonDTO person)
+        {
+            ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+            if (user == null)
+            {
+                user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
+                var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
+                if (result.Errors.Count() > 0)
+                    return result;
+                var personMapped = mapper.Map<Person>(person);
+                personMapped.ApplicationUserId = user.Id;
+                unitOfWork.PersonRepository.Add(personMapped);
+                await unitOfWork.Save();
+                await SignInPerson(user);
+                return result;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<SignInResult> LoginPerson(PersonDTO person)
+        {
+            var result = await unitOfWork.SignInManager.PasswordSignInAsync(person.Email, person.Password, person.RememberMe, lockoutOnFailure: true);
+            return result;
+        }
+
+        public async Task SignOutPerson()
+        {
+            await unitOfWork.SignInManager.SignOutAsync();
+        }
+        private async Task SignInPerson(ApplicationUser user)
+            {
+            await unitOfWork.SignInManager.SignInAsync(user, isPersistent: false);
+        }
+
         public async Task AddPerson(PersonDTO person)
         {
             try
@@ -33,12 +70,12 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 await unitOfWork.Save();
                 logger.LogInformation($"In method {nameof(AddPerson)} instance of person successfully added");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 logger.LogError($"Catch an exception in method {nameof(AddPerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
-               
+
             }
 
         }
@@ -66,9 +103,9 @@ namespace BankTransactionWeb.BAL.Infrastucture
             unitOfWork.Dispose();
         }
 
-        public async Task<List<PersonDTO>> GetAllPersons(string name=null, string surname = null, string lastname = null,
+        public async Task<List<PersonDTO>> GetAllPersons(string name = null, string surname = null, string lastname = null,
             string accountNumber = null, string transactionNumber = null, string companyName = null)
-        { 
+        {
             try
             {
                 var persons = await unitOfWork.PersonRepository.GetAll();
@@ -86,17 +123,17 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 }
                 if (!String.IsNullOrEmpty(accountNumber))
                 {
-                    persons = persons.Where(s => s.Accounts.Select(e => e.Number).Contains(accountNumber)); 
+                    persons = persons.Where(s => s.Accounts.Select(e => e.Number).Contains(accountNumber));
                 }
                 if (!String.IsNullOrEmpty(transactionNumber))
                 {
-                    persons = persons.Where(p=>p.Accounts.Contains(p.Accounts.Where
-                        (a=>a.Transactions.Contains(a.Transactions.Where
-                        (e=>e.Id.ToString()==transactionNumber).FirstOrDefault())).FirstOrDefault()));
+                    persons = persons.Where(p => p.Accounts.Contains(p.Accounts.Where
+                        (a => a.Transactions.Contains(a.Transactions.Where
+                        (e => e.Id.ToString() == transactionNumber).FirstOrDefault())).FirstOrDefault()));
                 }
                 if (!String.IsNullOrEmpty(companyName))
                 {
-                    persons = (await unitOfWork.ShareholderRepository.GetAll()).Where(sh => sh.Company.Name.Contains(companyName)).Select(sh=>sh.Person);
+                    persons = (await unitOfWork.ShareholderRepository.GetAll()).Where(sh => sh.Company.Name.Contains(companyName)).Select(sh => sh.Person);
                 }
                 return persons.Select(p => mapper.Map<PersonDTO>(p)).ToList();
             }
@@ -112,12 +149,12 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
 
 
-        public async  Task<PersonDTO> GetPersonById(int id)
+        public async Task<PersonDTO> GetPersonById(int id)
         {
             try
             {
                 var personFinded = await unitOfWork.PersonRepository.GetById(id);
-               
+
                 return mapper.Map<PersonDTO>(personFinded);
             }
             catch (Exception ex)
@@ -134,13 +171,13 @@ namespace BankTransactionWeb.BAL.Infrastucture
             try
             {
 
-            decimal totalBalance = 0;
-            var currentPerson = await unitOfWork.PersonRepository.GetById(id);
-            if (currentPerson != null)
-            {
-                totalBalance = currentPerson.Accounts.Select(ac => ac.Balance).Sum();
-            }
-            return totalBalance;
+                decimal totalBalance = 0;
+                var currentPerson = await unitOfWork.PersonRepository.GetById(id);
+                if (currentPerson != null)
+                {
+                    totalBalance = currentPerson.Accounts.Select(ac => ac.Balance).Sum();
+                }
+                return totalBalance;
             }
             catch (Exception ex)
             {
@@ -155,9 +192,9 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             try
             {
-            var personMapped = mapper.Map<Person>(person);
-            unitOfWork.PersonRepository.Update(personMapped);
-            await unitOfWork.Save();
+                var personMapped = mapper.Map<Person>(person);
+                unitOfWork.PersonRepository.Update(personMapped);
+                await unitOfWork.Save();
             }
             catch (Exception ex)
             {

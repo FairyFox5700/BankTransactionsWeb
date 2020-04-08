@@ -1,4 +1,5 @@
 ﻿using BankTransactionWeb.BAL.Models;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,9 @@ namespace BankTransactionWeb.BAL.Interfaces
 {
    public interface IPersonService: IDisposable
     {
+        Task SignOutPerson();
+        Task<SignInResult> LoginPerson(PersonDTO person);
+        Task<IdentityResult> RegisterPerson(PersonDTO person);
         Task<List<PersonDTO>> GetAllPersons(string name = null, string surname = null, string lastname = null,
             string accountNumber = null, string transactionNumber = null, string companyName = null);
         Task<PersonDTO> GetPersonById(int id);

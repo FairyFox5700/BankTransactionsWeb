@@ -32,7 +32,7 @@ namespace BankTransactionWeb.Areas.Identity.Models.ViewModels
         public string LastName { get; set; }
         [DataType(DataType.Date)]
         public DateTime DataOfBirth { get; set; }
-        public string Role { get; set; }
+
         //public bool RememberMe { get; set; }
 
     }

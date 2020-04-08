@@ -15,10 +15,11 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
     {
         private readonly BankTransactionContext context;
 
-        public UnitOfWork(BankTransactionContext context,UserManager<ApplicationUser> userManager)
+        public UnitOfWork(BankTransactionContext context,UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             this.context = context;
             UserManager = userManager;
+            SignInManager = signInManager;
         }
 
         IPersonRepository personRepository;
@@ -87,6 +88,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
         }
 
         public UserManager<ApplicationUser> UserManager { get; }
+        public SignInManager<ApplicationUser> SignInManager { get; }
 
         public async Task Save()
         {

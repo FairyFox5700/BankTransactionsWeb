@@ -19,15 +19,15 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
     public class AccountController : Controller
     {
 
-        private readonly UserManager<ApplicationUser> appUserManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
+        //private readonly UserManager<ApplicationUser> appUserManager;
+        //private readonly SignInManager<ApplicationUser> signInManager;
         private readonly ILogger<AccountController> logger;
         private readonly IPersonService personService;
         private readonly IMapper mapper;
-        public AccountController(UserManager<ApplicationUser> appUserManager, SignInManager<ApplicationUser> signInManager, ILogger<AccountController> logger, IPersonService personService, IMapper mapper)
+        public AccountController(ILogger<AccountController> logger, IPersonService personService, IMapper mapper)
         {
-            this.appUserManager = appUserManager;
-            this.signInManager = signInManager;
+            //this.appUserManager = appUserManager;
+            //this.signInManager = signInManager;
             this.logger = logger;
             this.personService = personService;
             this.mapper = mapper;
@@ -55,26 +55,8 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
-            // await personService.SetInitialDataAsync();
-            //if (ModelState.IsValid)
-            //{
-            //    var person = mapper.Map<PersonDTO>(model);
-            //    var result = await personService.AddPerson(person);
-
-            //    if (result.Succeeded)
-            //    {
-            //        logger.LogInformation("User  succesfully logged in.");
-
-
-            //        return RedirectToLocal(returnUrl);
-            //    }
-            //    else
-            //    {
-            //        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            //        return View(model);
-            //    }
-
-            var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
+            var person = mapper.Map<PersonDTO>(model);
+            var result = await personService.LoginPerson(person);
             if (result.Succeeded)
             {
                 logger.LogInformation("User  succesfully logged in.");
@@ -107,7 +89,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await signInManager.SignOutAsync();
+            await personService.SignOutPerson();
             logger.LogInformation("User successfully logged out.");
             return RedirectToAction("index", "home");
         }
@@ -118,33 +100,28 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-            //if (ModelState.IsValid)
-            //{
-            //    var person = mapper.Map<PersonDTO>(model);
-            //    var result = await personService.AddPerson(person);
-            //    if (result.Succeeded)
-            //    {
-            //        logger.LogInformation("Successfully created new user.");
-            //        return RedirectToLocal(returnUrl);
-            //    }
-            //       AddModelErrors(result);
-            //ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-
+            
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email
-                };
-                var result = await appUserManager.CreateAsync(user, model.Password);
+                var person = mapper.Map<PersonDTO>(model);
+                var result = await personService.RegisterPerson(person);
+                //var user = new ApplicationUser
+                //{
+                //    UserName = model.Email,
+                //    Email = model.Email
+                //};
+                //var result = await appUserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     logger.LogInformation("Successfully created new user.");
 
-                    await signInManager.SignInAsync(user, isPersistent: false);
+                    //await signInManager.SignInAsync(user, isPersistent: false);
                     logger.LogInformation("User signed in a new account with password.");
                     return RedirectToLocal(returnUrl);
+                }
+                if(result==null)
+                {
+                    ModelState.AddModelError("RegiterFailed", "There is alreasy user with this login");
                 }
                 AddModelErrors(result);
             }
