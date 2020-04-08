@@ -4,11 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.Areas.Admin.Models
+namespace BankTransactionWeb.Areas.Admin.Models.ViewModels
 {
-    public class AddRoleViewModel
+    public class ListRoleViewModel
     {
+        public int Id { get; set; }
         [Required]
-        public string RoleName { get; set; }
+        public string Name { get; set; }
     }
 }
+

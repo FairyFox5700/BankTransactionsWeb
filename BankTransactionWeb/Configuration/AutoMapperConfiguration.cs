@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BankTransactionWeb.Areas.Admin.Models.ViewModels;
 using BankTransactionWeb.Areas.Identity.Models.ViewModels;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
@@ -66,6 +67,16 @@ namespace BankTransactionWeb.Configuration
                 .ForMember(e=>e.ApplicationUserId, s=>s.MapFrom(a=>a.Id));
                 confg.CreateMap<PersonDTO, ApplicationUser>()
                 .ForMember(a => a.Id, s => s.MapFrom(e => e.ApplicationUserId));
+
+                confg.CreateMap<RoleDTO, AddRoleViewModel>();
+                confg.CreateMap<AddRoleViewModel, RoleDTO>();
+                confg.CreateMap<RoleDTO, UpdateRoleViewModel>();
+                confg.CreateMap<UpdateRoleViewModel, RoleDTO>();
+                confg.CreateMap<RoleDTO, ListRoleViewModel>();
+                confg.CreateMap<ListRoleViewModel, RoleDTO>();
+                confg.CreateMap<RoleDTO, ApplicationUser>();
+                confg.CreateMap<ApplicationUser, RoleDTO>();
+
             });
             return configuration;
         }

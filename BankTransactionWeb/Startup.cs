@@ -39,7 +39,7 @@ namespace BankTransactionWeb
             services.AddDALServices();
             //services.AddScoped < UserManager<ApplicationUser>>();
           
-            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 options.User.RequireUniqueEmail = false;
                 options.SignIn.RequireConfirmedEmail = true;

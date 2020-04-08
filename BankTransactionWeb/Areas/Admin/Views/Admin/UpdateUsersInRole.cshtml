@@ -1,0 +1,46 @@
+﻿@model List<UsersInRoleViewModel>
+@{
+    ViewData["Title"] = "UpdateUsersInRole";
+    var roleId = ViewBag.roleId;
+}
+
+<h1>Update Users In Role</h1>
+<form asp-controller="Admin" asp-area="Admin" class="form-horozontal" asp-action="UpdateUsersInRole" method="post">
+    <table class="table table-striped table-light">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Username</th>
+                <th scope="col">Name</th>
+                <th scope="col">Surname</th>
+                <th scope="col">Lastname</th>
+                <th scope="col">Check box</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+            <tr>
+                <th scope="row">@user.Id</th>
+                <td>@user.UserName </td>
+                <td>@user.Name </td>
+                <td>@user.Surname </td>
+                <td>@user.LastName </td>
+                <td>
+                    <div class="form-check m-1">
+                        <input as-for="@user.IsSelected" class="form-check-input" />
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+        </table>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input class="btn-success" type="submit" asp-controller="Admin" asp-area="Admin" asp-action="UpdateUsersInRole" asp-route-id="@roleId" value="Confirm" />
+                <input class="btn-success" type="submit" asp-controller="Admin" asp-area="Admin" asp-action="GetAllRoles" value="Cancel" />
+            </div>
+        </div>
+</form>
+
+

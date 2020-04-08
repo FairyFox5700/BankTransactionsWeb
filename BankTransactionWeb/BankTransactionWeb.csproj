@@ -23,10 +23,6 @@
     <ProjectReference Include="..\BankTransactionWeb.BAL\BankTransactionWeb.BAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Areas\Admin\Views\" />
-  </ItemGroup>
-
 
 
 </Project>
