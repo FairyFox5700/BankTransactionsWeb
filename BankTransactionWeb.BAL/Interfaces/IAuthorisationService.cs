@@ -13,5 +13,6 @@ namespace BankTransactionWeb.BAL.Interfaces
         Task SignOutPerson();
         Task<SignInResult> LoginPerson(PersonDTO person);
         Task<IdentityResult> RegisterPerson(PersonDTO person);
+        Task<IdentityResult> ConfirmUserEmailAsync(string userId, string code);
     }
 }

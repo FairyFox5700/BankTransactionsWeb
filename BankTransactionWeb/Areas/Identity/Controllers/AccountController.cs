@@ -68,16 +68,17 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                     logger.LogWarning("User account locked out.");
                     return RedirectToAction(nameof(Lockout));
                 }
+                if(result==null)
+                {
+                    ModelState.AddModelError(string.Empty, "You must confirm your email.");
+                }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "The attempt to lo in was unsuccessfull.");
                     return View(model);
                 }
             }
             return View(model);
-           
-
-         
         }
 
         [HttpGet]
@@ -118,11 +119,30 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                     logger.LogInformation("User signed in a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
-               
                 AddModelErrors(result);
             }
             return View(model);
 
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return View("Error");
+            }
+            var result = await authService.ConfirmUserEmailAsync(userId, code);
+            if (result == null)
+            {
+                return View("Error");
+            }
+            if (result.Succeeded)
+                return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
+            else
+                return View("Error");
         }
 
         private void AddModelErrors(IdentityResult result)
@@ -133,6 +153,13 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
             }
         }
 
+
+       
+        [HttpGet]
+        public IActionResult Error()
+        {
+            return View();
+        }
         /// <summary>
         /// Method returns user after succesfull lodin or registration.
         /// Avoid redirect from malicios website
@@ -152,3 +179,34 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         }
     }
 }
+
+//[HttpPost]
+//[AllowAnonymous]
+//[ValidateAntiForgeryToken]
+//public async Task<IActionResult> Login(LoginViewModel model)
+//{
+//    if (ModelState.IsValid)
+//    {
+//        var person = mapper.Map<PersonDTO>(model);
+//        var result = await authService.LoginPerson(person);
+//        if (result.Succeeded)
+//        {
+//            logger.LogInformation("User  succesfully logged in.");
+//            return RedirectToLocal(model.ReturnUrl);
+//        }
+//        if (result.IsLockedOut)
+//        {
+//            logger.LogWarning("User account locked out.");
+//            return RedirectToAction(nameof(Lockout));
+//        }
+//        else
+//        {
+//            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+//            return View(model);
+//        }
+//    }
+//    return View(model);
+
+
+
+//}
