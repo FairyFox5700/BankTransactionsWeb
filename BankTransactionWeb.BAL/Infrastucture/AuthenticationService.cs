@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
+using BankTransactionWeb.BAL.Infrastucture.MessageServices;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Http;
-using BankTransactionWeb.BAL.Infrastucture.MessageServices;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace BankTransactionWeb.BAL.Infrastucture
@@ -48,30 +48,40 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task<IdentityResult> RegisterPerson(PersonDTO person)
         {
-            ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
-            if (user == null)
+            try
             {
-                user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
-                var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
-                if (result.Succeeded)
+
+                ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+                if (user == null)
                 {
-                    var token = await unitOfWork.UserManager.GenerateEmailConfirmationTokenAsync(user);
-                    var confirmationLink = URLHelper.Action("ConfirmEmai", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
-                    logger.Log(LogLevel.Warning, confirmationLink);
-                    var message = new CustomMessage(new List<string>() { user.Email }, "Confirmation email link", confirmationLink, null);
-                    var personMapped = mapper.Map<Person>(person);
-                    personMapped.ApplicationUserId = user.Id;
-                    unitOfWork.PersonRepository.Add(personMapped);
-                    await unitOfWork.Save();
-                    await emailSender.SendEmailAsync(message);
-                    //await unitOfWork.UserManager.AddToRoleAsync(user, "Visitor");
+                    user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
+                    var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
+                    if (result.Succeeded)
+                    {
+                        var token = await unitOfWork.UserManager.GenerateEmailConfirmationTokenAsync(user);
+                        var confirmationLink = URLHelper.Action("ConfirmEmai", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
+                        logger.Log(LogLevel.Warning, confirmationLink);
+                        var message = new CustomMessage(new List<string>() { user.Email }, "Confirmation email link", confirmationLink, null);
+                        var personMapped = mapper.Map<Person>(person);
+                        personMapped.ApplicationUserFkId = user.Id;
+                        unitOfWork.PersonRepository.Add(personMapped);
+                        await unitOfWork.Save();
+                        await emailSender.SendEmailAsync(message);
+                        //await unitOfWork.UserManager.AddToRoleAsync(user, "Visitor");
+                        return result;
+                    }
                     return result;
                 }
-                return result;
+                else
+                {
+                    return null;
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                return null;
+                logger.LogError($"An exceprion {ex} occured on registering new user. Inner exeprion {ex.InnerException}");
+                throw ex;
             }
         }
 
@@ -149,32 +159,32 @@ namespace BankTransactionWeb.BAL.Infrastucture
     }
 }
 
-        //public async Task<IdentityResult> RegisterPerson(PersonDTO person)
-        //{
-        //    ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
-        //    if (user == null)
-        //    {
-        //        user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
-        //        var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
-        //        if (result.Succeeded)
-        //        {
+//public async Task<IdentityResult> RegisterPerson(PersonDTO person)
+//{
+//    ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+//    if (user == null)
+//    {
+//        user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
+//        var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
+//        if (result.Succeeded)
+//        {
 
-        //            var personMapped = mapper.Map<Person>(person);
-        //            personMapped.ApplicationUserId = user.Id;
-        //            unitOfWork.PersonRepository.Add(personMapped);
-        //            await unitOfWork.Save();
-        //            await SignInPerson(user);
-        //            return result;
-        //        }
-        //    }
+//            var personMapped = mapper.Map<Person>(person);
+//            personMapped.ApplicationUserId = user.Id;
+//            unitOfWork.PersonRepository.Add(personMapped);
+//            await unitOfWork.Save();
+//            await SignInPerson(user);
+//            return result;
+//        }
+//    }
 
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-        //public async Task<SignInResult> LoginPerson(PersonDTO person)
-        //{
-        //    var result = await unitOfWork.SignInManager.PasswordSignInAsync(person.UserName, person.Password, person.RememberMe, lockoutOnFailure: true);
-        //    return result;
-        //}
+//    else
+//    {
+//        return null;
+//    }
+//}
+//public async Task<SignInResult> LoginPerson(PersonDTO person)
+//{
+//    var result = await unitOfWork.SignInManager.PasswordSignInAsync(person.UserName, person.Password, person.RememberMe, lockoutOnFailure: true);
+//    return result;
+//}

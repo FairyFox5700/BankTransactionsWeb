@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankTransactionWeb.DAL.Migrations
 {
     [DbContext(typeof(BankTransactionContext))]
-    [Migration("20200407212448_IdentityAdded")]
-    partial class IdentityAdded
+    [Migration("20200409172127_IdentityAdd")]
+    partial class IdentityAdd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -182,7 +182,7 @@ namespace BankTransactionWeb.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("ApplicationUserId")
+                    b.Property<string>("ApplicationUserFkId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("DataOfBirth")
@@ -205,9 +205,9 @@ namespace BankTransactionWeb.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId")
+                    b.HasIndex("ApplicationUserFkId")
                         .IsUnique()
-                        .HasFilter("[ApplicationUserId] IS NOT NULL");
+                        .HasFilter("[ApplicationUserFkId] IS NOT NULL");
 
                     b.ToTable("Persons");
 
@@ -501,7 +501,7 @@ namespace BankTransactionWeb.DAL.Migrations
                 {
                     b.HasOne("BankTransactionWeb.DAL.Entities.ApplicationUser", "ApplicationUser")
                         .WithOne("Person")
-                        .HasForeignKey("BankTransactionWeb.DAL.Entities.Person", "ApplicationUserId");
+                        .HasForeignKey("BankTransactionWeb.DAL.Entities.Person", "ApplicationUserFkId");
                 });
 
             modelBuilder.Entity("BankTransactionWeb.DAL.Entities.Shareholder", b =>

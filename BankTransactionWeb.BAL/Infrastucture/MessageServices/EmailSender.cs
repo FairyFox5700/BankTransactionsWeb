@@ -31,9 +31,9 @@ namespace BankTransactionWeb.BAL.Infrastucture.MessageServices
     public class EmailSender: ISender
     {
         private readonly EmailConfig emailConfig;
-        private readonly Logger<EmailSender> logger;
+        private readonly ILogger<EmailSender> logger;
 
-        public EmailSender(EmailConfig emailConfig, Logger<EmailSender> logger)
+        public EmailSender(EmailConfig emailConfig, ILogger<EmailSender> logger)
         {
             this.emailConfig = emailConfig;
             this.logger = logger;

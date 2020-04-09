@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BankTransactionWeb.DAL.Migrations
 {
-    public partial class IdentityAdded : Migration
+    public partial class IdentityAdd : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "ApplicationUserId",
+                name: "ApplicationUserFkId",
                 table: "Persons",
                 nullable: true);
 
@@ -158,11 +158,11 @@ namespace BankTransactionWeb.DAL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Persons_ApplicationUserId",
+                name: "IX_Persons_ApplicationUserFkId",
                 table: "Persons",
-                column: "ApplicationUserId",
+                column: "ApplicationUserFkId",
                 unique: true,
-                filter: "[ApplicationUserId] IS NOT NULL");
+                filter: "[ApplicationUserFkId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -204,9 +204,9 @@ namespace BankTransactionWeb.DAL.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Persons_AspNetUsers_ApplicationUserId",
+                name: "FK_Persons_AspNetUsers_ApplicationUserFkId",
                 table: "Persons",
-                column: "ApplicationUserId",
+                column: "ApplicationUserFkId",
                 principalTable: "AspNetUsers",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Restrict);
@@ -215,7 +215,7 @@ namespace BankTransactionWeb.DAL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Persons_AspNetUsers_ApplicationUserId",
+                name: "FK_Persons_AspNetUsers_ApplicationUserFkId",
                 table: "Persons");
 
             migrationBuilder.DropTable(
@@ -240,11 +240,11 @@ namespace BankTransactionWeb.DAL.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropIndex(
-                name: "IX_Persons_ApplicationUserId",
+                name: "IX_Persons_ApplicationUserFkId",
                 table: "Persons");
 
             migrationBuilder.DropColumn(
-                name: "ApplicationUserId",
+                name: "ApplicationUserFkId",
                 table: "Persons");
         }
     }

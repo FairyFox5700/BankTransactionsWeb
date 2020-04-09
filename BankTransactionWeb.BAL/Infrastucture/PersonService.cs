@@ -50,7 +50,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             try
             {
-                var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserId);
+                var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
                 if (user != null)
                 {
                     var personMapped = mapper.Map<Person>(person);
@@ -184,7 +184,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             try
             {
-                var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserId);
+                var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
                 if(user!=null)
                 {
                     var userMapped = mapper.Map<ApplicationUser>(person);

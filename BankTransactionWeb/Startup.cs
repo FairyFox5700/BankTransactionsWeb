@@ -1,23 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
-using BankTransactionWeb.BAL;
 using BankTransactionWeb.BAL.Cofiguration;
+using BankTransactionWeb.BAL.Infrastucture.MessageServices;
 using BankTransactionWeb.Configuration;
 using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
 using BankTransactionWeb.DAL.Entities;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace BankTransactionWeb
 {
@@ -36,16 +32,22 @@ namespace BankTransactionWeb
             services.AddRazorPages().AddRazorRuntimeCompilation();
             IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
             services.AddSingleton(mapper);
-            services.AddDALServices();
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+.AddJsonFile("appsettings.json")
+.Build();
             //services.AddScoped < UserManager<ApplicationUser>>();
-          
+            services.AddDbContext<BankTransactionContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
             services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
             {
                 options.User.RequireUniqueEmail = false;
                 options.SignIn.RequireConfirmedEmail = true;
-            })
-            .AddEntityFrameworkStores<BankTransactionContext>()
-            .AddDefaultTokenProviders().AddUserManager<UserManager<ApplicationUser>>();
+            }).AddEntityFrameworkStores<BankTransactionContext>()
+           .AddDefaultTokenProviders().AddUserManager<UserManager<ApplicationUser>>();
+            var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
+            services.AddSingleton(emailConfig);
+            services.AddDALServices();
             services.ConfigureApplicationCookie(options =>
             {
                 // Cookie settings
@@ -79,14 +81,14 @@ namespace BankTransactionWeb
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env , ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
 
             }
-           
+
             else
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -96,7 +98,7 @@ namespace BankTransactionWeb
             app.UseRouting();
 
             app.UseAuthorization();
-           
+
 
             app.UseEndpoints(endpoints =>
             {

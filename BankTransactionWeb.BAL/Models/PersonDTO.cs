@@ -16,7 +16,7 @@ namespace BankTransactionWeb.BAL.Models
         public string UserName { get; set; }
         public bool RememberMe { get; set; }
         public string PhoneNumber { get; set; }
-        public string ApplicationUserId { get; set; }
+        public string ApplicationUserFkId { get; set; }
         public string Code{ get; set; }
         //private List<AccountDTO> accounts;
         //public List<AccountDTO> Accounts 

@@ -65,9 +65,9 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<RegisterViewModel, PersonDTO>();
                 confg.CreateMap<PersonDTO, RegisterViewModel>();
                 confg.CreateMap<ApplicationUser, PersonDTO>()
-                .ForMember(e=>e.ApplicationUserId, s=>s.MapFrom(a=>a.Id));
+                .ForMember(e=>e.ApplicationUserFkId, s=>s.MapFrom(a=>a.Id));
                 confg.CreateMap<PersonDTO, ApplicationUser>()
-                .ForMember(a => a.Id, s => s.MapFrom(e => e.ApplicationUserId));
+                .ForMember(a => a.Id, s => s.MapFrom(e => e.ApplicationUserFkId));
                 //admin
                 confg.CreateMap<RoleDTO, AddRoleViewModel>();
                 confg.CreateMap<AddRoleViewModel, RoleDTO>();

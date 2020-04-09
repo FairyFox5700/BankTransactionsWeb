@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -9,8 +9,26 @@
     <Compile Remove="EfCoreDAL\Migrations\20200331083000_DeletedNoUndersatndableRelationship.Designer.cs" />
     <Compile Remove="EfCoreDAL\Migrations\20200331083240_DeletedNoUndersatndableRelationship.cs" />
     <Compile Remove="EfCoreDAL\Migrations\20200331083240_DeletedNoUndersatndableRelationship.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200407212448_IdentityAdded.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200407212448_IdentityAdded.Designer.cs" />
     <Compile Remove="EfCoreDAL\Migrations\20200408073237_ChangedContextForAppUser.cs" />
     <Compile Remove="EfCoreDAL\Migrations\20200408073237_ChangedContextForAppUser.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409152850_UpdateIdentityDb.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409152850_UpdateIdentityDb.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409155929_UpdateIdentityDb.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409155929_UpdateIdentityDb.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409161946_RenameColumnDueToEx.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409161946_RenameColumnDueToEx.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409163340_Init.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409163340_Init.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409164050_InitialIdentityDB.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409164050_InitialIdentityDB.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409165432_InitialIdentityDB.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409165432_InitialIdentityDB.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409170729_Initilized.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409170729_Initilized.Designer.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409170948_AlterDB.cs" />
+    <Compile Remove="EfCoreDAL\Migrations\20200409170948_AlterDB.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
