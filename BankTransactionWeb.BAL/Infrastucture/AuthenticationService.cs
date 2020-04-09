@@ -22,12 +22,17 @@ namespace BankTransactionWeb.BAL.Infrastucture
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ILogger<AuthenticationService> logger;
-        private readonly EmailSender emailSender;
+        private readonly ISender emailSender;
         private readonly IUrlHelperFactory urlHelperFactory;
         private readonly IActionContextAccessor actionContextAccessor;
         private readonly IHttpContextAccessor httpContextAccessor;
+        private readonly IUrlHelper urlHelper;
+        public IUrlHelper URLHelper
+        {
+            get => urlHelper ?? (urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext));
+        }
 
-        public AuthenticationService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AuthenticationService> logger, EmailSender emailSender,
+        public AuthenticationService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AuthenticationService> logger, ISender emailSender,
             IUrlHelperFactory urlHelperFactory,
            IActionContextAccessor actionContextAccessor, IHttpContextAccessor httpContextAccessor)
         {
@@ -38,6 +43,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
             this.urlHelperFactory = urlHelperFactory;
             this.actionContextAccessor = actionContextAccessor;
             this.httpContextAccessor = httpContextAccessor;
+            this.urlHelper = urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext);
         }
 
         public async Task<IdentityResult> RegisterPerson(PersonDTO person)
@@ -49,9 +55,8 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
                 if (result.Succeeded)
                 {
-                    var urlHelper = urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext);
                     var token = await unitOfWork.UserManager.GenerateEmailConfirmationTokenAsync(user);
-                    var confirmationLink = urlHelper.Action("ConfirmEmai", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
+                    var confirmationLink = URLHelper.Action("ConfirmEmai", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
                     logger.Log(LogLevel.Warning, confirmationLink);
                     var message = new CustomMessage(new List<string>() { user.Email }, "Confirmation email link", confirmationLink, null);
                     var personMapped = mapper.Map<Person>(person);
@@ -59,6 +64,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
                     unitOfWork.PersonRepository.Add(personMapped);
                     await unitOfWork.Save();
                     await emailSender.SendEmailAsync(message);
+                    //await unitOfWork.UserManager.AddToRoleAsync(user, "Visitor");
                     return result;
                 }
                 return result;
@@ -68,6 +74,33 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 return null;
             }
         }
+
+        public async Task<bool> SendReserPasswordUrl(PersonDTO person)
+        {
+            var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+            if (user == null || !(await unitOfWork.UserManager.IsEmailConfirmedAsync(user)))
+            {
+                return false;
+            }
+            var token = await unitOfWork.UserManager.GeneratePasswordResetTokenAsync(user);
+            var confirmationLink = URLHelper.Action("ConfirmEmai", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
+            var message = new CustomMessage(new List<string>() { user.Email }, "Link for password reset", confirmationLink, null);
+
+            await emailSender.SendEmailAsync(message);
+            return true;
+        }
+
+        public async Task<IdentityResult> ResetPasswordForPerson(PersonDTO person)
+        {
+            var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+            if (user == null)
+            {
+                return null;
+            }
+            var result = await unitOfWork.UserManager.ResetPasswordAsync(user, person.Code, person.Password);
+            return result;
+        }
+
 
 
 
@@ -97,10 +130,10 @@ namespace BankTransactionWeb.BAL.Infrastucture
             await unitOfWork.SignInManager.SignOutAsync();
         }
 
-        private async Task SignInPerson(ApplicationUser user)
-        {
-            await unitOfWork.SignInManager.SignInAsync(user, isPersistent: false);
-        }
+        //private async Task SignInPerson(ApplicationUser user)
+        //{
+        //    await unitOfWork.SignInManager.SignInAsync(user, isPersistent: false);
+        //}
 
 
         public async Task<IdentityResult> ConfirmUserEmailAsync(string userId, string code)

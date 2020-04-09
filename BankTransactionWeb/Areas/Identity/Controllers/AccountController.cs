@@ -1,16 +1,12 @@
 ﻿using AutoMapper;
 using BankTransactionWeb.Areas.Identity.Models.ViewModels;
-using BankTransactionWeb.BAL.Infrastucture;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.Controllers;
-using BankTransactionWeb.DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Areas.Identity.Controllers
@@ -42,8 +38,8 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        
-        public ActionResult Login(string returnUrl =null)
+
+        public ActionResult Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
@@ -54,7 +50,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 var person = mapper.Map<PersonDTO>(model);
                 var result = await authService.LoginPerson(person);
@@ -68,7 +64,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                     logger.LogWarning("User account locked out.");
                     return RedirectToAction(nameof(Lockout));
                 }
-                if(result==null)
+                if (result == null)
                 {
                     ModelState.AddModelError(string.Empty, "You must confirm your email.");
                 }
@@ -85,7 +81,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [AllowAnonymous]
         private object Lockout()
         {
-             return View();
+            return View();
         }
 
         [HttpPost]
@@ -103,7 +99,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-            
+
             if (ModelState.IsValid)
             {
                 var person = mapper.Map<PersonDTO>(model);
@@ -154,7 +150,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         }
 
 
-       
+
         [HttpGet]
         public IActionResult Error()
         {
@@ -176,6 +172,79 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
             {
                 return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
             }
+        }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var person = new PersonDTO { Email = model.Email };
+                var sendEmailSuccesfull = await authService.SendReserPasswordUrl(person);
+                if(sendEmailSuccesfull == false)
+                {
+                    return View(nameof(ForgotPasswordConfirmation));
+                }
+                else
+                {
+                    return View(nameof(ForgotPasswordConfirmation));
+                }
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string code = null)
+        {
+            return code == null ? View("Error") : View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var person = mapper.Map<PersonDTO>(model);
+                var result = await authService.ResetPasswordForPerson(person);
+                if( result==null)
+                {
+                    logger.LogError("The user was not found");
+                    return View(nameof(ResetPasswordConfirmation));
+                }
+                if (result.Succeeded)
+                {
+                    return View(nameof(ResetPasswordConfirmation));
+                }
+                AddModelErrors(result);
+            }
+            return View(model);
+        }
+
+
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
         }
     }
 }

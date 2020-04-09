@@ -33,6 +33,7 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<AddPersonViewModel, PersonDTO>();
                 confg.CreateMap<PersonDTO, UpdatePersonViewModel>();
                 confg.CreateMap<UpdatePersonViewModel, PersonDTO>();
+                
                 //for acccount
                 confg.CreateMap<AccountDTO, AddAccountViewModel>();
                 confg.CreateMap<AddAccountViewModel, AccountDTO>();
@@ -67,7 +68,7 @@ namespace BankTransactionWeb.Configuration
                 .ForMember(e=>e.ApplicationUserId, s=>s.MapFrom(a=>a.Id));
                 confg.CreateMap<PersonDTO, ApplicationUser>()
                 .ForMember(a => a.Id, s => s.MapFrom(e => e.ApplicationUserId));
-
+                //admin
                 confg.CreateMap<RoleDTO, AddRoleViewModel>();
                 confg.CreateMap<AddRoleViewModel, RoleDTO>();
                 confg.CreateMap<RoleDTO, UpdateRoleViewModel>();
@@ -76,6 +77,11 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<ListRoleViewModel, RoleDTO>();
                 confg.CreateMap<RoleDTO, ApplicationUser>();
                 confg.CreateMap<ApplicationUser, RoleDTO>();
+                confg.CreateMap<UsersInRoleViewModel, PersonDTO>();
+                confg.CreateMap<PersonDTO, UsersInRoleViewModel>();
+                confg.CreateMap<ResetPasswordViewModel, PersonDTO>();
+                confg.CreateMap<PersonDTO, ResetPasswordViewModel>();
+                
 
             });
             return configuration;

@@ -20,10 +20,10 @@ namespace BankTransactionWeb.ViewModel
         [StringLength(30, MinimumLength = 3)]//, ErrorMessage = "Name cannot be longer than 30 characters and no less than 3 characters")
         public string Name { get; set; }
         [Required]
-        [StringLength(30, MinimumLength = 3)]//, ErrorMessage = "Surname cannot be longer than 30 characters  and no less than 3 characters"
+        [StringLength(30, MinimumLength = 3)]
         public string Surname { get; set; }
         [Required]
-        [StringLength(30, MinimumLength = 3)]//, ErrorMessage = "Last name cannot be longer than 30 characters and no less than 3 characters"
+        [StringLength(30, MinimumLength = 3)]
         public string LastName { get; set; }
         [DataType(DataType.Date)]
         [Required]

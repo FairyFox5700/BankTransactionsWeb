@@ -53,10 +53,10 @@ namespace BankTransactionWeb.Controllers
         }
 
 
-        public IActionResult AddPerson()
-        {
-            return View();
-        }
+        //public IActionResult AddPerson()
+        //{
+        //    return View();
+        //}
 
         //[HttpPost]
         //[ValidateAntiForgeryToken]
@@ -187,7 +187,7 @@ namespace BankTransactionWeb.Controllers
                 if (person == null)
                 {
                     logger.LogError($"Person with id {id} not find");
-
+                    return NotFound();
                 }
                 try
                 {

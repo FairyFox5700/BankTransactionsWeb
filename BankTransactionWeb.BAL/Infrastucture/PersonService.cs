@@ -4,6 +4,7 @@ using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 if (user != null)
                 {
                     var personMapped = mapper.Map<Person>(person);
-                    unitOfWork.PersonRepository.Delete(personMapped);
+                    ///unitOfWork.PersonRepository.Delete(personMapped);
                     var result = await unitOfWork.UserManager.DeleteAsync(user);
                     await unitOfWork.Save();
                     logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully deleted");
@@ -188,10 +189,9 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 {
                     var userMapped = mapper.Map<ApplicationUser>(person);
                     var personMapped = mapper.Map<Person>(person);
-                    
+                    userMapped.Person = personMapped;
                     var result = await unitOfWork.UserManager.UpdateAsync(userMapped);
-                   // await unitOfWork.Save();
-                    unitOfWork.PersonRepository.Update(personMapped);
+                    //unitOfWork.PersonRepository.Update(personMapped);
                     await unitOfWork.Save();
                     return result;
                 }

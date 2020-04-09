@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BankTransactionWeb.BAL.Infrastucture;
+using BankTransactionWeb.BAL.Infrastucture.MessageServices;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.DAL.EfCoreDAL;
 using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
@@ -43,6 +44,12 @@ namespace BankTransactionWeb.BAL.Cofiguration
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IShareholderService, ShareholderService>();
             services.AddTransient<IAuthenticationService, AuthenticationService>();
+            var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
+            services.AddSingleton(emailConfig);
+            services.AddTransient<ISender, EmailSender>();
+            services.AddTransient<IAdminService, AdminService>();
+            services.AddTransient<IAuthenticationService, AuthenticationService>();
+            
 
         }
     }

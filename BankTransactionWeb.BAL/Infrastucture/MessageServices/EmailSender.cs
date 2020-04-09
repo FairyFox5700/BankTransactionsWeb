@@ -1,4 +1,5 @@
-﻿using MailKit.Net.Smtp;
+﻿using BankTransactionWeb.BAL.Interfaces;
+using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using MimeKit;
@@ -27,7 +28,7 @@ namespace BankTransactionWeb.BAL.Infrastucture.MessageServices
         }
 
     }
-    public class EmailSender
+    public class EmailSender: ISender
     {
         private readonly EmailConfig emailConfig;
         private readonly Logger<EmailSender> logger;

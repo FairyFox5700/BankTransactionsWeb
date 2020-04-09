@@ -26,7 +26,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Person>().HasOne(p => p.ApplicationUser).WithOne(a => a.Person).HasForeignKey<Person>(p => p.ApplicationUserId);
+            modelBuilder.Entity<Person>().HasOne(p => p.ApplicationUser).WithOne(a => a.Person).HasForeignKey<Person>(p => p.ApplicationUserId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Transaction>()
                 .HasOne<Account>(t => t.SourceAccount)
                 .WithMany(a => a.Transactions);
