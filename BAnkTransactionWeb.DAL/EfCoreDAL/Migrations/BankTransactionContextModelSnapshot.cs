@@ -180,7 +180,7 @@ namespace BankTransactionWeb.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AplicationUserId")
+                    b.Property<string>("ApplicationUserFkId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("DataOfBirth")
@@ -203,9 +203,9 @@ namespace BankTransactionWeb.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AplicationUserId")
+                    b.HasIndex("ApplicationUserFkId")
                         .IsUnique()
-                        .HasFilter("[AplicationUserId] IS NOT NULL");
+                        .HasFilter("[ApplicationUserFkId] IS NOT NULL");
 
                     b.ToTable("Persons");
 
@@ -499,7 +499,7 @@ namespace BankTransactionWeb.DAL.Migrations
                 {
                     b.HasOne("BankTransactionWeb.DAL.Entities.ApplicationUser", "ApplicationUser")
                         .WithOne("Person")
-                        .HasForeignKey("BankTransactionWeb.DAL.Entities.Person", "AplicationUserId");
+                        .HasForeignKey("BankTransactionWeb.DAL.Entities.Person", "ApplicationUserFkId");
                 });
 
             modelBuilder.Entity("BankTransactionWeb.DAL.Entities.Shareholder", b =>

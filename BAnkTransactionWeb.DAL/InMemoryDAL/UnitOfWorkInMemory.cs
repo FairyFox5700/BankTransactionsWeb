@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.DAL.InMemoryDAL
 {
-
     public class UnitOfWorkInMemory : IUnitOfWork
     {
         private readonly InMemoryContainer context;
@@ -85,10 +84,11 @@ namespace BankTransactionWeb.DAL.InMemoryDAL
             }
         }
 
-       
-        UserManager<ApplicationUser> IUnitOfWork.AppUserManager => throw new NotImplementedException();
+        public UserManager<ApplicationUser> UserManager => throw new NotImplementedException();
 
-        RoleManager<IdentityRole> IUnitOfWork.AppRoleManager => throw new NotImplementedException();
+        public SignInManager<ApplicationUser> SignInManager => throw new NotImplementedException();
+
+        public RoleManager<IdentityRole> RoleManager => throw new NotImplementedException();
 
         public async Task Save()
         {

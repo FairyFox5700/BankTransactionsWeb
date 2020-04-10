@@ -4,11 +4,11 @@ using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Infrastucture
@@ -25,137 +25,43 @@ namespace BankTransactionWeb.BAL.Infrastucture
             this.mapper = mapper;
             this.logger = logger;
         }
-        //public async Task AddPerson(PersonDTO person)
-        //{
-        //    try
-        //    {
-
-
-        //            var personMapped = mapper.Map<Person>(person);
-        //            unitOfWork.PersonRepository.Add(personMapped);
-        //            await unitOfWork.Save();
-        //            logger.LogInformation($"In method {nameof(AddPerson)} instance of person successfully added");
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.LogError($"Catch an exception in method {nameof(AddPerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
-        //           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-        //        throw ex;
-
-        //    }
-
-        //}
-        public async Task<IdentityResult> AddPerson(PersonDTO person)
-        {
-
-            ApplicationUser user = await unitOfWork.AppUserManager.FindByEmailAsync(person.Email);
-            if (user == null)
-            {
-                user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
-                var result = await unitOfWork.AppUserManager.CreateAsync(user, person.Password);
-                if (result.Errors.Count() > 0)
-                    return result;
-                await unitOfWork.AppUserManager.AddToRoleAsync(user, person.Role);
-                var personMapped = mapper.Map<Person>(person);
-                personMapped.AplicationUserId = user.Id;
-                unitOfWork.PersonRepository.Add(personMapped);
-                await unitOfWork.Save();
-                return result;
-
-            }
-            else
-            {
-                var identRes = new IdentityResult();
-                var identityError = new IdentityError();
-                identityError.Code = "InvaliEmail";
-                identityError.Description = "Already exisst person with this email";
-                identRes.Errors.Append(identityError);
-                return identRes;
-            }
-        }
-
-        public async Task SetInitialData( PersonDTO person, List<string> roles)
-        {
-            foreach (string roleName in roles)
-            {
-                var role = await unitOfWork.AppRoleManager.FindByNameAsync(roleName);
-                if (role == null)
-                {
-                    role = new IdentityRole() { Name = roleName };
-                    await unitOfWork.AppRoleManager.CreateAsync(role);
-                }
-            }
-            await AddPerson(person);
-        }
-
-        //public async Task<ClaimsIdentity> Authenticate(PersonDTO person)
-        //{
-        //    ClaimsIdentity claim = null;
-        //    ApplicationUser user = (await unitOfWork.PersonRepository.GetById(person.Id)).ApplicationUser;
-        //    if(user!=null)
-        //    {
-        //        var factory = new UserClaimsPrincipalFactory<ApplicationUser>(unitOfWork.AppUserManager,null);
-        //        ClaimsPrincipal claimsPrincipal = await factory.CreateAsync(user,this);
-        //        ((ClaimsIdentity)claimsPrincipal.Identity).AddClaim(new Claim("user_id", user.Id.ToString()));
-        //        claim = await unitOfWork.AppUserManager.AddClaimAsync(user, ClaimValueTypes.Cook)
-        //    }
-        //}
-
-        //var identityResult = await unitOfWork.AppUserManager.CreateAsync(user, person.Password);
-        //if(identityResult.Succeeded)
-        //{
-        //   await unitOfWork.ApplicationSignInManager.SignInAsync(user, isPersistent: false);
-
-        //}
-        //return identityResult;
-        //return new AddPersonResponse(user.Id, identityResult.Succeeded, 
-        // identityResult.Succeeded ? null : identityResult.Errors.Select(er => new Error(er.Code, er.Description)).ToList());
-
-        //public async Task<ServiceOperationDetails> AddPerson(PersonDTO person)
-        //{
-        //    try
-        //    {
-        //        ApplicationUser user = await unitOfWork.AppUserManager.FindByEmailAsync(person.Email);
-        //        if (user == null)
-        //        {
-        //            user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
-        //            var result = await unitOfWork.AppUserManager.CreateAsync(user, person.Password);
-        //            if (result.Errors.Count() > 0)
-        //            {
-        //                return new ServiceOperationDetails(false, result.Errors.FirstOrDefault()?.ToString(), "");
-        //            }
-        //            await unitOfWork.AppUserManager.AddToRoleAsync(user, person.Role);
-
-        //            var personMapped = mapper.Map<Person>(person);
-        //            personMapped.AplicationUserId = user.Id;
-        //            unitOfWork.PersonRepository.Add(personMapped);
-        //            await unitOfWork.Save();
-        //            logger.LogInformation($"In method {nameof(AddPerson)} instance of person successfully added");
-        //            return new ServiceOperationDetails(true, "Resistration was succcessfull", "");
-        //        }
-        //        else
-        //        {
-        //            return new ServiceOperationDetails(true, "There is somebode registered with this email.", "");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.LogError($"Catch an exception in method {nameof(AddPerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
-        //           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-        //        throw ex;
-
-        //    }
-        //}
-
-        public async Task DeletePerson(PersonDTO person)
+        //REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public async Task AddPerson(PersonDTO person)
         {
             try
             {
                 var personMapped = mapper.Map<Person>(person);
-                unitOfWork.PersonRepository.Delete(personMapped);
+                unitOfWork.PersonRepository.Add(personMapped);
                 await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully added");
+                logger.LogInformation($"In method {nameof(AddPerson)} instance of person successfully added");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(AddPerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+
+            }
+
+        }
+
+        //Unit of work transaction
+        public async Task<IdentityResult> DeletePerson(PersonDTO person)
+        {
+            try
+            {
+                var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
+                if (user != null)
+                {
+                    var personMapped = mapper.Map<Person>(person);
+                    ///unitOfWork.PersonRepository.Delete(personMapped);
+                    var result = await unitOfWork.UserManager.DeleteAsync(user);
+                    await unitOfWork.Save();
+                    logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully deleted");
+                    return result;
+
+                }
+                return null;
             }
             catch (Exception ex)
             {
@@ -165,6 +71,23 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
             }
         }
+        //public async Task DeletePerson(PersonDTO person)
+        //{
+        //    try
+        //    {
+        //        var personMapped = mapper.Map<Person>(person);
+        //        unitOfWork.PersonRepository.Delete(personMapped);
+        //        await unitOfWork.Save();
+        //        logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully added");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.LogError($"Catch an exception in method {nameof(DeletePerson)} in class {nameof(PersonService)}. The exception is {ex.Message}. " +
+        //           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+        //        throw ex;
+
+        //    }
+        //}
 
         public void Dispose()
         {
@@ -220,7 +143,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
             try
             {
                 var personFinded = await unitOfWork.PersonRepository.GetById(id);
-
                 return mapper.Map<PersonDTO>(personFinded);
             }
             catch (Exception ex)
@@ -231,6 +153,9 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
             }
         }
+
+
+        
 
         public async Task<decimal> TotalBalanceOnAccounts(int id)
         {
@@ -254,13 +179,24 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
         }
 
-        public async Task UpdatePerson(PersonDTO person)
+        //Related data transaction
+        public async Task<IdentityResult> UpdatePerson(PersonDTO person)
         {
             try
             {
-                var personMapped = mapper.Map<Person>(person);
-                unitOfWork.PersonRepository.Update(personMapped);
-                await unitOfWork.Save();
+                var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
+                if(user!=null)
+                {
+                    var userMapped = mapper.Map<ApplicationUser>(person);
+                    var personMapped = mapper.Map<Person>(person);
+                    userMapped.Person = personMapped;
+                    var result = await unitOfWork.UserManager.UpdateAsync(userMapped);
+                    //unitOfWork.PersonRepository.Update(personMapped);
+                    await unitOfWork.Save();
+                    return result;
+                }
+                return null;
+               
             }
             catch (Exception ex)
             {
@@ -272,3 +208,38 @@ namespace BankTransactionWeb.BAL.Infrastucture
         }
     }
 }
+
+//public async Task<PersonDTO> GetPersonById(int id)
+//{
+//    try
+//    {
+//        var personFinded = await unitOfWork.PersonRepository.GetById(id);
+
+//        return mapper.Map<PersonDTO>(personFinded);
+//    }
+//    catch (Exception ex)
+//    {
+//        logger.LogError($"Catch an exception in method {nameof(GetPersonById)} in class {this.GetType()}. The exception is {ex.Message}. " +
+//           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+//        throw ex;
+
+//    }
+//}
+
+
+//public async Task UpdatePerson(PersonDTO person)
+//{
+//    try
+//    {
+//        var personMapped = mapper.Map<Person>(person);
+//        unitOfWork.PersonRepository.Update(personMapped);
+//        await unitOfWork.Save();
+//    }
+//    catch (Exception ex)
+//    {
+//        logger.LogError($"Catch an exception in method {nameof(UpdatePerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
+//           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+//        throw ex;
+
+//    }
+//}

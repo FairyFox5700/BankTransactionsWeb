@@ -7,6 +7,7 @@ using BankTransactionWeb.BAL.Infrastucture;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BankTransactionWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AccountController : Controller
     {
         private readonly IAccountService accountService;

@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
+using BankTransactionWeb.Areas.Admin.Models.ViewModels;
+using BankTransactionWeb.Areas.Identity.Models.ViewModels;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace BankTransactionWeb.Configuration
 {
@@ -30,7 +29,8 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<PersonDTO, AddPersonViewModel>();
                 confg.CreateMap<AddPersonViewModel, PersonDTO>();
                 confg.CreateMap<PersonDTO, UpdatePersonViewModel>();
-                confg.CreateMap<UpdatePersonViewModel, Person>();
+                confg.CreateMap<UpdatePersonViewModel, PersonDTO>();
+
                 //for acccount
                 confg.CreateMap<AccountDTO, AddAccountViewModel>();
                 confg.CreateMap<AddAccountViewModel, AccountDTO>();
@@ -56,6 +56,46 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<AddTransactionViewModel, TransactionDTO>();
                 confg.CreateMap<UpdateTransactionViewModel, TransactionDTO>();
                 confg.CreateMap<TransactionDTO, UpdateTransactionViewModel>();
+                //Identity
+                confg.CreateMap<LoginViewModel, PersonDTO>();
+                confg.CreateMap<PersonDTO, LoginViewModel>();
+                confg.CreateMap<RegisterViewModel, PersonDTO>();
+                confg.CreateMap<PersonDTO, RegisterViewModel>();
+                confg.CreateMap<ApplicationUser, PersonDTO>()
+                .ForMember(e => e.ApplicationUserFkId, s => s.MapFrom(a => a.Id));
+                confg.CreateMap<PersonDTO, ApplicationUser>()
+                .ForMember(a => a.Id, s => s.MapFrom(e => e.ApplicationUserFkId));
+                //admin
+                confg.CreateMap<RoleDTO, AddRoleViewModel>();
+                confg.CreateMap<AddRoleViewModel, RoleDTO>();
+                confg.CreateMap<RoleDTO, UpdateRoleViewModel>();
+                confg.CreateMap<UpdateRoleViewModel, RoleDTO>();
+                confg.CreateMap<RoleDTO, ListRoleViewModel>();
+                confg.CreateMap<ListRoleViewModel, RoleDTO>();
+                confg.CreateMap<RoleDTO, ApplicationUser>();
+                confg.CreateMap<ApplicationUser, RoleDTO>();
+                confg.CreateMap<UsersInRoleViewModel, PersonDTO>();
+                confg.CreateMap<PersonDTO, UsersInRoleViewModel>();
+                confg.CreateMap<ResetPasswordViewModel, PersonDTO>();
+                confg.CreateMap<PersonDTO, ResetPasswordViewModel>();
+                confg.CreateMap<IdentityRole, RoleDTO>();
+                confg.CreateMap<RoleDTO, IdentityRole>();
+                confg.CreateMap<PersonInRoleDTO, IdentityRole>();
+                confg.CreateMap<IdentityRole, PersonInRoleDTO>();
+                confg.CreateMap<UsersInRoleViewModel, PersonInRoleDTO>();
+                confg.CreateMap<PersonInRoleDTO, UsersInRoleViewModel>();
+               // confg.CreateMap<PersonInRoleDTO, ApplicationUser>()
+               // .ForPath(x => x.Person.Name, s => s.MapFrom(e => e.Name))
+               //.ForPath(x => x.Person.Surname, s => s.MapFrom(e => e.Surname))
+               //.ForPath(x => x.Person.LastName, s => s.MapFrom(e => e.LastName));
+               // confg.CreateMap<ApplicationUser, PersonInRoleDTO>()
+               // .ForPath(x => x.Name, s => s.MapFrom(e => e.Person.Name))
+               //.ForPath(x => x.Surname, s => s.MapFrom(e => e.Person.Surname))
+               //.ForPath(x => x.LastName, s => s.MapFrom(e => e.Person.LastName));
+                confg.CreateMap<PersonInRoleDTO, Person>()
+                 .ForMember(x => x.ApplicationUserFkId , s => s.MapFrom(e => e.AppUserId)); ;
+                confg.CreateMap<Person, PersonInRoleDTO>()
+                .ForMember(x=>x.AppUserId, s=>s.MapFrom(e=>e.ApplicationUserFkId));
             });
             return configuration;
         }

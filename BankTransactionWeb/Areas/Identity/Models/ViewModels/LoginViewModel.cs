@@ -9,8 +9,7 @@ namespace BankTransactionWeb.Areas.Identity.Models.ViewModels
     public class LoginViewModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        public string UserName { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -19,6 +18,8 @@ namespace BankTransactionWeb.Areas.Identity.Models.ViewModels
         [Display(Name = "Remember me")]
         public bool RememberMe { get; set; }
 
-       
+        public string ReturnUrl { get; set; }
+
+
     }
 }

@@ -22,16 +22,17 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
             : base(options)
         {
             this.logger = logger;
+           // Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+          
+            modelBuilder.Entity<ApplicationUser>().HasKey(k => k.Id);
+            modelBuilder.Entity<Person>().HasOne(p => p.ApplicationUser).WithOne(a => a.Person).HasForeignKey<Person>(p => p.ApplicationUserFkId);
             modelBuilder.Entity<Transaction>()
                 .HasOne<Account>(t => t.SourceAccount)
                 .WithMany(a => a.Transactions);
-            modelBuilder.Entity<Person>().HasOne(p => p.ApplicationUser)
-                .WithOne(u => u.Person)
-                .HasForeignKey<Person>(p => p.AplicationUserId);
             try
             {
                 modelBuilder.Seed();
@@ -41,6 +42,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
                 logger.LogError(ex, "An error occurred seeding the Database.");
             }
             base.OnModelCreating(modelBuilder);
+
         }
     }
 }

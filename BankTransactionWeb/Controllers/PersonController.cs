@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.ViewModel;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
 {
@@ -33,8 +32,8 @@ namespace BankTransactionWeb.Controllers
             {
                 var listOfPersonsVM = new PersonListViewModel()
                 {
-                    Persons =  await personService.GetAllPersons(name, surname, lastname, 
-                    accountNumber,accountTransaction,companyName),
+                    Persons = await personService.GetAllPersons(name, surname, lastname,
+                    accountNumber, accountTransaction, companyName),
                     Name = name,
                     SurName = surname,
                     LastName = lastname,
@@ -54,45 +53,46 @@ namespace BankTransactionWeb.Controllers
         }
 
 
-        public IActionResult  AddPerson()
-        {
-            return View();
-        }
+        //public IActionResult AddPerson()
+        //{
+        //    return View();
+        //}
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPerson(AddPersonViewModel personModel)
-        {
-            try
-            {
-                if (personModel == null)
-                {
-                    logger.LogError("Object of type person send by client was null.");
-                    return BadRequest("Object of type person is null");
-                }
-                if (!ModelState.IsValid)
-                {
-                    logger.LogError("Person model send by client is not valid.");
-                    return BadRequest("Person model is not valid.");
-                }
-                else
-                {
-                    var person = mapper.Map<PersonDTO>(personModel);
-                    await personService.AddPerson(person);
-                    return RedirectToAction(nameof(GetAllPersons));
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddPerson)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
-        }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> AddPerson(AddPersonViewModel personModel)
+        //{
+        //    try
+        //    {
+        //        if (personModel == null)
+        //        {
+        //            logger.LogError("Object of type person send by client was null.");
+        //            return BadRequest("Object of type person is null");
+        //        }
+        //        if (!ModelState.IsValid)
+        //        {
+        //            logger.LogError("Person model send by client is not valid.");
+        //            return BadRequest("Person model is not valid.");
+        //        }
+        //        else
+        //        {
+        //            var person = mapper.Map<PersonDTO>(personModel);
+        //            await personService.AddPerson(person);
+        //            return RedirectToAction(nameof(GetAllPersons));
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.LogError($"Catch an exception in method {nameof(AddPerson)}. The exception is {ex.Message}. " +
+        //            $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+        //        return StatusCode(500, "Internal server error");
+        //    }
+        //}
 
         [HttpGet]
         public async Task<IActionResult> UpdatePerson(int id)
         {
+
             var currentPerson = await personService.GetPersonById(id);
             if (currentPerson == null)
             {
@@ -104,13 +104,13 @@ namespace BankTransactionWeb.Controllers
                 var personModel = mapper.Map<UpdatePersonViewModel>(currentPerson);
                 return View(personModel);
             }
-            
+
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePerson( [FromForm]UpdatePersonViewModel personModel)
+        public async Task<IActionResult> UpdatePerson([FromForm]UpdatePersonViewModel personModel)
         {
             try
             {
@@ -119,15 +119,10 @@ namespace BankTransactionWeb.Controllers
                     logger.LogError("Object of type person send by client was null.");
                     return BadRequest("Object of type person is null");
                 }
-                if (!ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
-                    logger.LogError("Person model send by client is not valid.");
-                    return View(personModel);
-                }
-                else
-                {
-                        try
-                        {
+                    try
+                    {
                         var person = await personService.GetPersonById(personModel.Id);
                         if (person == null)
                         {
@@ -136,22 +131,31 @@ namespace BankTransactionWeb.Controllers
                         }
                         else
                         {
-                            var updatedPerson = mapper.Map<UpdatePersonViewModel, PersonDTO>(personModel,person);
-                            await personService.UpdatePerson(updatedPerson);
-                            return RedirectToAction(nameof(GetAllPersons));
+                            var updatedPerson = mapper.Map<UpdatePersonViewModel, PersonDTO>(personModel, person);
+                            var result = await personService.UpdatePerson(updatedPerson);
+                            if (result.Succeeded)
+                            {
+                                return RedirectToAction(nameof(GetAllPersons));
+                            }
+                            else
+                            {
+                                AddModelErrors(result);
+                            }
+
                         }
-                        }
-                        catch (DbUpdateException ex)
-                        {
-                            logger.LogError($"Unable to update person becuase of {ex.Message}");
-                            ModelState.AddModelError("", "Unable to save changes. " +
-                            "Try again, and if the problem persists, " +
-                            "see your system administrator.");
-                            return View(personModel);
-                        }
-                
+                    }
+                    catch (DbUpdateException ex)
+                    {
+                        logger.LogError($"Unable to update person becuase of {ex.Message}");
+                        ModelState.AddModelError("", "Unable to save changes. " +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
+                        return View(personModel);
+                    }
+
                 }
-             
+                return View(personModel);
+
             }
             catch (Exception ex)
             {
@@ -161,7 +165,20 @@ namespace BankTransactionWeb.Controllers
             }
         }
 
-        
+
+        private void AddModelErrors(IdentityResult result)
+        {
+            if (result != null)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+        }
+
+        [HttpPost]
         public async Task<IActionResult> DeletePerson(int id)
         {
             try
@@ -174,8 +191,16 @@ namespace BankTransactionWeb.Controllers
                 }
                 try
                 {
-                    await personService.DeletePerson(person);
-                    return RedirectToAction(nameof(GetAllPersons));
+                    var result = await personService.DeletePerson(person);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction(nameof(GetAllPersons));
+                    }
+                    else
+                    {
+                        AddModelErrors(result);
+                        return NotFound();
+                    }
                 }
                 catch (DbUpdateException ex)
                 {

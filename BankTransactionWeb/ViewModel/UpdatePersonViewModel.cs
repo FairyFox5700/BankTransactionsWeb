@@ -10,17 +10,27 @@ namespace BankTransactionWeb.ViewModel
     {
         public int Id { get; set; }
         [Required]
-        [MaxLength(30, ErrorMessage = "Name cannot be longer than 30 characters")]
+        [EmailAddress]
+        [Display(Name = "Email")]
+        public string Email { get; set; }
+        [Display(Name = "User name")]
+        [MaxLength(20)]//, ErrorMessage = "Your user name must be  max 20  characters long.")
+        public string UserName { get; set; }
+        [Required]
+        [StringLength(30, MinimumLength = 3)]//, ErrorMessage = "Name cannot be longer than 30 characters and no less than 3 characters")
         public string Name { get; set; }
         [Required]
-        [MaxLength(30, ErrorMessage = "Surname cannot be longer than 30 characters")]
+        [StringLength(30, MinimumLength = 3)]
         public string Surname { get; set; }
         [Required]
-        [MaxLength(35, ErrorMessage = "LastName cannot be longer than 35 characters")]
-        [Display(Name = "Last Name")]
+        [StringLength(30, MinimumLength = 3)]
         public string LastName { get; set; }
         [DataType(DataType.Date)]
+        [Required]
         [Display(Name = "Date of birth")]
         public DateTime DataOfBirth { get; set; }
+        [Phone]
+        [Required]
+        public string PhoneNumber { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace BankTransactionWeb.DAL.Entities
         public string LastName { get; set; }
         public DateTime DataOfBirth { get; set; }
         public virtual ICollection<Account> Accounts { get; set; }
-        public string AplicationUserId { get; set; }
+        public string ApplicationUserFkId { get; set; }
         public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }

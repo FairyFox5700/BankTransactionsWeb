@@ -10,8 +10,9 @@ namespace BankTransactionWeb.DAL.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
-        UserManager<ApplicationUser> AppUserManager { get; }
-        RoleManager<IdentityRole> AppRoleManager { get; }
+        UserManager<ApplicationUser> UserManager { get; }
+        SignInManager<ApplicationUser> SignInManager { get; }
+        RoleManager<IdentityRole> RoleManager { get; }
         IPersonRepository PersonRepository { get; }
         IAccountRepository AccountRepository { get; }
         ITransactionRepository TransactionRepository { get; }
