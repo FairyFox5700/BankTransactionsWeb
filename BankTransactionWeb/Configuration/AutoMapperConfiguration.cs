@@ -4,6 +4,7 @@ using BankTransactionWeb.Areas.Identity.Models.ViewModels;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.ViewModel;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,7 +82,16 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<PersonDTO, UsersInRoleViewModel>();
                 confg.CreateMap<ResetPasswordViewModel, PersonDTO>();
                 confg.CreateMap<PersonDTO, ResetPasswordViewModel>();
-                
+                confg.CreateMap<IdentityRole, RoleDTO>();
+                confg.CreateMap<RoleDTO, IdentityRole>();
+                confg.CreateMap<PersonInRoleDTO, IdentityRole>()
+                .ForMember(x => x.Name, s => s.MapFrom(e => e.RoleName))
+                .ForMember(x => x.Id, s => s.MapFrom(e => e.RoleId));
+                confg.CreateMap<IdentityRole, PersonInRoleDTO>()
+                .ForMember(x => x.RoleName, s => s.MapFrom(e => e.Name))
+                .ForMember(x => x.RoleId, s => s.MapFrom(e => e.Id)); 
+                confg.CreateMap<UsersInRoleViewModel, PersonInRoleDTO>();
+                confg.CreateMap<PersonInRoleDTO,UsersInRoleViewModel>();
 
             });
             return configuration;

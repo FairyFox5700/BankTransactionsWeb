@@ -1,6 +1,7 @@
 ﻿@model UpdateRoleViewModel
 @{
     ViewData["Title"] = "UpdateRole";
+         Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>Update Role</h1>
@@ -48,8 +49,8 @@
         }
     </div>
     <div class="card-footer">
-        <button class="bg-primary"  asp-controller="Admin" asp-area="Admin" asp-action="UpdateUsersInRole" style="width:auto" asp-route-roleId="@Model.Id">Add users</button>
-        <button class="bg-primary"  asp-controller="Admin" asp-area="Admin" asp-action="DeleteUsersInRole" style="width:auto" asp-route-roleId="@Model.Id">Delete users</button>
+        <a class="btn btn-dark "  asp-controller="Admin" asp-area="Admin" asp-action="UpdateUsersInRole" style="width:auto" asp-route-roleId="@Model.Id">Add users</a>
+        <a class="btn btn-dark "  asp-controller="Admin" asp-area="Admin" asp-action="DeleteUsersInRole" style="width:auto" asp-route-roleId="@Model.Id">Delete users</a>
     </div>
 </div>
 

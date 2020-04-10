@@ -88,7 +88,7 @@ namespace BankTransactionWeb.DAL.InMemoryDAL
 
         public SignInManager<ApplicationUser> SignInManager => throw new NotImplementedException();
 
-        public RoleManager<ApplicationRole> RoleManager => throw new NotImplementedException();
+        public RoleManager<IdentityRole> RoleManager => throw new NotImplementedException();
 
         public async Task Save()
         {

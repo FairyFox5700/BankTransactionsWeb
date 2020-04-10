@@ -2,8 +2,6 @@
 using BankTransactionWeb.Areas.Admin.Models.ViewModels;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.Controllers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Areas.Admin.Çontrollers
 {
-    [Authorize(Roles ="Admin")]
+    // [Authorize(Roles ="Admin")]
     public class AdminController : Controller
     {
-        private readonly Logger<AdminController> logger;
+        private readonly ILogger<AdminController> logger;
         private readonly IMapper mapper;
         private readonly IAdminService adminService;
 
-        public AdminController(Logger<AdminController> logger, IMapper mapper, IAdminService adminService)
+        public AdminController(ILogger<AdminController> logger, IMapper mapper, IAdminService adminService)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -30,7 +28,7 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
         [HttpGet]
         public IActionResult AddRole()
         {
-            return View();
+            return View("~/Areas/Admin/Views/Admin/AddRole.cshtml");
         }
 
         [HttpPost]
@@ -42,11 +40,11 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
                 var result = await adminService.AddRole(role);
                 if (result.Succeeded)
                 {
-                    return RedirectToAction(nameof(GetAllRoles));
+                    return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
                 }
                 AddModelErrors(result);
             }
-            return View(model);
+            return View("~/Areas/Admin/Views/Admin/AddRole.cshtml", model);
         }
 
 
@@ -61,8 +59,8 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
         [HttpGet]
         public IActionResult GetAllRoles()
         {
-            var roles = adminService.GetAllRoles().Select(e=> mapper.Map<ListRoleViewModel>(e));
-            return View(roles);
+            var roles = adminService.GetAllRoles().Select(e => mapper.Map<ListRoleViewModel>(e)).ToList();
+            return View("~/Areas/Admin/Views/Admin/GetAllRoles.cshtml", roles);
         }
 
         [HttpGet]
@@ -75,25 +73,33 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
                 return NotFound();
             }
             var model = mapper.Map<UpdateRoleViewModel>(role);
-            return View(model);
+            return View("~/Areas/Admin/Views/Admin/UpdateRole.cshtml", model);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateRole(UpdateRoleViewModel model)
         {
-            var role = await adminService.GetRoleById(model.Id);
-            if (role == null)
+
+            //var role = await adminService.GetRoleById(model.Id);
+            //if (role == null)
+            //{
+            //    logger.LogError($"Role wwith id {model.Id} was not finded");
+            //    return NotFound();
+            //}
+            var roleToUpdate = mapper.Map<RoleDTO>(model);
+            var result = await adminService.UpdateRole(roleToUpdate);
+            if( result==null)
             {
-                logger.LogError($"Role wwith id {model.Id} was not finded");
+                logger.LogError($"Role with id {model.Id} was not finded");
                 return NotFound();
             }
-            var returnModel = mapper.Map<UpdateRoleViewModel>(role);
-            var result = await adminService.UpdateRole(role.Id);
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
-                return RedirectToAction(nameof(GetAllRoles));
+                //var role = await adminService.GetRoleById(model.Id);
+                //var returnModel = mapper.Map<UpdateRoleViewModel>(role);
+                return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
             }
-            if(result==null)
+            if (result == null)
             {
                 return NotFound();
             }
@@ -105,15 +111,14 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
         public async Task<IActionResult> UpdateUsersInRole(string roleId)
         {
             ViewBag.roleId = roleId;
-            var currentRole = adminService.GetRoleById(roleId);
-            if(currentRole==null)
+            var users = await adminService.GetAllUsersInCurrentRole(roleId);
+            if(users==null)
             {
-                logger.LogError($"Role wwith id {roleId} was not finded");
+                logger.LogError($"Role with id {roleId} was not finded");
                 return NotFound();
             }
-            var users = await adminService.GetAllUsersInCurrentRole(roleId);
-            var model = users.Select(u => mapper.Map<UsersInRoleViewModel>(u));
-            return View(model);
+            var model = users.Select(u => mapper.Map<UsersInRoleViewModel>(u)).ToList();
+            return View("~/Areas/Admin/Views/Admin/UpdateUsersInRole.cshtml", model);
         }
 
         [HttpPost]
@@ -123,31 +128,53 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
             var currentRole = await adminService.GetRoleById(roleId);
             if (currentRole == null)
             {
-                logger.LogError($"Role wwith id {roleId} was not finded");
+                logger.LogError($"Role with id {roleId} was not finded");
                 return NotFound();
             }
-            for(int i=0; i<model.Count();i++)
+            for (int i = 0; i < model.Count(); i++)
             {
-                var result = await adminService.AddUserToRole(model[i].Id, model[i].IsSelected, currentRole.Name); 
-                if(result.Succeeded)
+                var result = await adminService.AddUserToRole(model[i].Id, model[i].IsSelected, currentRole.Name);
+                 if (result == null)
+                    continue;
+                if (result.Succeeded)
                 {
                     if (i < model.Count - 1)
                         continue;
-                    else return RedirectToAction(nameof(GetAllRoles));
+                    else return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
                 }
-                if (result == null)
-                    continue;
+               
             }
             // var model = mapper.Map<UsersInRoleViewModel>(await adminService.GetAllUsersInCurrentRole(roleId));
-            return View(nameof(UpdateRoleViewModel), new { roleId = roleId });
+            return View("~/Areas/Admin/Views/Admin/UpdateRoleViewModel.cshtml", new { roleId = roleId });
         }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public IActionResult AccessDenied()
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public IActionResult AccessDenied()
+        //{
+        //    return View();
+        //}
+
+        public async Task<IActionResult> DeleteRole(string id)
         {
-            return View();
+            var result = await adminService.DeleteRole(id);
+            if (result == null)
+            {
+                logger.LogError($"Role with Id = {id} cannot be found");
+                return NotFound();
+            }
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
+            }
+            AddModelErrors(result);
+            return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            adminService.Dispose();
+            base.Dispose(disposing);
+        }
     }
 }

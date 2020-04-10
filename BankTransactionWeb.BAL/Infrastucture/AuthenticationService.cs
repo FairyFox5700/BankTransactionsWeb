@@ -48,40 +48,46 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task<IdentityResult> RegisterPerson(PersonDTO person)
         {
-            try
+            using (var trans = unitOfWork.BeginTransaction())
             {
-
-                ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
-                if (user == null)
+                try
                 {
-                    user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
-                    var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
-                    if (result.Succeeded)
+
+                    ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+                    if (user == null)
                     {
-                        var token = await unitOfWork.UserManager.GenerateEmailConfirmationTokenAsync(user);
-                        var confirmationLink = URLHelper.Action("ConfirmEmai", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
-                        logger.Log(LogLevel.Warning, confirmationLink);
-                        var message = new CustomMessage(new List<string>() { user.Email }, "Confirmation email link", confirmationLink, null);
-                        var personMapped = mapper.Map<Person>(person);
-                        personMapped.ApplicationUserFkId = user.Id;
-                        unitOfWork.PersonRepository.Add(personMapped);
+                        user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
+                        var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
                         await unitOfWork.Save();
-                        await emailSender.SendEmailAsync(message);
-                        //await unitOfWork.UserManager.AddToRoleAsync(user, "Visitor");
+                        if (result.Succeeded)
+                        {
+                            var token = await unitOfWork.UserManager.GenerateEmailConfirmationTokenAsync(user);
+                            var confirmationLink = URLHelper.Action("ConfirmEmail", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
+                            logger.Log(LogLevel.Warning, confirmationLink);
+                            var message = new CustomMessage(new List<string>() { user.Email }, "Confirmation email link", confirmationLink, null);
+                            var personMapped = mapper.Map<Person>(person);
+                            personMapped.ApplicationUserFkId = user.Id;
+                            unitOfWork.PersonRepository.Add(personMapped);
+                            await unitOfWork.Save();
+                            await emailSender.SendEmailAsync(message);
+                            unitOfWork.CommitTransaction();
+                            //await unitOfWork.UserManager.AddToRoleAsync(user, "Visitor");
+                            return result;
+                        }
                         return result;
                     }
-                    return result;
-                }
-                else
-                {
-                    return null;
-                }
+                    else
+                    {
+                        return null;
+                    }
 
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"An exceprion {ex} occured on registering new user. Inner exeprion {ex.InnerException}");
-                throw ex;
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($"An exceprion {ex} occured on registering new user. Inner exeprion {ex.InnerException}");
+                    unitOfWork.RollbackTransaction();
+                    throw ex;
+                }
             }
         }
 
@@ -146,15 +152,19 @@ namespace BankTransactionWeb.BAL.Infrastucture
         //}
 
 
-        public async Task<IdentityResult> ConfirmUserEmailAsync(string userId, string code)
+        public async Task<IdentityResult> ConfirmUserEmailAsync(string email, string code)
         {
-            var user = await unitOfWork.UserManager.FindByIdAsync(userId);
+            var user = await unitOfWork.UserManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return null;
             }
             var result = await unitOfWork.UserManager.ConfirmEmailAsync(user, code);
             return result;
+        }
+        public void Dispose()
+        {
+            unitOfWork.Dispose();
         }
     }
 }

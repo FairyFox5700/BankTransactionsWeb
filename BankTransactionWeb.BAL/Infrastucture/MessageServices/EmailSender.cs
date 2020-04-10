@@ -1,5 +1,6 @@
 ﻿using BankTransactionWeb.BAL.Interfaces;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using MimeKit;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Authentication;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,7 +68,10 @@ namespace BankTransactionWeb.BAL.Infrastucture.MessageServices
             {
                 try
                 {
-                    await client.ConnectAsync(emailConfig.SmtpServer, emailConfig.Port, true);
+                    client.CheckCertificateRevocation = false;
+
+                    await client.ConnectAsync(emailConfig.SmtpServer, emailConfig.Port, SecureSocketOptions.Auto);
+                    //await client.ConnectAsync(emailConfig.SmtpServer, emailConfig.Port, true);
                     await client.AuthenticateAsync(emailConfig.UserName, emailConfig.Password);
                     await client.SendAsync(emailMessage);
                     

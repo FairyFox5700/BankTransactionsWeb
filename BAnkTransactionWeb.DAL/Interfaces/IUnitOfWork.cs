@@ -12,7 +12,7 @@ namespace BankTransactionWeb.DAL.Interfaces
     {
         UserManager<ApplicationUser> UserManager { get; }
         SignInManager<ApplicationUser> SignInManager { get; }
-        RoleManager<ApplicationRole> RoleManager { get; }
+        RoleManager<IdentityRole> RoleManager { get; }
         IPersonRepository PersonRepository { get; }
         IAccountRepository AccountRepository { get; }
         ITransactionRepository TransactionRepository { get; }

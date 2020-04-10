@@ -1,6 +1,7 @@
-﻿@model IEnumerable<ListRoleViewModel>
+﻿@model IList<ListRoleViewModel>
 @{
     ViewData["Title"] = "Get All Roles";
+     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h1>All Roles</h1>
@@ -16,14 +17,14 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach(var  role in Model)
+                @for(int i=0;i<Model.Count();i++)
                 {
                     <tr>
-                        <th scope="row">@role.Id</th>
-                        <td>@role.Name </td>
+                        <th scope="row">@i</th>
+                        <td>@Model[i].Name </td>
                         <td>
-                            <button class="btn-primary" asp-action="UpdateRole" asp-controller="Admin" asp-area="Admin" asp-route-id="@role.Id">Update</button>
-                            <button class="btn-danger" asp-action="DeleteRole" asp-controller="Person" asp-area="Admin" asp-route-id="@role.Id">Delete</button>
+                            <button class="btn-primary" asp-action="UpdateRole" asp-controller="Admin" asp-area="Admin" asp-route-id="@Model[i].Id">Update</button>
+                            <button class="btn-danger" asp-action="DeleteRole" asp-controller="Admin" asp-area="Admin" asp-route-id="@Model[i].Id">Delete</button>
                         </td>
                     </tr>
                 }

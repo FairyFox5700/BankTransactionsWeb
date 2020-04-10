@@ -1,11 +1,12 @@
 ﻿@model List<UsersInRoleViewModel>
 @{
     ViewData["Title"] = "UpdateUsersInRole";
+         Layout = "~/Views/Shared/_Layout.cshtml";
     var roleId = ViewBag.roleId;
 }
 
 <h1>Update Users In Role</h1>
-<form asp-controller="Admin" asp-area="Admin" class="form-horozontal" asp-action="UpdateUsersInRole" method="post">
+<form  asp-controller="Admin" asp-area="Admin" asp-action="UpdateUsersInRole"  class="form-horozontal"  method="post">
     <table class="table table-striped table-light">
         <thead>
             <tr>
@@ -18,17 +19,27 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in Model)
+            @for(int i=0; i<Model.Count();i++) 
             {
             <tr>
-                <th scope="row">@user.Id</th>
-                <td>@user.UserName </td>
-                <td>@user.Name </td>
-                <td>@user.Surname </td>
-                <td>@user.LastName </td>
+                <th scope="row">@i</th>
+                <td>@Model[i].UserName </td>
+                <td>@Model[i].Name </td>
+                <td>@Model[i].Surname </td>
+                <td>@Model[i].LastName </td>
                 <td>
-                    <div class="form-check m-1">
-                        <input as-for="@user.IsSelected" class="form-check-input" />
+                        <div class="form-check m-1">
+                            <input type="hidden" asp-for="@Model[i].RoleId" />
+                            <input type="hidden" asp-for="@Model[i].RoleName" />
+                            <input asp-for="@Model[i].IsSelected" class="form-check-input" />
+                        <div class="checkbox">
+                            <label asp-for="@Model[i].IsSelected">
+                                <input asp-for="@Model[i].IsSelected" />
+                                Add to role
+                            </label>
+                        </div>
+                        @*<label class="custom-control-label" for="customCheck">Check to add user in role</label>
+        <input type="checkbox" name="isMarried" asp-for="@Model[i].IsSelected" value="add to tole" />*@
                     </div>
                 </td>
             </tr>
@@ -37,8 +48,8 @@
         </table>
         <div class="form-group row">
             <div class="col-sm-10">
-                <input class="btn-success" type="submit" asp-controller="Admin" asp-area="Admin" asp-action="UpdateUsersInRole" asp-route-id="@roleId" value="Confirm" />
-                <input class="btn-success" type="submit" asp-controller="Admin" asp-area="Admin" asp-action="GetAllRoles" value="Cancel" />
+                <input class="btn-success" type="submit"  asp-route-roleId="@roleId"  value="Confirm" />
+                <a class="btn btn-dark" asp-controller="Admin" asp-area="Admin" asp-action="GetAllRoles" > Cancel</a>
             </div>
         </div>
 </form>

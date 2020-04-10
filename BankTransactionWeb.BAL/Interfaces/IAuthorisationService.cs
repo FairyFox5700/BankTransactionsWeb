@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Interfaces
 {
-    public interface IAuthenticationService
+    public interface IAuthenticationService:IDisposable
     {
         Task SignOutPerson();
         Task<SignInResult> LoginPerson(PersonDTO person);
         Task<IdentityResult> RegisterPerson(PersonDTO person);
-        Task<IdentityResult> ConfirmUserEmailAsync(string userId, string code);
+        Task<IdentityResult> ConfirmUserEmailAsync(string email, string code);
         Task<IdentityResult> ResetPasswordForPerson(PersonDTO person);
         Task<bool> SendReserPasswordUrl(PersonDTO person);
     }

@@ -124,13 +124,13 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            if (userId == null || code == null)
+            if (email == null || token == null)
             {
                 return View("Error");
             }
-            var result = await authService.ConfirmUserEmailAsync(userId, code);
+            var result = await authService.ConfirmUserEmailAsync(email, token);
             if (result == null)
             {
                 return View("Error");
@@ -245,6 +245,11 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         public IActionResult ResetPasswordConfirmation()
         {
             return View();
+        }
+        protected override void Dispose(bool disposing)
+        {
+            authService.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

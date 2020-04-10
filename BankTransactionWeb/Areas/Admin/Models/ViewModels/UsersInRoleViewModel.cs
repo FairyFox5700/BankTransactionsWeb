@@ -21,6 +21,10 @@ namespace BankTransactionWeb.Areas.Admin.Models.ViewModels
         [Required]
         [StringLength(30, MinimumLength = 3)]
         public string LastName { get; set; }
+        [Required]
+        public string RoleId { get; set; }
+        [Required]
+        public string RoleName { get; set; }
 
         public bool IsSelected { get; set; }
     }

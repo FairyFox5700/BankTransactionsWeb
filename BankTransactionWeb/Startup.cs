@@ -39,7 +39,7 @@ namespace BankTransactionWeb
             //services.AddScoped < UserManager<ApplicationUser>>();
             services.AddDbContext<BankTransactionContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
             .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
-            services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole> (options =>
             {
                 options.User.RequireUniqueEmail = false;
                 options.SignIn.RequireConfirmedEmail = true;

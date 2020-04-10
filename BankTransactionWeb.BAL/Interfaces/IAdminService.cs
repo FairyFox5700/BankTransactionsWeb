@@ -1,11 +1,12 @@
 ﻿using BankTransactionWeb.BAL.Models;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Interfaces
 {
-    public interface IAdminService
+    public interface IAdminService:IDisposable
     {
         Task<IdentityResult> AddUserToRole(string id, bool isUserSelected, string roleName);
         Task<IdentityResult> AddRole(RoleDTO role);
@@ -13,6 +14,7 @@ namespace BankTransactionWeb.BAL.Interfaces
         Task<IEnumerable<PersonInRoleDTO>> GetAllUsersInCurrentRole(string id);
         Task<RoleDTO> GetRoleById(string id);
         Task<RoleDTO> GetRoleWithUsers(string id);
-        Task<IdentityResult> UpdateRole(string id);
+        Task<IdentityResult> UpdateRole(RoleDTO role);
+        Task<IdentityResult> DeleteRole(string id);
     }
 }
