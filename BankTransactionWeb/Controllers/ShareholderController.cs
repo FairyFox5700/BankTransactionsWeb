@@ -204,6 +204,8 @@ namespace BankTransactionWeb.Controllers
 
         protected override void Dispose(bool disposing)
         {
+            companyService.Dispose();
+            personService.Dispose();
             shareholderService.Dispose();
             base.Dispose(disposing);
         }

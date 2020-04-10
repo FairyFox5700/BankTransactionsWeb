@@ -72,7 +72,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
                             await unitOfWork.Save();
                             await emailSender.SendEmailAsync(message);
                             unitOfWork.CommitTransaction();
-                            //await unitOfWork.UserManager.AddToRoleAsync(user, "Visitor");
+                            await unitOfWork.UserManager.AddToRoleAsync(user, "Visitor");
                             return result;
                         }
                         return result;
@@ -128,7 +128,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
         }
         public async Task<SignInResult> LoginPerson(PersonDTO person)
         {
-            var user = await unitOfWork.UserManager.FindByNameAsync(person.UserName);
+            var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
             if (user != null)
             {
                 if (!await unitOfWork.UserManager.IsEmailConfirmedAsync(user))
@@ -136,16 +136,10 @@ namespace BankTransactionWeb.BAL.Infrastucture
                     return null;
                 }
             }
-            var result = await unitOfWork.SignInManager.PasswordSignInAsync(person.UserName, person.Password, person.RememberMe, lockoutOnFailure: true);
+            var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password, person.RememberMe, lockoutOnFailure: true);
             return result;
         }
 
-
-        //public async Task<SignInResult> LoginPerson(PersonDTO person)
-        //{
-        //    var result = await unitOfWork.SignInManager.PasswordSignInAsync(person.UserName, person.Password, person.RememberMe, lockoutOnFailure: true);
-        //    return result;
-        //}
 
         public async Task SignOutPerson()
         {
@@ -171,6 +165,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
         public void Dispose()
         {
             unitOfWork.Dispose();
+            emailSender.Dispose();
         }
     }
 }

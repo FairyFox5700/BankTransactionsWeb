@@ -50,6 +50,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+
             if (ModelState.IsValid)
             {
                 var person = mapper.Map<PersonDTO>(model);
@@ -248,6 +249,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         }
         protected override void Dispose(bool disposing)
         {
+            personService.Dispose();
             authService.Dispose();
             base.Dispose(disposing);
         }

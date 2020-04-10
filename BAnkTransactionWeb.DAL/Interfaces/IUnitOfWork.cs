@@ -1,4 +1,5 @@
-﻿using BankTransactionWeb.DAL.Entities;
+﻿using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
+using BankTransactionWeb.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;

@@ -4,10 +4,51 @@
    Layout = "~/Views/Shared/_Layout.cshtml";
 
 }
+    <head>
+        <link href="~/css/styleForLogin.css" rel="stylesheet" />
+    </head>
 
-<h1>User Login</h1>
 
-<div class="row">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card card-signin my-5">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Sign In</h5>
+                        <form class="form-signin" method="post" asp-controller="Account" asp-action="Login" asp-area="Identity"
+                              asp-route-returnUrl="@Model.ReturnUrl">
+                            <div asp-validation-summary="ModelOnly"></div>
+                            <div class="form-label-group">
+                                <input asp-for="Email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                                <label asp-for="Email">Email address</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-label-group">
+                                <input type="password" asp-for="Password" id="inputPassword" class="form-control" placeholder="Password" required>
+                                <label for="inputPassword" asp-for="Password">Password</label>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <div class="custom-control custom-checkbox mb-3">
+                                <input type="checkbox" class="custom-control-input"  asp-for="RememberMe" id="customCheck1">
+                                <label class="custom-control-label" for="customCheck1">Remember password</label>
+   
+                            </div>
+                            <hr class="my-4">
+                            <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Sign in</button>
+                            @*<hr class="my-4">
+        <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign in with Google</button>
+        <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class="fab fa-facebook-f mr-2"></i> Sign in with Facebook</button>*@
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+@*<div class="row">
     <div class="col-md-12">
         <form method="post" asp-controller="Account" asp-action="Login" asp-area="Identity"
               asp-route-returnUrl="@Model.ReturnUrl">
@@ -33,5 +74,5 @@
             <button type="submit" class="btn btn-primary">Log In</button>
         </form>
     </div>
-</div>
+</div>*@
 

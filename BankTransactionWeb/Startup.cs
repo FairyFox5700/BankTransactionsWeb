@@ -3,6 +3,7 @@ using BankTransactionWeb.BAL.Cofiguration;
 using BankTransactionWeb.BAL.Infrastucture.MessageServices;
 using BankTransactionWeb.Configuration;
 using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
+using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
 using BankTransactionWeb.DAL.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,11 +40,11 @@ namespace BankTransactionWeb
             //services.AddScoped < UserManager<ApplicationUser>>();
             services.AddDbContext<BankTransactionContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
             .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
-            services.AddIdentity<ApplicationUser, IdentityRole> (options =>
-            {
-                options.User.RequireUniqueEmail = false;
-                options.SignIn.RequireConfirmedEmail = true;
-            }).AddEntityFrameworkStores<BankTransactionContext>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+           {
+               options.User.RequireUniqueEmail = false;
+               options.SignIn.RequireConfirmedEmail = true;
+           }).AddEntityFrameworkStores<BankTransactionContext>()
            .AddDefaultTokenProviders().AddUserManager<UserManager<ApplicationUser>>();
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
             services.AddSingleton(emailConfig);
