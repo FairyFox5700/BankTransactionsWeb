@@ -77,10 +77,12 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 return null;
             }
             var resultList = new List<PersonInRoleDTO>();
-            foreach (var user in unitOfWork.UserManager.Users)
+            foreach (var user in await unitOfWork.PersonRepository.GetAll())
             {
                 var userInRole = mapper.Map<PersonInRoleDTO>(user);
-                if (await unitOfWork.UserManager.IsInRoleAsync(user, identityRole.Name))
+                if (userInRole == null || user.ApplicationUser==null)
+                    continue;
+                if (await unitOfWork.UserManager.IsInRoleAsync(user.ApplicationUser, identityRole.Name))
                 {
                     userInRole.IsSelected = true;
                 }

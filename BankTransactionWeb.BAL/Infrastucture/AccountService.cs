@@ -44,7 +44,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task DeleteAccount(AccountDTO account)
         {
-           
+
             try
             {
                 var accountMapped = mapper.Map<Account>(account);
@@ -65,6 +65,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             unitOfWork.Dispose();
         }
+
 
         public async Task<AccountDTO> GetAccountById(int id)
         {

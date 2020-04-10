@@ -17,6 +17,10 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         {
             this.context = context;
         }
+        public override async  Task<IEnumerable<Person>> GetAll()
+        {
+            return await context.Persons.Include(p => p.ApplicationUser).ToListAsync();
+        }
 
         public override async Task<Person> GetById(int id)
         {

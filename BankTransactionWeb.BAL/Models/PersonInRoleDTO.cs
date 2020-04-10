@@ -11,8 +11,7 @@ namespace BankTransactionWeb.BAL.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string LastName { get; set; }
-        public string RoleId { get; set; }
-        public string RoleName { get; set; }
+        public string AppUserId { get; set; }
         public bool IsSelected { get; set; }
     }
 }

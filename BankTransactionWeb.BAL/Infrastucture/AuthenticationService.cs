@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
@@ -118,8 +119,13 @@ namespace BankTransactionWeb.BAL.Infrastucture
         }
 
 
-
-
+        public bool IsUserSignedIn(ClaimsPrincipal user)
+        {
+            if (unitOfWork.SignInManager.IsSignedIn(user))
+                return true;
+            else 
+                return false;
+        }
         public async Task<SignInResult> LoginPerson(PersonDTO person)
         {
             var user = await unitOfWork.UserManager.FindByNameAsync(person.UserName);

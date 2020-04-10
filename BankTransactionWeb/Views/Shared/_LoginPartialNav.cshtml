@@ -1,8 +1,8 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using BankTransactionWeb.DAL.Entities
-@inject SignInManager<ApplicationUser> SignInManager
-@inject UserManager<ApplicationUser> UserManager
-@if (SignInManager.IsSignedIn(User))
+﻿
+@using BankTransactionWeb.BAL.Interfaces
+@inject IAuthenticationService authService
+
+@if (authService.IsUserSignedIn(User))
 {
 
     <li class="nav-item">

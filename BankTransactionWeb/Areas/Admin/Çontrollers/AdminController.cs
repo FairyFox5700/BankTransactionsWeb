@@ -2,6 +2,7 @@
 using BankTransactionWeb.Areas.Admin.Models.ViewModels;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Areas.Admin.Çontrollers
 {
-    // [Authorize(Roles ="Admin")]
+    [Authorize(Roles ="Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> logger;
@@ -80,23 +81,15 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
         public async Task<IActionResult> UpdateRole(UpdateRoleViewModel model)
         {
 
-            //var role = await adminService.GetRoleById(model.Id);
-            //if (role == null)
-            //{
-            //    logger.LogError($"Role wwith id {model.Id} was not finded");
-            //    return NotFound();
-            //}
             var roleToUpdate = mapper.Map<RoleDTO>(model);
             var result = await adminService.UpdateRole(roleToUpdate);
-            if( result==null)
+            if (result == null)
             {
                 logger.LogError($"Role with id {model.Id} was not finded");
                 return NotFound();
             }
             if (result.Succeeded)
             {
-                //var role = await adminService.GetRoleById(model.Id);
-                //var returnModel = mapper.Map<UpdateRoleViewModel>(role);
                 return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
             }
             if (result == null)
@@ -112,7 +105,7 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
         {
             ViewBag.roleId = roleId;
             var users = await adminService.GetAllUsersInCurrentRole(roleId);
-            if(users==null)
+            if (users == null)
             {
                 logger.LogError($"Role with id {roleId} was not finded");
                 return NotFound();
@@ -133,8 +126,8 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
             }
             for (int i = 0; i < model.Count(); i++)
             {
-                var result = await adminService.AddUserToRole(model[i].Id, model[i].IsSelected, currentRole.Name);
-                 if (result == null)
+                var result = await adminService.AddUserToRole(model[i].AppUserId, model[i].IsSelected, currentRole.Name);
+                if (result == null)
                     continue;
                 if (result.Succeeded)
                 {
@@ -144,8 +137,8 @@ namespace BankTransactionWeb.Areas.Admin.Çontrollers
                 }
                
             }
-            // var model = mapper.Map<UsersInRoleViewModel>(await adminService.GetAllUsersInCurrentRole(roleId));
             return View("~/Areas/Admin/Views/Admin/UpdateRoleViewModel.cshtml", new { roleId = roleId });
+
         }
 
         //[HttpGet]

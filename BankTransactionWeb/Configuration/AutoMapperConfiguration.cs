@@ -5,10 +5,6 @@ using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.ViewModel;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Configuration
 {
@@ -34,7 +30,7 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<AddPersonViewModel, PersonDTO>();
                 confg.CreateMap<PersonDTO, UpdatePersonViewModel>();
                 confg.CreateMap<UpdatePersonViewModel, PersonDTO>();
-                
+
                 //for acccount
                 confg.CreateMap<AccountDTO, AddAccountViewModel>();
                 confg.CreateMap<AddAccountViewModel, AccountDTO>();
@@ -66,7 +62,7 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<RegisterViewModel, PersonDTO>();
                 confg.CreateMap<PersonDTO, RegisterViewModel>();
                 confg.CreateMap<ApplicationUser, PersonDTO>()
-                .ForMember(e=>e.ApplicationUserFkId, s=>s.MapFrom(a=>a.Id));
+                .ForMember(e => e.ApplicationUserFkId, s => s.MapFrom(a => a.Id));
                 confg.CreateMap<PersonDTO, ApplicationUser>()
                 .ForMember(a => a.Id, s => s.MapFrom(e => e.ApplicationUserFkId));
                 //admin
@@ -84,15 +80,22 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<PersonDTO, ResetPasswordViewModel>();
                 confg.CreateMap<IdentityRole, RoleDTO>();
                 confg.CreateMap<RoleDTO, IdentityRole>();
-                confg.CreateMap<PersonInRoleDTO, IdentityRole>()
-                .ForMember(x => x.Name, s => s.MapFrom(e => e.RoleName))
-                .ForMember(x => x.Id, s => s.MapFrom(e => e.RoleId));
-                confg.CreateMap<IdentityRole, PersonInRoleDTO>()
-                .ForMember(x => x.RoleName, s => s.MapFrom(e => e.Name))
-                .ForMember(x => x.RoleId, s => s.MapFrom(e => e.Id)); 
+                confg.CreateMap<PersonInRoleDTO, IdentityRole>();
+                confg.CreateMap<IdentityRole, PersonInRoleDTO>();
                 confg.CreateMap<UsersInRoleViewModel, PersonInRoleDTO>();
-                confg.CreateMap<PersonInRoleDTO,UsersInRoleViewModel>();
-
+                confg.CreateMap<PersonInRoleDTO, UsersInRoleViewModel>();
+               // confg.CreateMap<PersonInRoleDTO, ApplicationUser>()
+               // .ForPath(x => x.Person.Name, s => s.MapFrom(e => e.Name))
+               //.ForPath(x => x.Person.Surname, s => s.MapFrom(e => e.Surname))
+               //.ForPath(x => x.Person.LastName, s => s.MapFrom(e => e.LastName));
+               // confg.CreateMap<ApplicationUser, PersonInRoleDTO>()
+               // .ForPath(x => x.Name, s => s.MapFrom(e => e.Person.Name))
+               //.ForPath(x => x.Surname, s => s.MapFrom(e => e.Person.Surname))
+               //.ForPath(x => x.LastName, s => s.MapFrom(e => e.Person.LastName));
+                confg.CreateMap<PersonInRoleDTO, Person>()
+                 .ForMember(x => x.ApplicationUserFkId , s => s.MapFrom(e => e.AppUserId)); ;
+                confg.CreateMap<Person, PersonInRoleDTO>()
+                .ForMember(x=>x.AppUserId, s=>s.MapFrom(e=>e.ApplicationUserFkId));
             });
             return configuration;
         }
