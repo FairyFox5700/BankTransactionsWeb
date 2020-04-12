@@ -22,12 +22,32 @@ namespace BankTransactionWeb.Controllers
         private readonly ILogger<TransactionController> logger;
         private readonly IMapper mapper;
 
-        public TransactionController(ITransactionService transactionService, IAccountService accountService, ILogger<TransactionController> logger, IMapper mapper)
+        public TransactionController(ITransactionService transactionService, IAccountService accountService, 
+            ILogger<TransactionController> logger, IMapper mapper)
         {
             this.transactionService = transactionService;
             this.accountService = accountService;
             this.logger = logger;
             this.mapper = mapper;
+        }
+
+        //auth User
+        [HttpGet]
+        public async Task<IActionResult> MyTransaction(int userId)
+        {
+            try
+            {
+                var transactions = (await transactionService.GetAllUserTransactions(userId));//maybe sort them
+                logger.LogInformation("Successfully returned all  user transactions");
+                var transactionListVM = transactions.Select(tr => mapper.Map<TransactionListViewModel>(tr)).ToList();
+                return View(transactionListVM);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(MyTransaction)}. The exception is {ex.Message}. " +
+                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpGet]

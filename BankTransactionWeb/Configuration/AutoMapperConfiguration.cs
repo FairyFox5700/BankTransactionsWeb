@@ -84,6 +84,10 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<IdentityRole, PersonInRoleDTO>();
                 confg.CreateMap<UsersInRoleViewModel, PersonInRoleDTO>();
                 confg.CreateMap<PersonInRoleDTO, UsersInRoleViewModel>();
+                confg.CreateMap<ApplicationUser, PersonDTO>()
+                 .ForMember(x => x.Id, opt => opt.Ignore()); ;
+                confg.CreateMap<PersonDTO, ApplicationUser>()
+                 .ForMember(x => x.Id, opt => opt.Ignore());
                // confg.CreateMap<PersonInRoleDTO, ApplicationUser>()
                // .ForPath(x => x.Person.Name, s => s.MapFrom(e => e.Name))
                //.ForPath(x => x.Person.Surname, s => s.MapFrom(e => e.Surname))

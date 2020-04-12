@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Interfaces
 {
-    public interface ISender : IDisposable
+    public interface ISender 
     {
         Task SendEmailAsync(CustomMessage message);
     }

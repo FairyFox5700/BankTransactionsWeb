@@ -192,6 +192,23 @@ namespace BankTransactionWeb.Controllers
 
         }
 
+        //auth User
+        [HttpGet]
+        public async Task<IActionResult> MyAccounts(int userId)
+        {
+            try
+            {
+                var accounts = (await accountService.GetMyAccounts(userId)).ToList();//maybe sort them
+                logger.LogInformation("Successfully returned all accounts");
+                return View(accounts);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(MyAccounts)}. The exception is {ex.Message}. " +
+                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                return StatusCode(500, "Internal server error");
+            }
+        }
 
         protected override void Dispose(bool disposing)
         {

@@ -9,10 +9,7 @@ namespace BankTransactionWeb.ViewModel
     public class UpdatePersonViewModel
     {
         public int Id { get; set; }
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+
         [Display(Name = "User name")]
         [MaxLength(20)]//, ErrorMessage = "Your user name must be  max 20  characters long.")
         public string UserName { get; set; }
@@ -31,6 +28,6 @@ namespace BankTransactionWeb.ViewModel
         public DateTime DataOfBirth { get; set; }
         [Phone]
         [Required]
-        public string PhoneNumber { get; set; }
+        public string PhoneNumber{ get; set; }
     }
 }

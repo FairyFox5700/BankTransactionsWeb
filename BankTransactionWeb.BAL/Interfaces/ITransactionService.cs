@@ -15,5 +15,6 @@ namespace BankTransactionWeb.BAL.Interfaces
         Task DeleteTransaction(TransactionDTO transaction);
         Task<int> TransActionCountByData(DateTime dataOfTrnsaction);
         Task ExecuteTransaction(int accountSourceId, string accountDestinationNumber, decimal amount);
+        Task<IEnumerable<TransactionDTO>> GetAllUserTransactions(int userId);
     }
 }

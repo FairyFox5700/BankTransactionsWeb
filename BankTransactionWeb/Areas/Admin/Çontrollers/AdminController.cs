@@ -10,9 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.Areas.Admin.Çontrollers
+namespace BankTransactionWeb.Areas.Admin.Controllers
 {
     [Authorize(Roles ="Admin")]
+    [Area("Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> logger;

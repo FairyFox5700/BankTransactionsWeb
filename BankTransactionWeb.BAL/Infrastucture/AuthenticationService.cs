@@ -51,8 +51,10 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             using (var trans = unitOfWork.BeginTransaction())
             {
+               
                 try
                 {
+ 
 
                     ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
                     if (user == null)
@@ -71,8 +73,8 @@ namespace BankTransactionWeb.BAL.Infrastucture
                             unitOfWork.PersonRepository.Add(personMapped);
                             await unitOfWork.Save();
                             await emailSender.SendEmailAsync(message);
-                            unitOfWork.CommitTransaction();
                             await unitOfWork.UserManager.AddToRoleAsync(user, "Visitor");
+                            unitOfWork.CommitTransaction();
                             return result;
                         }
                         return result;
@@ -99,8 +101,8 @@ namespace BankTransactionWeb.BAL.Infrastucture
             {
                 return false;
             }
-            var token = await unitOfWork.UserManager.GeneratePasswordResetTokenAsync(user);
-            var confirmationLink = URLHelper.Action("ConfirmEmai", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
+            var token = await unitOfWork.UserManager.GeneratePasswordResetTokenAsync(user);//
+            var confirmationLink = URLHelper.Action("ResetPassword", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
             var message = new CustomMessage(new List<string>() { user.Email }, "Link for password reset", confirmationLink, null);
 
             await emailSender.SendEmailAsync(message);
@@ -114,7 +116,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
             {
                 return null;
             }
-            var result = await unitOfWork.UserManager.ResetPasswordAsync(user, person.Code, person.Password);
+            var result = await unitOfWork.UserManager.ResetPasswordAsync(user, person.Token, person.Password);
             return result;
         }
 
@@ -135,9 +137,12 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 {
                     return null;
                 }
+                var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password, person.RememberMe, lockoutOnFailure: true);
+                return result;
             }
-            var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password, person.RememberMe, lockoutOnFailure: true);
-            return result;
+            return null;
+            
+           
         }
 
 
@@ -146,10 +151,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
             await unitOfWork.SignInManager.SignOutAsync();
         }
 
-        //private async Task SignInPerson(ApplicationUser user)
-        //{
-        //    await unitOfWork.SignInManager.SignInAsync(user, isPersistent: false);
-        //}
 
 
         public async Task<IdentityResult> ConfirmUserEmailAsync(string email, string code)
@@ -165,7 +166,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
         public void Dispose()
         {
             unitOfWork.Dispose();
-            emailSender.Dispose();
         }
     }
 }

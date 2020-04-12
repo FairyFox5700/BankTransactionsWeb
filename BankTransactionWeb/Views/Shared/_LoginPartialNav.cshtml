@@ -1,22 +1,63 @@
 ﻿
 @using BankTransactionWeb.BAL.Interfaces
 @inject IAuthenticationService authService
+    <head>
+
+        <link href="~/css/StyleSheet.css" rel="stylesheet" />
+    </head>
+
+
 
 @if (authService.IsUserSignedIn(User))
 {
+    <li class="nav-item dropdown no-arrow">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
+            <i class="fas fa-user"></i>
+        </a>
 
-    <li class="nav-item">
-        <form method="post" asp-area="Identity" asp-controller="Account" asp-action="Logout">
-            <button type="submit" style="width:auto"
-                    class="nav-link btn btn-link py-0">
-                Logout @User.Identity.Name
-            </button>
-        </form>
+        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+            <a class="dropdown-item" asp-controller="Person" asp-action="GetPersonCardCabinet" asp-area="">
+                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                My Profile
+            </a>
+            @id(User.IsInRole("Admin"))
+            {
+             <a class="dropdown-item" asp-controller="Admin" asp-action="GetAllRoles" asp-area="Admin">
+                <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                Dashboard
+            </a>
+            }
+            <div class="dropdown-divider"></div>
+            <form class="dropdown-item" method="post" asp-controller="Account" asp-action="Logout" asp-area="Identity">
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                <input type="submit" value="Logout" />
+            </form>
+        </div>
     </li>
 }
 else
 {
-    <li class="nav-item">
+    <li class="nav-item dropdown no-arrow">
+        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small">My account</span>
+            <i class="fas fa-user"></i>
+            @*<img class="img-profile rounded-circle" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Gnome-stock_person.svg/1024px-Gnome-stock_person.svg.png">*@
+        </a>
+        <!-- Dropdown - User Information -->
+        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+            <a class="dropdown-item" asp-area="Identity" asp-controller="Account" asp-action="Register"  >
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                Register
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" asp-area="Identity" asp-controller="Account" asp-action="Login"  >
+                <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                SignIn
+            </a>
+        </div>
+    </li>
+    @*<li class="nav-item">
         <a class="nav-link" asp-area="Identity" asp-controller="Account" asp-action="Register">
             Register
         </a>
@@ -25,7 +66,7 @@ else
         <a class="nav-link" asp-area="Identity" asp-controller="Account" asp-action="Login">
             Login
         </a>
-    </li>
+    </li>*@
 }
 
 

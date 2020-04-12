@@ -1,0 +1,174 @@
+﻿@model BankTransactionWeb.ViewModel.UpdatePersonViewModel
+@{
+    ViewData["Title"] = "GetPersonCardCabinet";
+}
+<head>
+    <link href="~/css/userAcountStyle.css" rel="stylesheet" />
+</head>
+<div id="user-profile-2" class="user-profile">
+   
+    <div class="tab-content no-border padding-24">
+        <div id="home" class="tab-pane in active">
+            <div class="row">
+                <div class="col-xs-12 col-sm-5 center">
+                    <span class="profile-picture">
+                        <img class="editable img-responsive" width="270" height="250" alt=" Avatar" id="avatar2"
+                             src="https://i.pinimg.com/originals/f1/bf/8d/f1bf8dfd265ba3d536667f5ad826c9c5.png" />
+                    </span>
+                    <div class="space space-4"></div>
+                    <a asp-action="MyAccounts" asp-controller="Account" class="btn btn-sm btn-block btn-success">
+                        <i class="ace-icon fa fa-user bigger-120"></i>
+                        <span class="bigger-110">My bank accounts</span>
+                    </a>
+                    <a asp-action="MyTransactions" asp-controller="Transaction" class="btn btn-sm btn-block btn-primary">
+                        <i class="ace-icon fa fa-money-bill bigger-110"></i>
+                        <span class="bigger-110">My transactions</span>
+                    </a>
+                    <a asp-action="UpdatePerson" asp-controller="Person" asp-route-id="@Model.Id" class="btn btn-sm btn-block btn-primary">
+                        <i class="ace-icon fas fa-cogs fa-sm fa-fw mr-2  bigger-110"></i>
+                        <span class="bigger-110">Settings</span>
+                    </a>
+                </div>
+                <div class="col-xs-12 col-sm-7">
+                    <h4 class="blue">
+                        <span class="middle">@Model.Name  @Model.LastName @Model.Surname</span>
+                        <span class="label label-purple arrowed-in-right">
+                            <i class="ace-icon fa fa-circle smaller-80 align-middle"></i>
+                            online
+                        </span>
+                    </h4>
+                    <div class="profile-user-info">
+                        <div class="profile-info-row">
+                            <div class="profile-info-name">
+                                <label asp-for="UserName"></label>
+                            </div>
+                            <div class="profile-info-value">
+                                <span>@Model.UserName</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-user-info">
+                        <div class="profile-info-row">
+                            <div class="profile-info-name">
+                                <label asp-for="Name"></label>
+                            </div>
+                            <div class="profile-info-value">
+                                <span>@Model.Name</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-user-info">
+                        <div class="profile-info-row">
+                            <div class="profile-info-name">
+                                <label asp-for="Surname"></label>
+                            </div>
+                            <div class="profile-info-value">
+                                <span>@Model.Surname</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-user-info">
+                        <div class="profile-info-row">
+                            <div class="profile-info-name">
+                                <label asp-for="LastName"></label>
+                            </div>
+                            <div class="profile-info-value">
+                                <span>@Model.LastName</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-user-info">
+                        <div class="profile-info-row">
+                            <div class="profile-info-name">
+                                <label asp-for="LastName"></label>
+                            </div>
+                            <div class="profile-info-value">
+                                <span>  @Model.DataOfBirth.ToString("dd/MM/yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-user-info">
+                        <div class="profile-info-row">
+                            <div class="profile-info-name">
+                                <label asp-for="PhoneNumber"></label>
+                            </div>
+                            <div class="profile-info-value">
+                                <span>  @Model.PhoneNumber</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+
+
+@*<form asp-controller="Person" class="form-horozontal" asp-action="UpdatePerson" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group row ">
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input asp-for="Id" type="hidden" class="form-contol" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group row ">
+        <label asp-for="UserName" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input asp-for="UserName" class="form-contol" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row ">
+        <label asp-for="Name" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input asp-for="Name" class="form-contol" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label asp-for="Surname" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="Surname" class="form-contol" />
+            <span asp-validation-for="Surname" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label asp-for="LastName" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input asp-for="LastName" class="form-contol" />
+            <span asp-validation-for="LastName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label asp-for="DataOfBirth" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <input type="date" asp-for="DataOfBirth" class="form-contol" />
+            <span asp-validation-for="DataOfBirth" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row ">
+        <label asp-for="PhoneNumber" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-10">
+            <div class="input-group">
+                <input asp-for="PhoneNumber" class="form-contol" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Email" class="col-sm-2 col-form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <input class="btn-success" type="submit" asp-action="UpdatePerson" asp-controller="Person" value="Confirm" />
+        </div>
+    </div>
+</form>*@

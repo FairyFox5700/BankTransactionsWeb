@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Areas.Identity.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Area("Identity")]
     public class AccountController : Controller
     {
@@ -214,9 +214,15 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
+        public IActionResult ResetPassword(string token = null, string email = null)
         {
-            return code == null ? View("Error") : View();
+            var model = new ResetPasswordViewModel()
+            {
+                Email = email,
+                Token = token
+
+            };
+            return token == null ? View("Error") : View(model);
         }
 
         [HttpPost]

@@ -1,34 +1,68 @@
 ﻿@model List<BankTransactionWeb.BAL.Models.AccountDTO>
 @{
-    ViewData["Title"] = "GetAllAccounts";
+    ViewData["Title"] = "All accounts";
+   if(User.IsInRole("Admin"))
+    {
+            Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
+    }
 }
+    <form asp-controller="Acount" asp-action="GetAllAccounts" method="get">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <div class="row">
+                    <div class="col-6">
+                        <h6 class="m-0 font-weight-bold text-primary">All accounts</h6>
+                    </div>
+                    <div class="col-6 ">
+                        <button class="btn btn-dark" asp-action="AddAccount" asp-controller="Account">Add new</button>
+                    </div>
+                </div>
+            </div>
 
-    <form asp-controller="Account" asp-action="GetAllAccounts" method="get">
-        <button class="btn-info" asp-action="AddAccount" asp-controller="Account">Add new</button>
-        <br />
-        <br />
-        <table class="table table-striped table-light">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Number</th>
-                    <th scope="col">Balance</th>
-                    <th scope="col">Options</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < Model.Count(); i++)
-                {
-                    <tr>
-                        <th scope="row">@(i + 1)</th>
-                        <td>@Model[i]?.Number </td>
-                        <td>@Model[i]?.Balance </td>
-                        <td>
-                            <button class="btn-primary" asp-action="UpdateAccount" asp-controller="Account" asp-route-id="@Model[i].Id">Update</button>
-                            <button class="btn-danger" asp-action="DeleteAccount" asp-controller="Account" asp-route-id="@Model[i].Id">Delete</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </form>
+            <div class="card-body">
+                <div class="table-responsive">
+                    @if (Model.Any())
+                    {
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Number</th>
+                                    <th scope="col">Balance</th>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <th scope="col">Options</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Count(); i++)
+                                {
+                                    <tr>
+                                        <th scope="row">@(i + 1)</th>
+                                        <td>@Model[i]?.Number </td>
+                                        <td>@Model[i]?.Balance </td>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <td>
+                                                <button class="btn-primary" asp-action="UpdateAccount" asp-controller="Account" asp-route-id="@Model[i].Id">Update</button>
+                                                <button class="btn-danger" asp-action="DeleteAccount" asp-controller="Account" asp-route-id="@Model[i].Id">Delete</button>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                No account created yet
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        </form>

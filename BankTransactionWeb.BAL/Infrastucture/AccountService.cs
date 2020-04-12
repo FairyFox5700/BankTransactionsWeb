@@ -87,8 +87,24 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             try
             {
-                var accounts= await unitOfWork.AccountRepository.GetAll();
+                var accounts= (await unitOfWork.AccountRepository.GetAll());
             return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(GetAllAccounts)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+
+            }
+        }
+
+        public async Task<IEnumerable<AccountDTO>> GetMyAccounts(int userId)
+        {
+            try
+            {
+                var accounts = (await unitOfWork.PersonRepository.GetById(userId)).Accounts;
+                return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
             }
             catch (Exception ex)
             {
@@ -115,8 +131,10 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
             }
         }
-       
 
-      
+    
+
+
+
     }
 }

@@ -4,6 +4,7 @@ using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +27,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         {
             try
             {
-                var entity = await context.Persons.Include(p=>p.ApplicationUser).FirstOrDefaultAsync(e => e.Id == id);
+                var entity = await context.Persons.Include(p=>p.ApplicationUser).Include(p=>p.Accounts).FirstOrDefaultAsync(e => e.Id == id);
                 return entity;
             }
             catch (Exception ex)
@@ -35,7 +36,9 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
             }
         }
 
-     
+      
+
+
 
 
     }

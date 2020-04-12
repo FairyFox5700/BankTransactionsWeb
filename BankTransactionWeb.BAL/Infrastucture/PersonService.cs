@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Infrastucture
@@ -143,7 +144,9 @@ namespace BankTransactionWeb.BAL.Infrastucture
             try
             {
                 var personFinded = await unitOfWork.PersonRepository.GetById(id);
-                return mapper.Map<PersonDTO>(personFinded);
+                var appUser = personFinded.ApplicationUser;
+                var personModel = mapper.Map<ApplicationUser, PersonDTO>(appUser);
+                return mapper.Map(personFinded, personModel);
             }
             catch (Exception ex)
             {
@@ -154,8 +157,24 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
         }
 
+        public async Task<PersonDTO> GetPersonById(ClaimsPrincipal user)
+        {
+            try
+            {
+                var id = unitOfWork.UserManager.GetUserId(user);
+                var personFinded = (await unitOfWork.PersonRepository.GetAll()).Where(e => e.ApplicationUserFkId == id).FirstOrDefault();
+                var appUser = personFinded.ApplicationUser;
+                var personModel = mapper.Map<ApplicationUser, PersonDTO>(appUser);
+                return mapper.Map(personFinded, personModel);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(GetPersonById)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
 
-        
+            }
+        }
 
         public async Task<decimal> TotalBalanceOnAccounts(int id)
         {
@@ -182,27 +201,35 @@ namespace BankTransactionWeb.BAL.Infrastucture
         //Related data transaction
         public async Task<IdentityResult> UpdatePerson(PersonDTO person)
         {
-            try
+            using (var trans = unitOfWork.BeginTransaction())
             {
-                var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
-                if(user!=null)
+
+                try
                 {
-                    var userMapped = mapper.Map<ApplicationUser>(person);
-                    var personMapped = mapper.Map<Person>(person);
-                    userMapped.Person = personMapped;
-                    var result = await unitOfWork.UserManager.UpdateAsync(userMapped);
-                    //unitOfWork.PersonRepository.Update(personMapped);
-                    await unitOfWork.Save();
-                    return result;
+                    var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
+                    if (user != null)
+                    {
+                        var userMapped = mapper.Map<ApplicationUser>(person);
+                        var personMapped = mapper.Map<Person>(person);
+                        userMapped.Person = personMapped;
+                        var result = await unitOfWork.UserManager.UpdateAsync(userMapped);
+                        await unitOfWork.Save();
+                        unitOfWork.PersonRepository.Update(personMapped);
+                        await unitOfWork.Save();
+                        unitOfWork.CommitTransaction();
+                        return result;
+                    }
+                    return null;
+
                 }
-                return null;
-               
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdatePerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
+                catch (Exception ex)
+                {
+                    logger.LogError($"Catch an exception in method {nameof(UpdatePerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                       $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                    unitOfWork.RollbackTransaction();
+                    throw ex;
+
+                }
 
             }
         }

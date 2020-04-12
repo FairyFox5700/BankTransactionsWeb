@@ -1,38 +1,42 @@
 ﻿@model BankTransactionWeb.ViewModel.AddTransactionViewModel
 @{
-    ViewData["Title"] = "AddTransaction";
+    ViewData["Title"] = "Add Transaction";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
 }
+<head>
+    <link href="~/css/StyleSheet1.css" rel="stylesheet" />
+</head>
 
-    <form asp-controller="Transaction" asp-action="AddTransaction" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
-        <div class="form-group row">
-            <label asp-for="AccountSourceId" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <select asp-for="AccountSourceId" asp-items="@Model.Accounts">
-                    <option>Please select account source</option>
-                </select>
-            </div>
+<form asp-controller="Transaction" asp-action="AddTransaction" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
+    <div class="form-group row ">
+        <label asp-for="AccountSourceId" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-5">
+            <select asp-for="AccountSourceId" class="form-control" asp-items="@Model.Accounts">
+                <option>Please select account source</option>
+            </select>
         </div>
-        <div class="form-group row">
-            <label asp-for="AccountDestinationId" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <select asp-for="AccountDestinationId" asp-items="@Model.Accounts">
-                    <option>Please select account destination</option>
-                </select>
-            </div>
+    </div>
+    <div class="form-group row ">
+        <label asp-for="AccountDestinationId" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-5">
+            <select asp-for="AccountDestinationId" class="form-control" asp-items="@Model.Accounts">
+                <option>Please select account destination</option>
+            </select>
         </div>
-        <div class="form-group row">
-            <label asp-for="Amount" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <input asp-for="Amount" class="form-contol" />
-                <span asp-validation-for="Amount" class="text-danger"></span>
-            </div>
+    </div>
+    <div class="form-group row ">
+        <label asp-for="Amount" class="col-sm-2 col-form-label"></label>
+        <div class="form-group">
+            <input asp-for="Amount" class="form-control" placeholder="Amount" value="" />
+            <span asp-validation-for="Amount" class="text-danger"></span>
         </div>
-        <div class="form-group row">
-            <div class="col-sm-10">
-                <input class="btn-success" type="submit" asp-controller="Transaction" asp-action="AddTransaction" value="Confirm" />
-                <a asp-controller="Transaction" asp-action="GetAllTransactions" class="btn btn-primary">Cancel</a>
-            </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <input class="btn btn-success" type="submit" asp-controller="Transaction" asp-action="AddTransaction" value="Confirm" />
+            <a asp-controller="Transaction" asp-action="GetAllTransactions" class="btn btn-primary">Cancel</a>
         </div>
-    </form>
+    </div>
+</form>
 

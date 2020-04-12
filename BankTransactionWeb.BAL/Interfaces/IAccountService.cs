@@ -13,5 +13,6 @@ namespace BankTransactionWeb.BAL.Interfaces
         Task AddAccount(AccountDTO account);
         Task UpdateAccount(AccountDTO account);
         Task DeleteAccount(AccountDTO account);
+        Task<IEnumerable<AccountDTO>> GetMyAccounts(int userId);
     }
 }

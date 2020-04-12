@@ -28,6 +28,13 @@ body {
         background-size: cover;
     }
 
+
+.bg-password-image {
+    background: url("https://cdn3.vectorstock.com/i/1000x1000/65/42/forgot-lock-office-password-icon-vector-20106542.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
     .card-signin .card-body {
         padding: 2rem;
     }

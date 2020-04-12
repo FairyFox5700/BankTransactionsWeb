@@ -1,28 +1,33 @@
 ﻿@model BankTransactionWeb.ViewModel.AddCompanyViewModel
 @{
-    ViewData["Title"] = "AddCompany";
-}
+    ViewData["Title"] = "Add company";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
 
-<form asp-controller="Company" asp-action="AddCompany" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
-    <div class="form-group row">
-        <label asp-for="Name" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="Name" class="form-contol" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+}
+    <head>
+        <link href="~/css/StyleSheet1.css" rel="stylesheet" />
+    </head>
+
+    <form asp-controller="Company" asp-action="AddCompany" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
+        <div class="form-group row ">
+            <label asp-for="Name" class="col-sm-2 col-form-label"></label>
+            <div class="form-group">
+                <input type="text" asp-for="Name" class="form-control" placeholder="Company Name *" value="" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
         </div>
-    </div>
-    <div class="form-group row">
-        <label asp-for="DateOfCreation" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="DateOfCreation" class="form-contol" />
-            <span asp-validation-for="DateOfCreation" class="text-danger"></span>
+        <div class="form-group row ">
+            <label asp-for="DateOfCreation" class="col-sm-2 col-form-label"></label>
+            <div class="form-group">
+                <input type="date" asp-for="DateOfCreation" class="form-control" placeholder="Date Of Creation *" value="" />
+                <span asp-validation-for="DateOfCreation" class="text-danger"></span>
+            </div>
         </div>
-    </div>
-    <div class="form-group row">
-        <div class="col-sm-10">
-            <input class="btn-success" type="submit" asp-action="AddCompany" asp-controller="Company" value="Confirm" />
-            <a asp-action="GetAllCompanies" asp-controller="Company" class="btn btn-primary">Cancel</a>
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input class="btn btn-success" type="submit" asp-action="AddCompany" asp-controller="Company" value="Confirm" />
+                <a asp-action="GetAllCompanies" asp-controller="Company" class="btn btn-primary">Cancel</a>
+            </div>
         </div>
-    </div>
-</form>
+    </form>

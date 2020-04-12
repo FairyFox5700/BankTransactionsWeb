@@ -172,5 +172,30 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             unitOfWork.Dispose();
         }
+
+
+        public async Task<IEnumerable<TransactionDTO>> GetAllUserTransactions(int userId)
+        {
+            try
+            {
+
+                var userAccounts = (await unitOfWork.PersonRepository.GetById(userId)).Accounts;
+                var listOfTransaction = new List<TransactionDTO>();
+                foreach (var account in userAccounts)
+                {
+                    var transactions = account.Transactions;
+                    listOfTransaction.AddRange(transactions.Select(t => mapper.Map<TransactionDTO>(t)));
+                }
+                return listOfTransaction;
+
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(GetAllUserTransactions)}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+
+            }
+        }
     }
 }

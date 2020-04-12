@@ -38,12 +38,6 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
             }
             DBSet.Remove(entity);
         }
-        //    if (context.Entry<TEntity>(entity).State == EntityState.Detached)
-        //    {
-        //        DBSet.Attach(entity);
-        //    }
-        //    DBSet.Remove(entity);
-        //}
 
         public virtual  async Task<IEnumerable<TEntity>> GetAll()
         {
