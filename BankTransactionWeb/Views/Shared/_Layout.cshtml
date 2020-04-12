@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="https://kit.fontawesome.com/d2ed3bb74c.js" crossorigin="anonymous"></script>
-
+    <link href="~/css/accurateFieldStyle.css" rel="stylesheet" />
+    <link href="~/css/StyleSheet.css" rel="stylesheet" />
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>\
     <environment include="Development">
 
@@ -39,15 +40,6 @@
                         <li class="nav-item">
                             <a class="nav-link " asp-area="" asp-controller="Account" asp-action="GetAllAccounts">About us</a>
                         </li>
-                        @*<li class="nav-item">
-                            <a class="nav-link " asp-area="" asp-controller="Company" asp-action="GetAllCompanies">All companies</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Transaction" asp-action="GetAllTransactions">All transactions</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Shareholder" asp-action="GetAllShareholders">All shareholders</a>
-                        </li>*@
 
                         @await Html.PartialAsync("_LoginPartialNav")
                     </ul>

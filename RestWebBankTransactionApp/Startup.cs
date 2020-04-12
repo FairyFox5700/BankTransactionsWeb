@@ -1,5 +1,6 @@
 using AutoMapper;
 using BankTransactionWeb.BAL.Cofiguration;
+using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
 using BankTransactionWeb.DAL.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using RestWebBankTransactionApp.Controllers;
 using System.Text;
 
 namespace RestWebBankTransactionApp
@@ -30,12 +32,13 @@ namespace RestWebBankTransactionApp
             IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
             services.AddSingleton(mapper);
             services.AddDALServices();
+            services.AddTransient<IJwtSecurityService,JWTSecurityService>();
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = false;
                 options.SignIn.RequireConfirmedEmail = true;
             }).AddEntityFrameworkStores<BankTransactionContext>()
-          .AddDefaultTokenProviders().AddUserManager<UserManager<ApplicationUser>>();
+            .AddDefaultTokenProviders().AddUserManager<UserManager<ApplicationUser>>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                  .AddJwtBearer(options =>
                  {
@@ -47,7 +50,7 @@ namespace RestWebBankTransactionApp
                          ValidateAudience = true,
                          ValidAudience = Configuration["Jwt:Audience"],
                          ValidateLifetime = true,
-                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MySecretKeyToGEnerateTokeJWT_DotC")),
+                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])),
                          ValidateIssuerSigningKey = true,
                      };
                  });

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace RestWebBankTransactionApp.Controllers
 {
+     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -25,6 +27,7 @@ namespace RestWebBankTransactionApp.Controllers
         }
         // GET /api/Account
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<AccountDTO>>> GetAllAccounts()
         {
             try

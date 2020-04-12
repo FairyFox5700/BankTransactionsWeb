@@ -54,8 +54,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
                
                 try
                 {
- 
-
                     ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
                     if (user == null)
                     {
@@ -137,7 +135,9 @@ namespace BankTransactionWeb.BAL.Infrastucture
                 {
                     return null;
                 }
-                var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password, person.RememberMe, lockoutOnFailure: true);
+                var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password, 
+                    person.RememberMe, 
+                    lockoutOnFailure: true);
                 return result;
             }
             return null;

@@ -33,25 +33,17 @@ namespace BankTransactionWeb
             services.AddRazorPages().AddRazorRuntimeCompilation();
             IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
             services.AddSingleton(mapper);
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-.SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-.AddJsonFile("appsettings.json")
-.Build();
-            //services.AddScoped < UserManager<ApplicationUser>>();
-            services.AddDbContext<BankTransactionContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+            services.AddDALServices();
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
            {
                options.User.RequireUniqueEmail = false;
                options.SignIn.RequireConfirmedEmail = true;
            }).AddEntityFrameworkStores<BankTransactionContext>()
            .AddDefaultTokenProviders().AddUserManager<UserManager<ApplicationUser>>();
-            var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
-            services.AddSingleton(emailConfig);
-            services.AddDALServices();
+
+
             services.ConfigureApplicationCookie(options =>
             {
-                // Cookie settings
                 options.Cookie.HttpOnly = true;
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 
@@ -67,13 +59,9 @@ namespace BankTransactionWeb
                 options.Password.RequireUppercase = true;
                 options.Password.RequiredLength = 6;
                 options.Password.RequiredUniqueChars = 2;
-
-                // Lockout settings.
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
                 options.Lockout.MaxFailedAccessAttempts = 3;
                 options.Lockout.AllowedForNewUsers = true;
-
-                // User settings.
                 options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = false;

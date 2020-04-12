@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.DAL.Entities;
+using RestWebBankTransactionApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,10 @@ namespace RestWebBankTransactionApp
                 confg.CreateMap<ShareholderDTO, Shareholder>();
                 confg.CreateMap<Transaction, TransactionDTO>();
                 confg.CreateMap<TransactionDTO, Transaction>();
+                confg.CreateMap<LoginModel, PersonDTO>();
+                confg.CreateMap<PersonDTO, LoginModel>();
+                confg.CreateMap<RegisterModel, PersonDTO>();
+                confg.CreateMap<PersonDTO, RegisterModel>();
 
             });
             return configuration;

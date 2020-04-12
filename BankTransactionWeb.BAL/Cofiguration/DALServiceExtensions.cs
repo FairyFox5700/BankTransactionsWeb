@@ -25,7 +25,13 @@ namespace BankTransactionWeb.BAL.Cofiguration
         public static void AddDALServices(this IServiceCollection services)
         {
 
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+            .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+            .AddJsonFile("appsettings.json")
+            .Build();
 
+            services.AddDbContext<BankTransactionContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
             services.AddTransient<IPersonRepository, PersonRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<ICompanyRepository, CompanyRepository>();
@@ -53,7 +59,9 @@ namespace BankTransactionWeb.BAL.Cofiguration
             services.TryAddSingleton<IUrlHelperFactory, UrlHelperFactory>();
             services.TryAddSingleton<IHttpContextAccessor,HttpContextAccessor>();
             services.AddTransient<IAuthenticationService, AuthenticationService>();
-            
+            var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
+            services.AddSingleton(emailConfig);
+
 
         }
     }
