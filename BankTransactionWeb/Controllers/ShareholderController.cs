@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ShareholderController : Controller
     {
         private readonly IShareholderService shareholderService;
@@ -33,14 +34,14 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllShareholders(string companyName, DateTime? dateOfCompanyCreation=null)
+        public async Task<IActionResult> GetAllShareholders(string companyName, DateTime? dateOfCompanyCreation = null)
         {
             try
             {
                 var sh = await shareholderService.GetAllShareholders(companyName, dateOfCompanyCreation);
-               var listOfShareholdersVM = new ShareholdersListViewModel()
+                var listOfShareholdersVM = new ShareholdersListViewModel()
                 {
-                   
+
                     Shareholders = (sh).ToList(),
                     CompanyName = companyName,
                     DateOfCompanyCreation = dateOfCompanyCreation
@@ -58,13 +59,22 @@ namespace BankTransactionWeb.Controllers
 
         public async Task<IActionResult> AddShareholder()
         {
-            var shareholderVM = new AddShareholderViewModel()
+            try
             {
-                People =  new SelectList(await personService.GetAllPersons(), "Id","Name", "Surname", "LastName"),
-                Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name")
-            };
+                var shareholderVM = new AddShareholderViewModel()
+                {
+                    People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName"),
+                    Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name")
+                };
 
-            return View(shareholderVM);
+                return View(shareholderVM);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(AddShareholder)}. The exception is {ex.Message}. " +
+                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpPost]
@@ -93,7 +103,7 @@ namespace BankTransactionWeb.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Catch an exception in method {nameof(AddShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -101,18 +111,28 @@ namespace BankTransactionWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateShareholder(int id)
         {
-            var currentShareholder = await shareholderService.GetShareholderById(id);
-            if (currentShareholder == null)
+            try
             {
-                logger.LogError($"Shareholder with id {id} not find");
-                return NotFound();
+                var currentShareholder = await shareholderService.GetShareholderById(id);
+                if (currentShareholder == null)
+                {
+                    logger.LogError($"Shareholder with id {id} not find");
+                    return NotFound();
+                }
+                else
+                {
+                    var shareholderModel = mapper.Map<UpdateShareholderViewModel>(currentShareholder);
+                    shareholderModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
+                    shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+                    return View(shareholderModel);
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                var shareholderModel = mapper.Map<UpdateShareholderViewModel>(currentShareholder);
-                shareholderModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
-                shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
-                return View(shareholderModel);
+                logger.LogError($"Catch an exception in method {nameof(UpdateShareholder)}. The exception is {ex.Message}. " +
+                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
+                return StatusCode(500, "Internal server error");
             }
 
         }
@@ -125,7 +145,7 @@ namespace BankTransactionWeb.Controllers
             {
                 if (shareholderModel == null)
                 {
-                    logger.LogError($"Object of type {typeof(AddShareholderViewModel)} send by client was null.");
+                    logger.LogError($"Object of type {typeof(UpdateShareholderViewModel)} send by client was null.");
                     return BadRequest("Object of type shareholder is null");
                 }
                 if (!ModelState.IsValid)
@@ -152,7 +172,7 @@ namespace BankTransactionWeb.Controllers
                     }
                     catch (DbUpdateException ex)
                     {
-                        logger.LogError($"Unable to update person becuase of {ex.Message}");
+                        logger.LogError($"Unable to update shareholder because of {ex.Message}");
                         ModelState.AddModelError("", "Unable to save changes. " +
                         "Try again, and if the problem persists, " +
                         "see your system administrator.");
@@ -165,7 +185,7 @@ namespace BankTransactionWeb.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Catch an exception in method {nameof(UpdateShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
                 return StatusCode(500, "Internal server error");
             }
         }
@@ -181,21 +201,13 @@ namespace BankTransactionWeb.Controllers
                     logger.LogError($"Shareholder with id {id} not find");
                     return NotFound();
                 }
-                try
-                {
-                    await shareholderService.DeleteShareholder(shareholder);
-                    return RedirectToAction(nameof(GetAllShareholders));
-                }
-                catch (DbUpdateException ex)
-                {
-                    logger.LogError($"Unable to update person becuase of {ex.Message}");
-                    return StatusCode(500, "Internal server error");
-                }
+                await shareholderService.DeleteShareholder(shareholder);
+                return RedirectToAction(nameof(GetAllShareholders));
             }
             catch (Exception ex)
             {
                 logger.LogError($"Catch an exception in method {nameof(DeleteShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
                 return StatusCode(500, "Internal server error");
             }
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
-using BankTransactionWeb.BAL.Infrastucture;
+﻿using AutoMapper;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.ViewModel;
@@ -12,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
 {
@@ -25,7 +23,7 @@ namespace BankTransactionWeb.Controllers
 
         public AccountController(IAccountService accountService, IPersonService personService, ILogger<AccountController> logger, IMapper mapper)
         {
-        
+
             this.accountService = accountService;
             this.personService = personService;
             this.logger = logger;
@@ -37,7 +35,7 @@ namespace BankTransactionWeb.Controllers
         {
             try
             {
-                var accounts =(await accountService.GetAllAccounts()).ToList();//maybe sort them
+                var accounts = (await accountService.GetAllAccounts()).ToList();//maybe sort them
                 logger.LogInformation("Successfully returned all accounts");
                 return View(accounts);
             }
@@ -51,12 +49,21 @@ namespace BankTransactionWeb.Controllers
 
         public async Task<IActionResult> AddAccount()
         {
-            var accountVM = new AddAccountViewModel()
+            try
             {
-                People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName")
-            };
+                var accountVM = new AddAccountViewModel()
+                {
+                    People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName")
+                };
 
-            return View(accountVM);
+                return View(accountVM);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(AddAccount)}. The exception is {ex.Message}. " +
+                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpPost]
@@ -72,7 +79,7 @@ namespace BankTransactionWeb.Controllers
                 }
                 if (!ModelState.IsValid)
                 {
-                    logger.LogError($"Account model send by client is not valid.");
+                    logger.LogWarning($"Account model send by client is not valid.");
                     return BadRequest("Account model is not valid.");
                 }
                 else
@@ -93,17 +100,26 @@ namespace BankTransactionWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateAccount(int id)
         {
-            var currentAccount = await accountService.GetAccountById(id);
-            if (currentAccount == null)
+            try
             {
-                logger.LogError($"Account with id {id} not find");
-                return NotFound();
+                var currentAccount = await accountService.GetAccountById(id);
+                if (currentAccount == null)
+                {
+                    logger.LogError($"Account with id {id} not find");
+                    return NotFound();
+                }
+                else
+                {
+                    var accountModel = mapper.Map<UpdateAccountViewModel>(currentAccount);
+                    accountModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
+                    return View(accountModel);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var accountModel = mapper.Map<UpdateAccountViewModel>(currentAccount);
-                accountModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
-                return View(accountModel);
+                logger.LogError($"Catch an exception in method {nameof(UpdateAccount)}. The exception is {ex.Message}. " +
+                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                return StatusCode(500, "Internal server error");
             }
 
         }
@@ -121,7 +137,7 @@ namespace BankTransactionWeb.Controllers
                 }
                 if (!ModelState.IsValid)
                 {
-                    logger.LogError("Account model send by client is not valid.");
+                    logger.LogWarning("Account model send by client is not valid.");
                     return View(accountModel);
                 }
                 else
@@ -136,14 +152,14 @@ namespace BankTransactionWeb.Controllers
                         }
                         else
                         {
-                            var updatedAccount= mapper.Map<UpdateAccountViewModel, AccountDTO>(accountModel, account);
+                            var updatedAccount = mapper.Map<UpdateAccountViewModel, AccountDTO>(accountModel, account);
                             await accountService.UpdateAccount(updatedAccount);
                             return RedirectToAction(nameof(GetAllAccounts));
                         }
                     }
                     catch (DbUpdateException ex)
                     {
-                        logger.LogError($"Unable to update person becuase of {ex.Message}");
+                        logger.LogError($"Unable to update account becuase of {ex.Message}");
                         ModelState.AddModelError("", "Unable to save changes. " +
                         "Try again, and if the problem persists, " +
                         "see your system administrator.");

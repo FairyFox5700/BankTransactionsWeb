@@ -1,74 +1,52 @@
 ﻿@model IList<ListRoleViewModel>
 @{
-    ViewData["Title"] = "Get All Roles";
+    ViewData["Title"] = "All Roles";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
 }
-@*<form asp-controller="Person" asp-action="GetAllPersons" method="get">
-        <table class="table table-striped table-light">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Role name</th>
-                    <th scope="col">Options</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < Model.Count(); i++)
-                {
-                    <tr>
-                        <th scope="row">@i</th>
-                        <td>@Model[i].Name </td>
-                        <td>
-                            <button class="btn-primary" asp-action="UpdateRole" asp-controller="Admin" asp-area="Admin" asp-route-id="@Model[i].Id">Update</button>
-                            <button class="btn-danger" asp-action="DeleteRole" asp-controller="Admin" asp-area="Admin" asp-route-id="@Model[i].Id">Delete</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </form>*@
-<!-- DataTales Example -->
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">All roles</h6>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            @if (Model.Any())
-            {
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Role name</th>
-                            <th scope="col">Options</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (int i = 0; i < Model.Count(); i++)
-                        {
-                            <tr>
-                                <th scope="row">@i</th>
-                                <td>@Model[i].Name </td>
-                                <td>
-                                    <button class="btn-primary" asp-action="UpdateRole" asp-controller="Admin" asp-area="Admin" asp-route-id="@Model[i].Id">Update</button>
-                                    <button class="btn-danger" asp-action="DeleteRole" asp-controller="Admin" asp-area="Admin" asp-route-id="@Model[i].Id">Delete</button>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            }
-            else
-            {
-                <div class="card">
-                    <div class="card-header">
-                        No roles created yet
-                    </div>
+
+    <form asp-controller="Person" asp-action="GetAllPersons" method="get">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">All roles</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    @if (Model.Any())
+                    {
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Role name</th>
+                                    <th scope="col">Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Count(); i++)
+                                {
+                                    <tr>
+                                        <th scope="row">@i</th>
+                                        <td>@Model[i].Name </td>
+                                        <td>
+                                            <button class="btn-primary" asp-action="UpdateRole" asp-controller="Admin" asp-area="Admin" asp-route-id="@Model[i].Id">Update</button>
+                                            <button class="btn-danger" asp-action="DeleteRole" asp-controller="Admin" asp-area="Admin" asp-route-id="@Model[i].Id">Delete</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                No roles created yet
+                            </div>
+                        </div>
+                    }
                 </div>
-            }
+            </div>
         </div>
-    </div>
-</div>
+       </form>
 
 

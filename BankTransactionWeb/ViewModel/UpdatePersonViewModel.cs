@@ -25,9 +25,12 @@ namespace BankTransactionWeb.ViewModel
         [DataType(DataType.Date)]
         [Required]
         [Display(Name = "Date of birth")]
+        [Range(typeof(DateTime), "1/1/1870", "1/1/2012",
+    ErrorMessage = "Value for {0} must be between {1} and {2}")]
         public DateTime DataOfBirth { get; set; }
         [Phone]
         [Required]
         public string PhoneNumber{ get; set; }
+        public string ApplicationUserFkId { get; set; }
     }
 }

@@ -29,7 +29,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
         {
           
             modelBuilder.Entity<ApplicationUser>().HasKey(k => k.Id);
-            modelBuilder.Entity<Person>().HasOne(p => p.ApplicationUser).WithOne(a => a.Person).HasForeignKey<Person>(p => p.ApplicationUserFkId);
+            modelBuilder.Entity<Person>().HasOne(p => p.ApplicationUser).WithOne(a => a.Person).HasForeignKey<Person>(p => p.ApplicationUserFkId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Transaction>()
                 .HasOne<Account>(t => t.SourceAccount)
                 .WithMany(a => a.Transactions);

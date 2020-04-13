@@ -21,5 +21,6 @@ namespace BankTransactionWeb.ViewModel
         [Required]
         [Display(Name = "Current person id")]
         public int PersonId { get; set; }
+        public string ApplicationUserFkId { get; set; }
     }
 }

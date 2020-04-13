@@ -14,6 +14,7 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
     public class UnitOfWork : IUnitOfWork
     {
         private readonly BankTransactionContext context;
+        private IDbContextTransaction transaction;
 
         public UnitOfWork(BankTransactionContext context,UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> RoleManager)
         {
@@ -96,19 +97,36 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
         {
             await context.SaveChangesAsync();
         }
+        //public void Commit()
+        //{
+        //    transaction.Commit();
+        //}
 
-        public async Task<IDbContextTransaction> BeginTransaction() 
+        //public void Rollback()
+        //{
+        //    transaction.Rollback();
+        //    transaction.Dispose();
+        //}
+
+        public async Task<IDbContextTransaction> BeginTransaction()
         {
-            return await context.Database.BeginTransactionAsync();
+            transaction = await context.Database.BeginTransactionAsync();
+            return transaction;
         }
+        //public async Task<IDbContextTransaction> BeginTransaction() 
+        //{
+        //   return  await context.Database.BeginTransactionAsync();
+        //}
 
         public void  RollbackTransaction()
         {
-            context.Database.RollbackTransaction();
+            transaction.Rollback();
+            //context.Database.RollbackTransaction();
         }
         public void CommitTransaction() 
         {
-            context.Database.CommitTransaction();
+            transaction.Commit();
+            //context.Database.CommitTransaction();
         }
 
         private bool disposed = false;

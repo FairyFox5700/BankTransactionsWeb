@@ -35,8 +35,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(AddAccount)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
 
             }
@@ -54,10 +52,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(DeleteAccount)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
-
             }
         }
 
@@ -76,8 +71,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(GetAccountById)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
 
             }
@@ -91,11 +84,8 @@ namespace BankTransactionWeb.BAL.Infrastucture
             return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
             }
             catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllAccounts)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+            { 
                 throw ex;
-
             }
         }
 
@@ -108,8 +98,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(GetAllAccounts)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
 
             }
@@ -125,8 +113,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(UpdateAccount)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
 
             }

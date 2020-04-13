@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
 using BankTransactionWeb.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CompanyController : Controller
     {
         private readonly ICompanyService companyService;
@@ -43,6 +42,7 @@ namespace BankTransactionWeb.Controllers
             }
         }
 
+        [HttpGet]
         public IActionResult AddCompany()
         {
             return View();
@@ -82,16 +82,26 @@ namespace BankTransactionWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> UpdateCompany(int id)
         {
-            var currentCompany = await companyService.GetCompanyById(id);
-            if (currentCompany == null)
+
+            try
             {
-                logger.LogError($"Company with id {id} not find");
-                return NotFound();
+                var currentCompany = await companyService.GetCompanyById(id);
+                if (currentCompany == null)
+                {
+                    logger.LogError($"Company with id {id} not find");
+                    return NotFound();
+                }
+                else
+                {
+                    var companyModel = mapper.Map<UpdateCompanyViewModel>(currentCompany);
+                    return View(companyModel);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var companyModel = mapper.Map<UpdateCompanyViewModel>(currentCompany);
-                return View(companyModel);
+                logger.LogError($"Catch an exception in method {nameof(UpdateCompany)}. The exception is {ex.Message}. " +
+                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                return StatusCode(500, "Internal server error");
             }
 
         }
@@ -131,7 +141,7 @@ namespace BankTransactionWeb.Controllers
                     }
                     catch (DbUpdateException ex)
                     {
-                        logger.LogError($"Unable to update person becuase of {ex.Message}");
+                        logger.LogError($"Unable to update company becuase of {ex.Message}");
                         ModelState.AddModelError("", "Unable to save changes. " +
                         "Try again, and if the problem persists, " +
                         "see your system administrator.");
@@ -174,7 +184,7 @@ namespace BankTransactionWeb.Controllers
             catch (Exception ex)
             {
                 logger.LogError($"Catch an exception in method {nameof(DeleteCompany)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
                 return StatusCode(500, "Internal server error");
             }
 

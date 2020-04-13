@@ -26,7 +26,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
             this.mapper = mapper;
             this.logger = logger;
         }
-        //REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
         public async Task AddPerson(PersonDTO person)
         {
             try
@@ -60,7 +60,6 @@ namespace BankTransactionWeb.BAL.Infrastucture
                     await unitOfWork.Save();
                     logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully deleted");
                     return result;
-
                 }
                 return null;
             }
@@ -72,23 +71,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
             }
         }
-        //public async Task DeletePerson(PersonDTO person)
-        //{
-        //    try
-        //    {
-        //        var personMapped = mapper.Map<Person>(person);
-        //        unitOfWork.PersonRepository.Delete(personMapped);
-        //        await unitOfWork.Save();
-        //        logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully added");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.LogError($"Catch an exception in method {nameof(DeletePerson)} in class {nameof(PersonService)}. The exception is {ex.Message}. " +
-        //           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-        //        throw ex;
 
-        //    }
-        //}
 
         public void Dispose()
         {
@@ -201,19 +184,21 @@ namespace BankTransactionWeb.BAL.Infrastucture
         //Related data transaction
         public async Task<IdentityResult> UpdatePerson(PersonDTO person)
         {
-            using (var trans = unitOfWork.BeginTransaction())
+            using (var trans = await unitOfWork.BeginTransaction())
             {
-
                 try
                 {
+
                     var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
                     if (user != null)
                     {
-                        var userMapped = mapper.Map<ApplicationUser>(person);
+                            user.Email = person.Email;
+                            user.UserName = person.UserName;
+                            user.PhoneNumber = person.PhoneNumber;
                         var personMapped = mapper.Map<Person>(person);
-                        userMapped.Person = personMapped;
-                        var result = await unitOfWork.UserManager.UpdateAsync(userMapped);
-                        await unitOfWork.Save();
+                            var result = await unitOfWork.UserManager.UpdateAsync(user);
+                            await unitOfWork.Save();
+                            personMapped.ApplicationUserFkId = user.Id;
                         unitOfWork.PersonRepository.Update(personMapped);
                         await unitOfWork.Save();
                         unitOfWork.CommitTransaction();
@@ -236,37 +221,3 @@ namespace BankTransactionWeb.BAL.Infrastucture
     }
 }
 
-//public async Task<PersonDTO> GetPersonById(int id)
-//{
-//    try
-//    {
-//        var personFinded = await unitOfWork.PersonRepository.GetById(id);
-
-//        return mapper.Map<PersonDTO>(personFinded);
-//    }
-//    catch (Exception ex)
-//    {
-//        logger.LogError($"Catch an exception in method {nameof(GetPersonById)} in class {this.GetType()}. The exception is {ex.Message}. " +
-//           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-//        throw ex;
-
-//    }
-//}
-
-
-//public async Task UpdatePerson(PersonDTO person)
-//{
-//    try
-//    {
-//        var personMapped = mapper.Map<Person>(person);
-//        unitOfWork.PersonRepository.Update(personMapped);
-//        await unitOfWork.Save();
-//    }
-//    catch (Exception ex)
-//    {
-//        logger.LogError($"Catch an exception in method {nameof(UpdatePerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
-//           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-//        throw ex;
-
-//    }
-//}

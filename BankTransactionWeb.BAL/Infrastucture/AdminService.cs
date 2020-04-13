@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using BankTransactionWeb.BAL.Interfaces;
 using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.DAL.Entities;
 using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -27,43 +26,73 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public Task<IdentityResult> AddRole(RoleDTO role)
         {
-            var identityRole = new IdentityRole
+            try
             {
-                Name = role.Name
-            };
-            var result = unitOfWork.RoleManager.CreateAsync(identityRole);
-            return result;
+                var identityRole = new IdentityRole
+                {
+                    Name = role.Name
+                };
+                var result = unitOfWork.RoleManager.CreateAsync(identityRole);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
         public async Task<IdentityResult> DeleteRole(string id)
         {
-            var roleReturned = await unitOfWork.RoleManager.FindByIdAsync(id);
-            if (roleReturned == null)
-                return null;
-            var result = await unitOfWork.RoleManager.DeleteAsync(roleReturned);
-            return result;
+            try
+            {
+
+                var roleReturned = await unitOfWork.RoleManager.FindByIdAsync(id);
+                if (roleReturned == null)
+                    return null;
+                var result = await unitOfWork.RoleManager.DeleteAsync(roleReturned);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
         }
         public async Task<IdentityResult> AddUserToRole(string id, bool isUserSelected, string roleName)
         {
-            var user = await unitOfWork.UserManager.FindByIdAsync(id);
-            if (user == null)
+            try
+            {
+                var user = await unitOfWork.UserManager.FindByIdAsync(id);
+                if (user == null)
+                    return null;
+                if (isUserSelected && !(await unitOfWork.UserManager.IsInRoleAsync(user, roleName)))
+                {
+                    return await unitOfWork.UserManager.AddToRoleAsync(user, roleName);
+                }
+                else if (!isUserSelected && (await unitOfWork.UserManager.IsInRoleAsync(user, roleName)))
+                {
+                    return await unitOfWork.UserManager.RemoveFromRoleAsync(user, roleName);
+                }
                 return null;
-            if (isUserSelected && !(await unitOfWork.UserManager.IsInRoleAsync(user, roleName)))
-            {
-                return await unitOfWork.UserManager.AddToRoleAsync(user, roleName);
             }
-            else if (!isUserSelected && (await unitOfWork.UserManager.IsInRoleAsync(user, roleName)))
+            catch (Exception ex)
             {
-                return await unitOfWork.UserManager.RemoveFromRoleAsync(user, roleName);
+                throw ex;
             }
-            return null;
         }
 
         public IEnumerable<RoleDTO> GetAllRoles()
         {
-            return unitOfWork.RoleManager.Roles.Select(e =>  mapper.Map<RoleDTO>(e));
+            try
+            {
+                return unitOfWork.RoleManager.Roles.Select(e => mapper.Map<RoleDTO>(e));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
         public void Dispose()
         {
@@ -71,37 +100,52 @@ namespace BankTransactionWeb.BAL.Infrastucture
         }
         public async Task<IEnumerable<PersonInRoleDTO>> GetAllUsersInCurrentRole(string id)
         {
-            var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
-            if (identityRole == null)
+            try
             {
-                return null;
-            }
-            var resultList = new List<PersonInRoleDTO>();
-            foreach (var user in await unitOfWork.PersonRepository.GetAll())
-            {
-                var userInRole = mapper.Map<PersonInRoleDTO>(user);
-                if (userInRole == null || user.ApplicationUser==null)
-                    continue;
-                if (await unitOfWork.UserManager.IsInRoleAsync(user.ApplicationUser, identityRole.Name))
+                var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
+                if (identityRole == null)
                 {
-                    userInRole.IsSelected = true;
+                    return null;
                 }
-                else
-                    userInRole.IsSelected = false;
-                resultList.Add(userInRole);
+                var resultList = new List<PersonInRoleDTO>();
+                foreach (var user in await unitOfWork.PersonRepository.GetAll())
+                {
+                    var userInRole = mapper.Map<PersonInRoleDTO>(user);
+                    if (userInRole == null || user.ApplicationUser == null)
+                        continue;
+                    if (await unitOfWork.UserManager.IsInRoleAsync(user.ApplicationUser, identityRole.Name))
+                    {
+                        userInRole.IsSelected = true;
+                    }
+                    else
+                        userInRole.IsSelected = false;
+                    resultList.Add(userInRole);
+                }
+                return resultList;
             }
-            return resultList;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
         }
 
         public async Task<RoleDTO> GetRoleById(string id)
         {
-            var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
-            if (identityRole == null)
+            try
             {
-                return null;
+                var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
+                if (identityRole == null)
+                {
+                    return null;
+                }
+                return mapper.Map<RoleDTO>(identityRole);
             }
-            return mapper.Map<RoleDTO>(identityRole);
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
 
@@ -109,23 +153,23 @@ namespace BankTransactionWeb.BAL.Infrastucture
         {
             try
             {
-            var identityRole = await GetRoleById(id);
-            if (identityRole == null)
-            {
-                return null;
-            }
-            var roleMapped = mapper.Map<RoleDTO>(identityRole);
-            {
-                foreach (var user in unitOfWork.UserManager.Users)
+                var identityRole = await GetRoleById(id);
+                if (identityRole == null)
                 {
-                    if (await unitOfWork.UserManager.IsInRoleAsync(user, identityRole.Name))
+                    return null;
+                }
+                var roleMapped = mapper.Map<RoleDTO>(identityRole);
+                {
+                    foreach (var user in unitOfWork.UserManager.Users)
                     {
-                        roleMapped.Users.Add(user.UserName);
+                        if (await unitOfWork.UserManager.IsInRoleAsync(user, identityRole.Name))
+                        {
+                            roleMapped.Users.Add(user.UserName);
+                        }
                     }
                 }
-            }
 
-            return roleMapped;
+                return roleMapped;
             }
             catch (Exception ex)
             {
@@ -137,18 +181,25 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task<IdentityResult> UpdateRole(RoleDTO role)
         {
-            var identityRole = await unitOfWork.RoleManager.FindByIdAsync(role.Id);
-            identityRole.Name = role.Name;
-            if (identityRole == null)
+            try
             {
-                return null;
+                var identityRole = await unitOfWork.RoleManager.FindByIdAsync(role.Id);
+                identityRole.Name = role.Name;
+                if (identityRole == null)
+                {
+                    return null;
+                }
+                var result = await unitOfWork.RoleManager.UpdateAsync(identityRole);
+                return result;
             }
-            var result = await unitOfWork.RoleManager.UpdateAsync(identityRole);
-            return result;
+            catch (Exception ex)
+            {
+                logger.LogError($"An error ocurred : {ex.Message}. Inner exeption : {ex.InnerException}");
+                throw ex;
+
+            }
+            
         }
-
-       
-
 
     }
 }

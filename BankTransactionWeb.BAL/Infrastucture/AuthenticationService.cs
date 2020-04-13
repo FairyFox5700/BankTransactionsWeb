@@ -49,15 +49,16 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task<IdentityResult> RegisterPerson(PersonDTO person)
         {
+
             using (var trans = unitOfWork.BeginTransaction())
             {
-               
+
                 try
                 {
                     ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
                     if (user == null)
                     {
-                        user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
+                        user = new ApplicationUser { Email = person.Email, UserName = person.UserName, PhoneNumber = person.PhoneNumber };
                         var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
                         await unitOfWork.Save();
                         if (result.Succeeded)
@@ -94,74 +95,122 @@ namespace BankTransactionWeb.BAL.Infrastucture
 
         public async Task<bool> SendReserPasswordUrl(PersonDTO person)
         {
-            var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
-            if (user == null || !(await unitOfWork.UserManager.IsEmailConfirmedAsync(user)))
+            try
             {
-                return false;
-            }
-            var token = await unitOfWork.UserManager.GeneratePasswordResetTokenAsync(user);//
-            var confirmationLink = URLHelper.Action("ResetPassword", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
-            var message = new CustomMessage(new List<string>() { user.Email }, "Link for password reset", confirmationLink, null);
+                var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+                if (user == null || !(await unitOfWork.UserManager.IsEmailConfirmedAsync(user)))
+                {
+                    return false;
+                }
+                var token = await unitOfWork.UserManager.GeneratePasswordResetTokenAsync(user);//
+                var confirmationLink = URLHelper.Action("ResetPassword", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
+                var message = new CustomMessage(new List<string>() { user.Email }, "Link for password reset", confirmationLink, null);
 
-            await emailSender.SendEmailAsync(message);
-            return true;
+                await emailSender.SendEmailAsync(message);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         public async Task<IdentityResult> ResetPasswordForPerson(PersonDTO person)
         {
-            var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
-            if (user == null)
+            try
             {
-                return null;
+
+                var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+                if (user == null)
+                {
+                    return null;
+                }
+                var result = await unitOfWork.UserManager.ResetPasswordAsync(user, person.Token, person.Password);
+                return result;
             }
-            var result = await unitOfWork.UserManager.ResetPasswordAsync(user, person.Token, person.Password);
-            return result;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
         public bool IsUserSignedIn(ClaimsPrincipal user)
         {
-            if (unitOfWork.SignInManager.IsSignedIn(user))
-                return true;
-            else 
-                return false;
+            try
+            {
+                if (unitOfWork.SignInManager.IsSignedIn(user))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
         public async Task<SignInResult> LoginPerson(PersonDTO person)
         {
-            var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
-            if (user != null)
+            try
             {
-                if (!await unitOfWork.UserManager.IsEmailConfirmedAsync(user))
+                var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+                if (user != null)
                 {
-                    return null;
+                    if (!await unitOfWork.UserManager.IsEmailConfirmedAsync(user))
+                    {
+                        return null;
+                    }
+                    var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password,
+                        person.RememberMe,
+                        lockoutOnFailure: true);
+                    return result;
                 }
-                var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password, 
-                    person.RememberMe, 
-                    lockoutOnFailure: true);
-                return result;
+                return null;
             }
-            return null;
-            
+            catch (Exception ex)
+            {
+                throw ex;
+            }
            
+
+
         }
 
 
         public async Task SignOutPerson()
         {
-            await unitOfWork.SignInManager.SignOutAsync();
+            try
+            {
+                await unitOfWork.SignInManager.SignOutAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
 
 
         public async Task<IdentityResult> ConfirmUserEmailAsync(string email, string code)
         {
-            var user = await unitOfWork.UserManager.FindByEmailAsync(email);
-            if (user == null)
+            try
             {
-                return null;
+                var user = await unitOfWork.UserManager.FindByEmailAsync(email);
+                if (user == null)
+                {
+                    return null;
+                }
+                var result = await unitOfWork.UserManager.ConfirmEmailAsync(user, code);
+                return result;
             }
-            var result = await unitOfWork.UserManager.ConfirmEmailAsync(user, code);
-            return result;
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+          
         }
         public void Dispose()
         {
@@ -169,33 +218,3 @@ namespace BankTransactionWeb.BAL.Infrastucture
         }
     }
 }
-
-//public async Task<IdentityResult> RegisterPerson(PersonDTO person)
-//{
-//    ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
-//    if (user == null)
-//    {
-//        user = new ApplicationUser { Email = person.Email, UserName = person.UserName };
-//        var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
-//        if (result.Succeeded)
-//        {
-
-//            var personMapped = mapper.Map<Person>(person);
-//            personMapped.ApplicationUserId = user.Id;
-//            unitOfWork.PersonRepository.Add(personMapped);
-//            await unitOfWork.Save();
-//            await SignInPerson(user);
-//            return result;
-//        }
-//    }
-
-//    else
-//    {
-//        return null;
-//    }
-//}
-//public async Task<SignInResult> LoginPerson(PersonDTO person)
-//{
-//    var result = await unitOfWork.SignInManager.PasswordSignInAsync(person.UserName, person.Password, person.RememberMe, lockoutOnFailure: true);
-//    return result;
-//}

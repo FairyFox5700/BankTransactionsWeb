@@ -49,8 +49,6 @@ namespace RestWebBankTransactionApp.Controllers
         }
 
 
-
-
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
