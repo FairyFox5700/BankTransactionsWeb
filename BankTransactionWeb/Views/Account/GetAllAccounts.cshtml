@@ -13,9 +13,12 @@
                     <div class="col-6">
                         <h6 class="m-0 font-weight-bold text-primary">All accounts</h6>
                     </div>
+                    @if(User.IsInRole("Admin"))
+                    {
                     <div class="col-6 ">
                         <button class="btn btn-dark" asp-action="AddAccount" asp-controller="Account">Add new</button>
                     </div>
+                    }
                 </div>
             </div>
 

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     public class TransactionController : Controller
     {
         private readonly ITransactionService transactionService;
@@ -33,15 +33,15 @@ namespace BankTransactionWeb.Controllers
 
         //auth User
         [HttpGet]
-        [Authorize(Roles = "User")]
-        public async Task<IActionResult> MyTransaction(int userId)
+        [Authorize]
+        public async Task<IActionResult> MyTransaction()
         {
             try
             {
-                var transactions = (await transactionService.GetAllUserTransactions(userId));//maybe sort them
+                var transactions = (await transactionService.GetAllUserTransactions(HttpContext.User));//maybe sort them
                 logger.LogInformation("Successfully returned all  user transactions");
                 var transactionListVM = transactions.Select(tr => mapper.Map<TransactionListViewModel>(tr)).ToList();
-                return View(transactionListVM);
+                return View("~/Views/Transaction/GetAllTransactions.cshtml",transactionListVM);
             }
             catch (Exception ex)
             {
@@ -52,6 +52,7 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllTransactions()
         {
             try
@@ -69,6 +70,7 @@ namespace BankTransactionWeb.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddTransaction()
         {
             try
@@ -91,6 +93,7 @@ namespace BankTransactionWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddTransaction(AddTransactionViewModel transactionModel)
         {
             try
@@ -121,6 +124,7 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTransaction(int id)
         {
             try
@@ -150,6 +154,7 @@ namespace BankTransactionWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTransaction([FromForm]UpdateTransactionViewModel transactionModel)
         {
             try
@@ -201,7 +206,7 @@ namespace BankTransactionWeb.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTransaction(int id)
         {
             try

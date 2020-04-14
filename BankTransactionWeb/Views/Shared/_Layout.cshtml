@@ -9,9 +9,9 @@
     <script src="https://kit.fontawesome.com/d2ed3bb74c.js" crossorigin="anonymous"></script>
     <link href="~/css/accurateFieldStyle.css" rel="stylesheet" />
     <link href="~/css/StyleSheet.css" rel="stylesheet" />
-    <link href="~/css/styelForRegister.css" rel="stylesheet" />
-    <link href="~/css/styleForLogin.css" rel="stylesheet" />
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>\
+
+
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <environment include="Development">
 
         <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
@@ -39,9 +39,9 @@
                         <li class="nav-item">
                             <a class="nav-link " asp-area="" asp-controller="Transaction" asp-action="ExecuteTransaction">Transfer money</a>
                         </li>
-                        <li class="nav-item">
+                        @*<li class="nav-item">
                             <a class="nav-link " asp-area="" asp-controller="Account" asp-action="GetAllAccounts">About us</a>
-                        </li>
+                        </li>*@
 
                         @await Html.PartialAsync("_LoginPartialNav")
                     </ul>

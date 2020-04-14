@@ -1,17 +1,16 @@
 ﻿using BankTransactionWeb.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
+
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
-{ 
+{
     public static class ModelBuilderExtensions
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Person>().HasData(
-            new Person { Id = 1, Name = "Андрій", Surname = "Коваленко", LastName = "Володимирович", DataOfBirth = new DateTime(1990, 2, 23) },
+            new Person { Id = 1, Name = "Андрій", Surname = "Kovalenko", LastName = "Volodimirovitch", DataOfBirth = new DateTime(1990, 2, 23) },
             new Person { Id = 2, Name = "Vasil", Surname = "Kondratyuk", LastName = "Volodymirovich", DataOfBirth = new DateTime(1930, 2, 23) },
             new Person { Id = 3, Name = "Masha", Surname = "Koshova", LastName = "Olegivna", DataOfBirth = new DateTime(1987, 3, 27) });
             modelBuilder.Entity<Account>().HasData(
@@ -27,10 +26,10 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
             new Shareholder { Id = 2, PersonId = 2, CompanyId = 1 },
             new Shareholder { Id = 3, PersonId = 3, CompanyId = 2 });
             modelBuilder.Entity<Transaction>().HasData(
-            new Transaction { Id = 1, Amount = 300,AccountSourceId=1,AccountDestinationId=2, DateOftransfering = new DateTime(2004, 8, 3) },
+            new Transaction { Id = 1, Amount = 300, AccountSourceId = 1, AccountDestinationId = 2, DateOftransfering = new DateTime(2004, 8, 3) },
             new Transaction { Id = 2, Amount = 70, AccountSourceId = 1, AccountDestinationId = 2, DateOftransfering = new DateTime(2006, 6, 3) },
-            new Transaction { Id = 3, Amount = 70, AccountSourceId = 2, AccountDestinationId = 2, DateOftransfering = new DateTime(2009, 8, 3)},
-            new Transaction { Id = 4, Amount = 34, AccountSourceId = 1, AccountDestinationId = 2, DateOftransfering = new DateTime(2004, 8, 3)},
+            new Transaction { Id = 3, Amount = 70, AccountSourceId = 2, AccountDestinationId = 2, DateOftransfering = new DateTime(2009, 8, 3) },
+            new Transaction { Id = 4, Amount = 34, AccountSourceId = 1, AccountDestinationId = 2, DateOftransfering = new DateTime(2004, 8, 3) },
             new Transaction { Id = 5, Amount = 900, AccountSourceId = 4, AccountDestinationId = 2, DateOftransfering = new DateTime(2004, 8, 3) },
             new Transaction { Id = 6, Amount = 800, AccountSourceId = 3, AccountDestinationId = 2, DateOftransfering = new DateTime(2004, 8, 3) });
         }

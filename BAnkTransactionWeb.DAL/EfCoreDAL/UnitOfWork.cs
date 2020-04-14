@@ -95,7 +95,15 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
 
         public async Task Save()
         {
-            await context.SaveChangesAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+          
         }
         //public void Commit()
         //{

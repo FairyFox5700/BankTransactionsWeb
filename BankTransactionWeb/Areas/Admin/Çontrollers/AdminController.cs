@@ -180,12 +180,12 @@ namespace BankTransactionWeb.Areas.Admin.Controllers
         {
             try
             {
+                ViewBag.roleId = roleId;
                 if (!ModelState.IsValid)
                 {
                     logger.LogError("User in role model send by client is not valid.");
                     return View(roleId);
                 }
-                ViewBag.roleId = roleId;
                 var currentRole = await adminService.GetRoleById(roleId);
                 if (currentRole == null)
                 {
@@ -205,7 +205,7 @@ namespace BankTransactionWeb.Areas.Admin.Controllers
                     }
 
                 }
-                return View(roleId);
+                return RedirectToAction(nameof(GetAllRoles));
             }
             catch (Exception ex)
             {

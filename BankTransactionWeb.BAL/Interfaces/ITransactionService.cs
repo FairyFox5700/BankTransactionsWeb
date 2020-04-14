@@ -1,6 +1,7 @@
 ﻿using BankTransactionWeb.BAL.Models;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,6 @@ namespace BankTransactionWeb.BAL.Interfaces
         Task DeleteTransaction(TransactionDTO transaction);
         Task<int> TransActionCountByData(DateTime dataOfTrnsaction);
         Task ExecuteTransaction(int accountSourceId, string accountDestinationNumber, decimal amount);
-        Task<IEnumerable<TransactionDTO>> GetAllUserTransactions(int userId);
+        Task<IEnumerable<TransactionDTO>> GetAllUserTransactions(ClaimsPrincipal user );
     }
 }

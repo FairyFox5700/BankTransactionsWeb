@@ -11,11 +11,14 @@
         <div class="card-header py-3">
             <div class="row">
                 <div class="col-6">
-                    <h6 class="m-0 font-weight-bold text-primary">All accounts</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">All transactions</h6>
                 </div>
+                @if (User.IsInRole("Admin"))
+                {
                 <div class="col-6 ">
                     <button class="btn btn-dark" asp-action="AddTransaction" asp-controller="Transaction">Add new</button>
                 </div>
+                }
             </div>
         </div>
 

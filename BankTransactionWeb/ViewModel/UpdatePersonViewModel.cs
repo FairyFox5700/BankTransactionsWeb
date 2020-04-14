@@ -30,6 +30,7 @@ namespace BankTransactionWeb.ViewModel
         public DateTime DataOfBirth { get; set; }
         [Phone]
         [Required]
+        [StringLength( 10 , MinimumLength = 10)]
         public string PhoneNumber{ get; set; }
         public string ApplicationUserFkId { get; set; }
     }

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.BAL.Infrastucture
@@ -174,17 +175,22 @@ namespace BankTransactionWeb.BAL.Infrastucture
         }
 
 
-        public async Task<IEnumerable<TransactionDTO>> GetAllUserTransactions(int userId)
+        public async Task<IEnumerable<TransactionDTO>> GetAllUserTransactions(ClaimsPrincipal user)
         {
             try
             {
-
-                var userAccounts = (await unitOfWork.PersonRepository.GetById(userId)).Accounts;
+                var id = unitOfWork.UserManager.GetUserId(user);
+                var personFinded = (await unitOfWork.PersonRepository.GetAll()).Where(e => e.ApplicationUserFkId == id).FirstOrDefault();
+                var userAccounts = (await unitOfWork.PersonRepository.GetById(personFinded.Id)).Accounts;
                 var listOfTransaction = new List<TransactionDTO>();
                 foreach (var account in userAccounts)
                 {
                     var transactions = account.Transactions;
-                    listOfTransaction.AddRange(transactions.Select(t => mapper.Map<TransactionDTO>(t)));
+                    if (transactions != null)
+                    {
+                        listOfTransaction.AddRange(transactions.Select(t => mapper.Map<TransactionDTO>(t)));
+                    }
+
                 }
                 return listOfTransaction;
 

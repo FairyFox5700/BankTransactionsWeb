@@ -31,12 +31,23 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
 
         public virtual void Delete(TEntity entity)
         {
-            if (entity == null) throw new ArgumentNullException(nameof(entity));
-            if (context.Entry(entity).State == EntityState.Detached)
+            //if (entity == null) throw new ArgumentNullException(nameof(entity));
+            //if (context.Entry(entity).State == EntityState.Detached)
+            //{
+            //    DBSet.Attach(entity);
+            //}
+            //DBSet.Remove(entity);
+            var dbEntityEntry = this.context.Entry(entity);
+            if (dbEntityEntry.State != EntityState.Detached)
+            {
+
+                dbEntityEntry.State = EntityState.Deleted;
+            }
+            else
             {
                 DBSet.Attach(entity);
+                DBSet.Remove(entity);
             }
-            DBSet.Remove(entity);
         }
 
         public virtual  async Task<IEnumerable<TEntity>> GetAll()
@@ -54,24 +65,9 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.Repositories
         {
             DBSet.Attach(entity);
             context.Entry(entity).State = EntityState.Modified;
-            //var existingEntity = DBSet.Find(entity);
-            //if (existingEntity != null)
-            //{
-            //    //already in context
-            //    var attachedEntry = context.Entry(existingEntity);
-            //    attachedEntry.CurrentValues.SetValues(entity);
-            //}
-            //else
-            //{
-            //    DBSet.Update(entity);
-            //}
+
         }
-        //    if(context.Entry<TEntity>(entity).State ==EntityState.Detached)
-        //    {
-        //        DBSet.Attach(entity);
-        //    }
-        //    DBSet.Update(entity);
-        //}
+  
 
         private bool disposed = false;
 

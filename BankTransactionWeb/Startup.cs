@@ -5,10 +5,12 @@ using BankTransactionWeb.Configuration;
 using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
 using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
 using BankTransactionWeb.DAL.Entities;
+using BankTransactionWeb.DAL.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -70,7 +72,7 @@ namespace BankTransactionWeb
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, BankTransactionContext context)
         {
             if (env.IsDevelopment())
             {
@@ -88,6 +90,7 @@ namespace BankTransactionWeb
 
             app.UseAuthentication();
             app.UseAuthorization();
+            MyIdentityDataInitializer.SeedData(userManager, roleManager, context);
 
             app.UseEndpoints(endpoints =>
             {
@@ -98,6 +101,7 @@ namespace BankTransactionWeb
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }

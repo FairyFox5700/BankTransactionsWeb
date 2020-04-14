@@ -72,7 +72,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
                             unitOfWork.PersonRepository.Add(personMapped);
                             await unitOfWork.Save();
                             await emailSender.SendEmailAsync(message);
-                            await unitOfWork.UserManager.AddToRoleAsync(user, "Visitor");
+                            await unitOfWork.UserManager.AddToRoleAsync(user, "User");
                             unitOfWork.CommitTransaction();
                             return result;
                         }
@@ -164,7 +164,7 @@ namespace BankTransactionWeb.BAL.Infrastucture
                     }
                     var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password,
                         person.RememberMe,
-                        lockoutOnFailure: true);
+                        lockoutOnFailure: false);
                     return result;
                 }
                 return null;

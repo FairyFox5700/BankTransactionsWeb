@@ -57,19 +57,19 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                 {
                     var person = mapper.Map<PersonDTO>(model);
                     var result = await authService.LoginPerson(person);
-                    if (result.Succeeded)
+                    if (result == null)
+                    {
+                        ModelState.AddModelError(string.Empty, "You must confirm your email.");
+                    }
+                    else if (result.Succeeded)
                     {
                         logger.LogInformation("User  succesfully logged in.");
                         return RedirectToLocal(model.ReturnUrl);
                     }
-                    if (result.IsLockedOut)
+                    else if (result.IsLockedOut)
                     {
                         logger.LogWarning("User account locked out.");
                         return RedirectToAction(nameof(Lockout));
-                    }
-                    if (result == null)
-                    {
-                        ModelState.AddModelError(string.Empty, "You must confirm your email.");
                     }
                     else
                     {

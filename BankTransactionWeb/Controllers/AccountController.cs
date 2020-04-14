@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
 {
-    [Authorize(Roles = "Admin")]
+  
     public class AccountController : Controller
     {
         private readonly IAccountService accountService;
@@ -31,6 +31,7 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllAccounts()
         {
             try
@@ -47,13 +48,16 @@ namespace BankTransactionWeb.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> AddAccount()
         {
             try
             {
                 var accountVM = new AddAccountViewModel()
                 {
-                    People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName")
+                    People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName"),
+                    Number = accountService.GenrateCardNumber(16)
                 };
 
                 return View(accountVM);
@@ -68,6 +72,7 @@ namespace BankTransactionWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> AddAccount(AddAccountViewModel accountModel)
         {
             try
@@ -98,6 +103,7 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAccount(int id)
         {
             try
@@ -126,6 +132,7 @@ namespace BankTransactionWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAccount([FromForm]UpdateAccountViewModel accountModel)
         {
             try
@@ -177,7 +184,7 @@ namespace BankTransactionWeb.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAccount(int id)
         {
             try
@@ -210,13 +217,14 @@ namespace BankTransactionWeb.Controllers
 
         //auth User
         [HttpGet]
-        public async Task<IActionResult> MyAccounts(int userId)
+        [Authorize]
+        public async Task<IActionResult> MyAccounts()
         {
             try
             {
-                var accounts = (await accountService.GetMyAccounts(userId)).ToList();//maybe sort them
+                var accounts = (await accountService.GetMyAccounts(HttpContext.User)).ToList();//maybe sort them
                 logger.LogInformation("Successfully returned all accounts");
-                return View(accounts);
+                return View("~/Views/Account/GetAllAccounts.cshtml", accounts);
             }
             catch (Exception ex)
             {

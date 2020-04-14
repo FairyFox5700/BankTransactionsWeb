@@ -8,7 +8,7 @@ using System.Text;
 
 namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
 {
-   public class BankTransactionContext : IdentityDbContext<ApplicationUser>
+    public class BankTransactionContext : IdentityDbContext<ApplicationUser>
     {
         private readonly ILogger<BankTransactionContext> logger;
 
@@ -18,16 +18,18 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
         public DbSet<Company> Companies { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
 
+        
+
         public BankTransactionContext(DbContextOptions<BankTransactionContext> options, ILogger<BankTransactionContext> logger)
             : base(options)
         {
             this.logger = logger;
-           // Database.EnsureCreated();
+            // Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-          
+
             modelBuilder.Entity<ApplicationUser>().HasKey(k => k.Id);
             modelBuilder.Entity<Person>().HasOne(p => p.ApplicationUser).WithOne(a => a.Person).HasForeignKey<Person>(p => p.ApplicationUserFkId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Transaction>()
@@ -43,6 +45,38 @@ namespace BankTransactionWeb.DAL.EfCoreDAL.EfCore
             }
             base.OnModelCreating(modelBuilder);
 
+        }
+
+        public Company Company
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public Person Person
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public Shareholder Shareholder
+        {
+            get => default;
+            set
+            {
+            }
+        }
+
+        public Account Account
+        {
+            get => default;
+            set
+            {
+            }
         }
     }
 }

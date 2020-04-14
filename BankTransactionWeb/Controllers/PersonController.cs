@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
 {
-    [Authorize(Roles = "Admin")]
+   // [Authorize(Roles = "Admin")]
     public class PersonController : Controller
     {
         private readonly IPersonService personService;
@@ -27,6 +27,7 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllPersons(string name, string surname, string lastname,
             string accountNumber, string accountTransaction, string companyName)
         {
@@ -56,7 +57,7 @@ namespace BankTransactionWeb.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "User")]
+        [Authorize]
         public async Task<IActionResult> UpdatePerson(int id)
         {
             try
@@ -88,7 +89,7 @@ namespace BankTransactionWeb.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "User")]
+        [Authorize]
         public async Task<IActionResult> UpdatePerson([FromForm]UpdatePersonViewModel personModel)
         {
             try
@@ -104,15 +105,16 @@ namespace BankTransactionWeb.Controllers
                     {
                         var updatedPerson = mapper.Map<PersonDTO>(personModel);
                         var result = await personService.UpdatePerson(updatedPerson);
-                        if (result.Succeeded)
-                        {
-                            return RedirectToAction(nameof(GetAllPersons));
-                        }
                         if (result == null)
                         {
                             logger.LogError($"Person with id {personModel.Id} not find");
                             return NotFound();
                         }
+                        if (result.Succeeded)
+                        {
+                            return RedirectToAction(nameof(GetPersonCardCabinet));
+                        }
+
                         else
                         {
                             AddModelErrors(result);
@@ -141,7 +143,8 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "User")]
+       // [Authorize(Roles = "User")]
+       [Authorize]
         public async Task<IActionResult> GetPersonCardCabinet()
         {
             try
@@ -178,7 +181,7 @@ namespace BankTransactionWeb.Controllers
             }
 
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePerson(int id)
         {
             try
@@ -192,13 +195,16 @@ namespace BankTransactionWeb.Controllers
                 try
                 {
                     var result = await personService.DeletePerson(person);
+                    if (result == null)
+                    {
+                        return NotFound();
+                    }
                     if (result.Succeeded)
                     {
                         return RedirectToAction(nameof(GetAllPersons));
                     }
                     else
                     {
-                        AddModelErrors(result);
                         return NotFound();
                     }
                 }
