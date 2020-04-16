@@ -38,7 +38,7 @@ namespace RestWebBankTransactionApp.Controllers
             {
                 return Ok(await jwtService.GenerateJWTToken(model.Email));
             }
-            if (result == null)
+            if (result== null)
             {
                 return BadRequest( "You must confirm your email.");
             }

@@ -104,13 +104,13 @@ namespace BankTransactionWeb.Controllers
                     try
                     {
                         var updatedPerson = mapper.Map<PersonDTO>(personModel);
-                        var result = await personService.UpdatePerson(updatedPerson);
+                        var result= await personService.UpdatePerson(updatedPerson);
                         if (result == null)
                         {
                             logger.LogError($"Person with id {personModel.Id} not find");
                             return NotFound();
                         }
-                        if (result.Succeeded)
+                        else if (result.Succeeded)
                         {
                             return RedirectToAction(nameof(GetPersonCardCabinet));
                         }
@@ -199,7 +199,7 @@ namespace BankTransactionWeb.Controllers
                     {
                         return NotFound();
                     }
-                    if (result.Succeeded)
+                    else if (result.Succeeded)
                     {
                         return RedirectToAction(nameof(GetAllPersons));
                     }

@@ -10,8 +10,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using RestWebBankTransactionApp.Controllers;
+using RestWebBankTransactionApp.Extensions;
 using System.Text;
 
 namespace RestWebBankTransactionApp
@@ -32,7 +34,7 @@ namespace RestWebBankTransactionApp
             IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
             services.AddSingleton(mapper);
             services.AddDALServices();
-            services.AddTransient<IJwtSecurityService,JWTSecurityService>();
+            services.AddTransient<IJwtSecurityService, JWTSecurityService>();
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.User.RequireUniqueEmail = false;
@@ -54,8 +56,11 @@ namespace RestWebBankTransactionApp
                          ValidateIssuerSigningKey = true,
                      };
                  });
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -64,6 +69,7 @@ namespace RestWebBankTransactionApp
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.ConfigureErrorHandler();
 
             app.UseRouting();
 

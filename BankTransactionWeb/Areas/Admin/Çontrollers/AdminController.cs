@@ -130,11 +130,11 @@ namespace BankTransactionWeb.Areas.Admin.Controllers
                     logger.LogError($"Role with id {model.Id} was not finded");
                     return NotFound();
                 }
-                if (result.Succeeded)
+                else if (result.Succeeded)
                 {
                     return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
                 }
-                if (result == null)
+                else if (result == null)
                 {
                     return NotFound();
                 }
@@ -197,7 +197,7 @@ namespace BankTransactionWeb.Areas.Admin.Controllers
                     var result = await adminService.AddUserToRole(model[i].AppUserId, model[i].IsSelected, currentRole.Name);
                     if (result == null)
                         continue;
-                    if (result.Succeeded)
+                   else if (result.Succeeded)
                     {
                         if (i < model.Count - 1)
                             continue;
@@ -235,7 +235,7 @@ namespace BankTransactionWeb.Areas.Admin.Controllers
                     logger.LogError($"Role with Id = {id} cannot be found");
                     return NotFound();
                 }
-                if (result.Succeeded)
+                else if (result.Succeeded)
                 {
                     return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
                 }

@@ -50,8 +50,7 @@ namespace BankTransactionWeb.Configuration
                 confg.CreateMap<TransactionDTO, TransactionListViewModel>()
                 .ForMember(vm => vm.AccountDestinationeNumber, dto => dto.MapFrom(s => s.DestinationAccount.Number))
                 .ForMember(vm => vm.AccountSourceNumber, dto => dto.MapFrom(s => s.SourceAccount.Number));
-                //confg.CreateMap<TransactionListViewModel,TransactionDTO>()
-                //.ForPath(dto=>dto.)
+
                 confg.CreateMap<TransactionDTO, UpdateTransactionViewModel>();
                 confg.CreateMap<AddTransactionViewModel, TransactionDTO>();
                 confg.CreateMap<UpdateTransactionViewModel, TransactionDTO>();
@@ -88,14 +87,6 @@ namespace BankTransactionWeb.Configuration
                  .ForMember(x => x.Id, opt => opt.Ignore()); ;
                 confg.CreateMap<PersonDTO, ApplicationUser>()
                  .ForMember(x => x.Id, opt => opt.Ignore());
-               // confg.CreateMap<PersonInRoleDTO, ApplicationUser>()
-               // .ForPath(x => x.Person.Name, s => s.MapFrom(e => e.Name))
-               //.ForPath(x => x.Person.Surname, s => s.MapFrom(e => e.Surname))
-               //.ForPath(x => x.Person.LastName, s => s.MapFrom(e => e.LastName));
-               // confg.CreateMap<ApplicationUser, PersonInRoleDTO>()
-               // .ForPath(x => x.Name, s => s.MapFrom(e => e.Person.Name))
-               //.ForPath(x => x.Surname, s => s.MapFrom(e => e.Person.Surname))
-               //.ForPath(x => x.LastName, s => s.MapFrom(e => e.Person.LastName));
                 confg.CreateMap<PersonInRoleDTO, Person>()
                  .ForMember(x => x.ApplicationUserFkId , s => s.MapFrom(e => e.AppUserId)); ;
                 confg.CreateMap<Person, PersonInRoleDTO>()

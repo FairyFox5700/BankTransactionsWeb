@@ -1,13 +1,10 @@
-﻿using System;
+﻿using BankTransactionWeb.BAL.Interfaces;
+using BankTransactionWeb.BAL.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace RestWebBankTransactionApp.Controllers
 {
@@ -27,18 +24,9 @@ namespace RestWebBankTransactionApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ShareholderDTO>>> GetAllShareholders()
         {
-            try
-            {
-                var shareholders = (await shareholderService.GetAllShareholders()).ToList(); 
-                logger.LogInformation("Successfully returned all shareholders");
-                return shareholders;
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllShareholders)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            var shareholders = (await shareholderService.GetAllShareholders()).ToList();
+            logger.LogInformation("Successfully returned all shareholders");
+            return shareholders;
         }
         // PUT /api/Shareholder/{id}
         [HttpPut("{id}")]
@@ -54,75 +42,38 @@ namespace RestWebBankTransactionApp.Controllers
                 logger.LogError($"Shareholder with id {id} not find");
                 return NotFound();
             }
-            try
-            {
-                await shareholderService.UpdateShareholder(shareholder);
-                return Ok(currentShareholder);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Unable to update shareholder becuase of {ex.Message}");
-                ModelState.AddModelError("", "Unable to save changes. " +
-                "Try again, and if the problem persists, " +
-                "see your system administrator.");
-                return NotFound();
-            }
+            await shareholderService.UpdateShareholder(shareholder);
+            return Ok(currentShareholder);
 
         }
 
-        // POST: api/AShareholder
+        // POST: api/Shareholder
         [HttpPost]
         public async Task<IActionResult> AddShareholder(ShareholderDTO shareholder)
         {
-            try
+            if (shareholder == null)
             {
-                if (shareholder == null)
-                {
-                    logger.LogError("Object of type shareholder send by client was null.");
-                    return BadRequest("Object of type shareholder is null");
-                }
-                else
-                {
-                    await shareholderService.AddShareholder(shareholder);
-                    return Ok(shareholder);
-                }
+                logger.LogError("Object of type shareholder send by client was null.");
+                return BadRequest("Object of type shareholder is null");
             }
-            catch (Exception ex)
+            else
             {
-                logger.LogError($"Catch an exception in method {nameof(AddShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
+                await shareholderService.AddShareholder(shareholder);
+                return Ok(shareholder);
             }
         }
         // DELETE /api/Shareholder/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteShareholder(int id)
         {
-            try
+            var shareholder = await shareholderService.GetShareholderById(id);
+            if (shareholder == null)
             {
-                var shareholder = await shareholderService.GetShareholderById(id);
-                if (shareholder == null)
-                {
-                    logger.LogError($"Shareholder with id {id} not find");
-                    return NotFound();
-                }
-                try
-                {
-                    await shareholderService.DeleteShareholder(shareholder);
-                    return Ok("Deleted succesfully");
-                }
-                catch (DbUpdateException ex)
-                {
-                    logger.LogError($"Unable to update shareholder becuase of {ex.Message}");
-                    return StatusCode(500, "Internal server error");
-                }
+                logger.LogError($"Shareholder with id {id} not find");
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(DeleteShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            await shareholderService.DeleteShareholder(shareholder);
+            return Ok("Deleted succesfully");
 
         }
     }

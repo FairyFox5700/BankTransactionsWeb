@@ -76,12 +76,16 @@ namespace BankTransactionWeb
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-
+                var options = new DeveloperExceptionPageOptions
+                {
+                    SourceCodeLineCount = 2
+                };
+                app.UseDeveloperExceptionPage(options);
             }
 
             else
             {
+               
                 app.UseExceptionHandler("/Home/Error");
             }
             app.UseStaticFiles();
@@ -90,7 +94,7 @@ namespace BankTransactionWeb
 
             app.UseAuthentication();
             app.UseAuthorization();
-            MyIdentityDataInitializer.SeedData(userManager, roleManager, context);
+            //MyIdentityDataInitializer.SeedData(userManager, roleManager, context);
 
             app.UseEndpoints(endpoints =>
             {

@@ -244,7 +244,7 @@ namespace BankTransactionWeb.Controllers
             {
                 var executeTransactionVM = new ExecuteTransactionViewModel()
                 {
-                    Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number")
+                    Accounts = new SelectList(await accountService.GetMyAccounts(HttpContext.User), "Id", "Number")
                 };
 
                 return View(executeTransactionVM);
@@ -260,16 +260,14 @@ namespace BankTransactionWeb.Controllers
 
         [HttpPost]
         [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ExecuteTransaction([FromForm]ExecuteTransactionViewModel executeTransactionViewModel)
         {
             try
             {
-
                 try
                 {
-                    executeTransactionViewModel.Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number");
-
-
+                    executeTransactionViewModel.Accounts = new SelectList(await accountService.GetMyAccounts(HttpContext.User), "Id", "Number");
                     if (ModelState.IsValid)
                     {
                         await transactionService.ExecuteTransaction(executeTransactionViewModel.AccountSourceId,

@@ -73,7 +73,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "The attempt to lo in was unsuccessfull.");
+                        ModelState.AddModelError(string.Empty, "The attempt to log in was unsuccessfull.");
                         return View(model);
                     }
                 }
@@ -130,7 +130,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                         ModelState.AddModelError("RegiterFailed", "There is alreasy user with this login");
                         return View(model);
                     }
-                    if (result.Succeeded)
+                    else if (result.Succeeded)
                     {
                         logger.LogInformation("Successfully created new user.");
                         logger.LogInformation("User signed in a new account with password.");
@@ -165,7 +165,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                 {
                     return View("Error");
                 }
-                if (result.Succeeded)
+                else if (result.Succeeded)
                     return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
                 else
                     return View("Error");
@@ -288,7 +288,7 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                         logger.LogError("The user was not found");
                         return View(nameof(ResetPasswordConfirmation));
                     }
-                    if (result.Succeeded)
+                    else if (result.Succeeded)
                     {
                         return View(nameof(ResetPasswordConfirmation));
                     }
