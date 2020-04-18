@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RestWebBankTransactionApp.Models
+namespace BankTransaction.Api.Models
 {
     public class RegisterModel
     {

@@ -1,4 +1,4 @@
-﻿using BankTransactionWeb.BAL.Models;
+﻿using BankTransaction.BAL.Implementation.DTOModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

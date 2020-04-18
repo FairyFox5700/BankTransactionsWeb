@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.Areas.Admin.Models.ViewModels;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Web.Areas.Admin.Models.ViewModels;
 
-namespace BankTransactionWeb.Areas.Admin.Controllers
+namespace BankTransaction.Web.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
     [Area("Admin")]

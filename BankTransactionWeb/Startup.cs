@@ -1,11 +1,6 @@
 using AutoMapper;
-using BankTransactionWeb.BAL.Cofiguration;
-using BankTransactionWeb.BAL.Infrastucture.MessageServices;
-using BankTransactionWeb.Configuration;
-using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
-using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
-using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Interfaces;
+using BankTransaction.DAL.Implementation.Core;
+using BankTransaction.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace BankTransactionWeb
+namespace BankTransaction.Web
 {
     public class Startup
     {
@@ -33,9 +28,9 @@ namespace BankTransactionWeb
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages().AddRazorRuntimeCompilation();
-            IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
-            services.AddSingleton(mapper);
-            services.AddDALServices();
+            //IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
+            //services.AddSingleton(mapper);
+            ///services.AddDALServices();!!!!!!!!!!!!!!!!!!!!!!!!
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
            {
                options.User.RequireUniqueEmail = false;

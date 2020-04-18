@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransactionWeb.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +11,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.Controllers
+namespace BankTransaction.Web.Controllers
 {
   
     public class AccountController : Controller

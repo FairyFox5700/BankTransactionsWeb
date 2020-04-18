@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransactionWeb.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

@@ -1,12 +1,12 @@
-﻿using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
+﻿using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RestWebBankTransactionApp.Controllers
+namespace BankTransaction.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,27 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="BankTransactionWeb.DAL.Entities.Account" Collapsed="true">
+  <Class Name="BankTransaction.Entities.Account" Collapsed="true">
     <Position X="4.75" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AICAAAAAAAAAAAAEAEgAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\Account.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BankTransactionWeb.DAL.Entities.ApplicationUser" Collapsed="true">
+  <Class Name="BankTransaction.Entities.ApplicationUser" Collapsed="true">
     <Position X="10.25" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\ApplicationUser.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BankTransactionWeb.DAL.Entities.BaseEntity" Collapsed="true">
+  <Class Name="BankTransaction.Entities.BaseEntity" Collapsed="true">
     <Position X="4.75" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\BaseEntity.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BankTransactionWeb.DAL.Entities.Person" Collapsed="true">
+  <Class Name="BankTransaction.Entities.Person" Collapsed="true">
     <Position X="8.25" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAQAAAAgAQABAAAAQCAAAAAAAAAAAg=</HashCode>
@@ -31,37 +31,37 @@
       <Property Name="ApplicationUser" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="BankTransactionWeb.DAL.Entities.Company" Collapsed="true">
+  <Class Name="BankTransaction.Entities.Company" Collapsed="true">
     <Position X="1.25" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAAAAAAAAAAAAQQAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Entities\Company.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BankTransactionWeb.DAL.Entities.Transaction" Collapsed="true">
+  <Class Name="BankTransaction.Entities.Transaction" Collapsed="true">
     <Position X="3" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAACAACAAAAAAEAAAAAAAAAAAQI=</HashCode>
       <FileName>Entities\Transaction.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BankTransactionWeb.DAL.Entities.Shareholder" Collapsed="true">
+  <Class Name="BankTransaction.Entities.Shareholder" Collapsed="true">
     <Position X="6.5" Y="2" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAAAAAAAIAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
       <FileName>Entities\Shareholder.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="BankTransactionWeb.DAL.EfCoreDAL.EfCore.BankTransactionContext" Collapsed="true">
+  <Class Name="BankTransaction.DAL.Implementation.Core.BankTransactionContext" Collapsed="true">
     <Position X="5.25" Y="3.25" Width="1.5" />
-    <InheritanceLine Type="BankTransactionWeb.DAL.Entities.Transaction" ManuallyRouted="true" FixedToPoint="true">
+    <InheritanceLine Type="BankTransaction.Entities.Transaction" ManuallyRouted="true" FixedToPoint="true">
       <Path>
         <Point X="3.75" Y="2.691" />
         <Point X="3.75" Y="3.278" />
         <Point X="5.25" Y="3.278" />
       </Path>
     </InheritanceLine>
-    <AssociationLine Name="Shareholder" Type="BankTransactionWeb.DAL.Entities.Shareholder">
+    <AssociationLine Name="Shareholder" Type="BankTransaction.Entities.Shareholder">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-0.514" Y="0.032" />
       </MemberNameLabel>
@@ -77,7 +77,7 @@
       <Property Name="Account" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="BankTransactionWeb.DAL.EfCoreDAL.UnitOfWork" Collapsed="true">
+  <Class Name="BankTransaction.DAL.Implementation.EfCoreDAL.UnitOfWork" Collapsed="true">
     <Position X="13.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAICAIChICAQAAARAAAgAQAAAAAICAAAAAgAAAAAqAA=</HashCode>
@@ -88,49 +88,49 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="BankTransactionWeb.DAL.Interfaces.IAccountRepository" Collapsed="true">
+  <Interface Name="BankTransaction.DAL.Implementation.Interfaces.IAccountRepository" Collapsed="true">
     <Position X="1" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IAccountRepository.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="BankTransactionWeb.DAL.Interfaces.IPersonRepository" Collapsed="true">
+  <Interface Name="BankTransaction.DAL.Implementation.Interfaces.IPersonRepository" Collapsed="true">
     <Position X="5.25" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IPersonRepository.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="BankTransactionWeb.DAL.Interfaces.ICompanyRepository" Collapsed="true">
+  <Interface Name="BankTransaction.DAL.Implementation.Interfaces.ICompanyRepository" Collapsed="true">
     <Position X="3" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\ICompanyRepository.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="BankTransactionWeb.DAL.Interfaces.IRepository&lt;TEntity&gt;" Collapsed="true">
+  <Interface Name="BankTransaction.DAL.Implementation.Interfaces.IRepository&lt;TEntity&gt;" Collapsed="true">
     <Position X="5.75" Y="6.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAYAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAgAAAAAAAIA=</HashCode>
       <FileName>Interfaces\IRepository.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="BankTransactionWeb.DAL.Interfaces.IShareholderRepository" Collapsed="true">
+  <Interface Name="BankTransaction.DAL.Implementation.Interfaces.IShareholderRepository" Collapsed="true">
     <Position X="10" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\IShareholderRepository.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="BankTransactionWeb.DAL.Interfaces.ITransactionRepository" Collapsed="true">
+  <Interface Name="BankTransaction.DAL.Implementation.Interfaces.ITransactionRepository" Collapsed="true">
     <Position X="7.5" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Interfaces\ITransactionRepository.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="BankTransactionWeb.DAL.Interfaces.IUnitOfWork" Collapsed="true">
+  <Interface Name="BankTransaction.DAL.Implementation.Interfaces.IUnitOfWork" Collapsed="true">
     <Position X="12.75" Y="7" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAICBICAQAAABAAAgAAAAAAAICAAAAAAAAAAAKAA=</HashCode>

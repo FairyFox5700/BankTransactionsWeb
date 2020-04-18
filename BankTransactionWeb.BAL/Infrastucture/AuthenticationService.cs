@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.BAL.Infrastucture.MessageServices;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Interfaces;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Entities;
+using BankTransaction.DAL.Abstract;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,8 +14,9 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
+using BankTransaction.Models;
 
-namespace BankTransactionWeb.BAL.Infrastucture
+namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class AuthenticationService : IAuthenticationService
     {

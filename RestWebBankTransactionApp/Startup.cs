@@ -1,8 +1,6 @@
 using AutoMapper;
-using BankTransactionWeb.BAL.Cofiguration;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
-using BankTransactionWeb.DAL.Entities;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,11 +10,23 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using RestWebBankTransactionApp.Controllers;
-using RestWebBankTransactionApp.Extensions;
+using BankTransaction.Api.Controllers;
+using BankTransaction.Api.Extensions;
 using System.Text;
+using BankTransaction.DAL.Implementation.Core;
+using BankTransaction.Configuration;
+using Microsoft.AspNetCore.Mvc.Routing;
+using BankTransaction.BAL.Implementation.Infrastucture;
+using BankTransaction.BAL.Implementation;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
+using BankTransaction.DAL.Implementation.EfCoreDAL;
+using Microsoft.EntityFrameworkCore;
 
-namespace RestWebBankTransactionApp
+namespace BankTransaction.Api
 {
     public class Startup
     {
@@ -31,9 +41,40 @@ namespace RestWebBankTransactionApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            IMapper mapper = new Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
+            IMapper mapper = new AutoMapper.Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
             services.AddSingleton(mapper);
-            services.AddDALServices();
+            //services.AddDALServices();
+            services.AddDbContext<BankTransactionContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+           .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+            services.AddTransient<IPersonRepository, PersonRepository>();
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<ICompanyRepository, CompanyRepository>();
+            services.AddTransient<IShareholderRepository, ShareholderRepository>();
+            services.AddTransient<ITransactionRepository, TransactionRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            //services.AddSingleton<InMemoryContainer>();
+            //services.AddTransient<IPersonRepository, PersonInMemoryRepository>();
+            //services.AddTransient<IAccountRepository, AccountInMemoryRepository>();
+            //services.AddTransient<ICompanyRepository, CompanyInMemoryRepository>();
+            //services.AddTransient<IShareholderRepository, ShareholderInMemoryRepository>();
+            //services.AddTransient<ITransactionRepository, TransactionInMemoryRepository>();
+            //services.AddScoped<IUnitOfWork, UnitOfWorkInMemory>();
+            services.AddTransient<ICompanyService, CompanyService>();
+            services.AddTransient<ITransactionService, TransactionService>();
+            services.AddTransient<IPersonService, PersonService>();
+            services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IShareholderService, ShareholderService>();
+            services.AddTransient<IAuthenticationService, BAL.Implementation.Infrastucture.AuthenticationService>();
+
+
+            services.AddTransient<ISender, EmailSender>();
+            services.AddTransient<IAdminService, AdminService>();
+            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.TryAddSingleton<IUrlHelperFactory, UrlHelperFactory>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IAuthenticationService, BAL.Implementation.Infrastucture.AuthenticationService>();
+            var emailConfig = Configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
+            services.AddSingleton(emailConfig);
             services.AddTransient<IJwtSecurityService, JWTSecurityService>();
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {

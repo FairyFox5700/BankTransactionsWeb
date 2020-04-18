@@ -3,13 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransactionWeb", "BankTransactionWeb.csproj", "{1DC2040E-554F-40A3-A69D-7A434F96814D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.Web", "BankTransaction.Web.csproj", "{1DC2040E-554F-40A3-A69D-7A434F96814D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransactionWeb.BAL", "..\BankTransactionWeb.BAL\BankTransactionWeb.BAL.csproj", "{3AC6A702-1768-4979-9BB8-EE30284834F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.BAL.Implementation", "..\BankTransactionWeb.BAL\BankTransaction.BAL.Implementation.csproj", "{3AC6A702-1768-4979-9BB8-EE30284834F0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransactionWeb.DAL", "..\BAnkTransactionWeb.DAL\BankTransactionWeb.DAL.csproj", "{A1E6EB90-AD0D-48D3-AEFC-1639778A768F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.DAL.Implementation", "..\BAnkTransactionWeb.DAL\BankTransaction.DAL.Implementation.csproj", "{A1E6EB90-AD0D-48D3-AEFC-1639778A768F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestWebBankTransactionApp", "..\RestWebBankTransactionApp\RestWebBankTransactionApp.csproj", "{83385562-02CF-463E-BF50-7F741DA89568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.Api", "..\RestWebBankTransactionApp\BankTransaction.Api.csproj", "{83385562-02CF-463E-BF50-7F741DA89568}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankTransaction.Mapper", "..\BankTransaction.Mapper\BankTransaction.Mapper.csproj", "{8EA092C9-6F63-435D-976A-17C3F57CE1FA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankTransaction.DAL.Abstract", "..\BankTransaction.DAL.Abstract\BankTransaction.DAL.Abstract.csproj", "{72B7D49B-78D2-4931-8A79-08224092EE71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankTransaction.Entities", "..\BankTransaction.Entities\BankTransaction.Entities.csproj", "{75BF2EE5-9525-4DC7-9B48-A029392F25BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankTransaction.BAL.Abstract", "..\BankTransaction.BAL.Abstract\BankTransaction.BAL.Abstract.csproj", "{B3E627DC-C543-4578-A288-5F99D9B3C968}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankTransaction.Models", "..\BankTransaction.Models\BankTransaction.Models.csproj", "{5117B93B-51EB-47ED-ABEE-D6B8B02AE45E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankTransaction.Configuration", "..\BankTransaction.Configuration\BankTransaction.Configuration.csproj", "{D0862C8D-3D3F-45A3-BB8F-48F5F7C44CA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +45,30 @@ Global
 		{83385562-02CF-463E-BF50-7F741DA89568}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83385562-02CF-463E-BF50-7F741DA89568}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83385562-02CF-463E-BF50-7F741DA89568}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EA092C9-6F63-435D-976A-17C3F57CE1FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EA092C9-6F63-435D-976A-17C3F57CE1FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EA092C9-6F63-435D-976A-17C3F57CE1FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EA092C9-6F63-435D-976A-17C3F57CE1FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72B7D49B-78D2-4931-8A79-08224092EE71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72B7D49B-78D2-4931-8A79-08224092EE71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72B7D49B-78D2-4931-8A79-08224092EE71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72B7D49B-78D2-4931-8A79-08224092EE71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75BF2EE5-9525-4DC7-9B48-A029392F25BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75BF2EE5-9525-4DC7-9B48-A029392F25BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75BF2EE5-9525-4DC7-9B48-A029392F25BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75BF2EE5-9525-4DC7-9B48-A029392F25BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3E627DC-C543-4578-A288-5F99D9B3C968}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3E627DC-C543-4578-A288-5F99D9B3C968}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3E627DC-C543-4578-A288-5F99D9B3C968}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3E627DC-C543-4578-A288-5F99D9B3C968}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5117B93B-51EB-47ED-ABEE-D6B8B02AE45E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5117B93B-51EB-47ED-ABEE-D6B8B02AE45E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5117B93B-51EB-47ED-ABEE-D6B8B02AE45E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5117B93B-51EB-47ED-ABEE-D6B8B02AE45E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0862C8D-3D3F-45A3-BB8F-48F5F7C44CA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0862C8D-3D3F-45A3-BB8F-48F5F7C44CA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0862C8D-3D3F-45A3-BB8F-48F5F7C44CA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0862C8D-3D3F-45A3-BB8F-48F5F7C44CA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.Areas.Admin.Models.ViewModels;
-using BankTransactionWeb.Areas.Identity.Models.ViewModels;
-using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.DAL.Entities;
+using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Entities;
+using BankTransaction.Web.Areas.Admin.Models.ViewModels;
+using BankTransaction.Web.Areas.Identity.Models.ViewModels;
+
 using BankTransactionWeb.ViewModel;
 using Microsoft.AspNetCore.Identity;
 
-namespace BankTransactionWeb.Configuration
+namespace BankTransaction.Web.Configuration
 {
     public static class AutoMapperConfiguration
     {

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Interfaces;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Entities;
+using BankTransaction.DAL.Abstract;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.BAL.Infrastucture
+namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class CompanyService : ICompanyService
     {

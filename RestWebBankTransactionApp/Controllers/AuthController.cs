@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.DAL.Entities;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using RestWebBankTransactionApp.Models;
+using BankTransaction.Api.Models;
 using System.Threading.Tasks;
 
-namespace RestWebBankTransactionApp.Controllers
+namespace BankTransaction.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

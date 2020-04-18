@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.DAL.Entities;
-using RestWebBankTransactionApp.Models;
+using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Entities;
+using BankTransaction.Api.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RestWebBankTransactionApp
+namespace BankTransaction.Api
 {
     public static class AutoMapperConfiguration
     {

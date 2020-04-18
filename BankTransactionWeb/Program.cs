@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace BankTransactionWeb
+namespace BankTransaction.Web
 {
     public class Program
     {

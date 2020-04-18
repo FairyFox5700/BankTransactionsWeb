@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.Areas.Identity.Models.ViewModels;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Web.Areas.Identity.Models.ViewModels;
 using BankTransactionWeb.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.Areas.Identity.Controllers
+namespace BankTransaction.Web.Areas.Identity.Controllers
 {
     [Authorize]
     [Area("Identity")]

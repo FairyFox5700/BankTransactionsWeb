@@ -1,6 +1,6 @@
-﻿using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
-using BankTransactionWeb.DAL.Interfaces;
+﻿using BankTransaction.BAL.Abstract;
+using BankTransaction.DAL.Implementation.Core;
+using BankTransaction.DAL.Abstract;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RestWebBankTransactionApp.Controllers
+namespace BankTransaction.Api.Controllers
 {
     public class JWTSecurityService: IJwtSecurityService
     {

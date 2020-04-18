@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.DAL.Interfaces;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.DAL.Abstract;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.BAL.Infrastucture
+namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class AdminService : IAdminService
     {
