@@ -2,7 +2,6 @@
 using BankTransaction.DAL.Implementation.Core;
 using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
 using BankTransaction.Entities;
-using BankTransaction.DAL.Abstract;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using System;
@@ -93,6 +92,19 @@ namespace BankTransaction.DAL.Implementation.EfCoreDAL
         public UserManager<ApplicationUser> UserManager { get; }
         public SignInManager<ApplicationUser> SignInManager { get; }
         public RoleManager<IdentityRole>  RoleManager { get; }
+
+        public ITokenRepository tokenRepository;
+        public ITokenRepository TokenRepository
+        {
+            get
+            {
+                if (tokenRepository == null)
+                {
+                    tokenRepository = new TokenRepository(context);
+                }
+                return tokenRepository;
+            }
+        }
 
         public async Task Save()
         {

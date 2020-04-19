@@ -17,9 +17,7 @@ namespace BankTransaction.DAL.Implementation.Core
         public DbSet<Shareholder> Shareholders { get; set; }
         public DbSet<Company> Companies { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-
-        
-
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
         public BankTransactionContext(DbContextOptions<BankTransactionContext> options, ILogger<BankTransactionContext> logger)
             : base(options)
         {

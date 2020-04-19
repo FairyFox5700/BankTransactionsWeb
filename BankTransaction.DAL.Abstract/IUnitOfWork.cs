@@ -19,6 +19,7 @@ namespace BankTransaction.DAL.Abstract
         ITransactionRepository TransactionRepository { get; }
         ICompanyRepository CompanyRepository { get; }
         IShareholderRepository ShareholderRepository { get; }
+        ITokenRepository TokenRepository { get; }
         Task Save();
         void CommitTransaction();
         void RollbackTransaction();

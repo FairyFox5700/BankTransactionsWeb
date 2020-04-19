@@ -2,7 +2,7 @@
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Entities;
-using BankTransactionWeb.ViewModel;
+using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;

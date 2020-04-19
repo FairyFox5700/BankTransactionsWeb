@@ -23,7 +23,6 @@ namespace BankTransaction.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PersonDTO>>> GetAllPersons()
         {
-
             var persons = await personService.GetAllPersons();
             logger.LogInformation("Successfully returned all persons");
             return persons;

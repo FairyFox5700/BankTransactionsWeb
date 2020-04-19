@@ -1,33 +1,35 @@
 using AutoMapper;
+using BankTransaction.Api.Controllers;
+using BankTransaction.Api.Helpers;
+using BankTransaction.Api.Models;
 using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation;
+using BankTransaction.BAL.Implementation.Infrastucture;
+using BankTransaction.Configuration;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.DAL.Implementation.Core;
+using BankTransaction.DAL.Implementation.EfCoreDAL;
+using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
 using BankTransaction.Entities;
+using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using BankTransaction.Api.Controllers;
-using BankTransaction.Api.Extensions;
-using System.Text;
-using BankTransaction.DAL.Implementation.Core;
-using BankTransaction.Configuration;
-using Microsoft.AspNetCore.Mvc.Routing;
-using BankTransaction.BAL.Implementation.Infrastucture;
-using BankTransaction.BAL.Implementation;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using BankTransaction.DAL.Abstract;
-using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
-using BankTransaction.DAL.Implementation.EfCoreDAL;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace BankTransaction.Api
 {
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -64,6 +66,7 @@ namespace BankTransaction.Api
             services.AddTransient<IPersonService, PersonService>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IShareholderService, ShareholderService>();
+            services.AddTransient<ITransactionService, TransactionService>();
             services.AddTransient<IAuthenticationService, BAL.Implementation.Infrastucture.AuthenticationService>();
 
 
@@ -82,23 +85,29 @@ namespace BankTransaction.Api
                 options.SignIn.RequireConfirmedEmail = true;
             }).AddEntityFrameworkStores<BankTransactionContext>()
             .AddDefaultTokenProviders().AddUserManager<UserManager<ApplicationUser>>();
+
+            var jwtSettings = new JwtSettings();
+            Configuration.Bind("Jwt", jwtSettings);
+            services.AddSingleton(jwtSettings);
+            var tokenValidParam = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = jwtSettings.Issuer,
+                ValidateAudience = true,
+                ValidAudience = jwtSettings.Audience,
+                ValidateLifetime = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                ValidateIssuerSigningKey = true
+            };
+            services.AddSingleton(tokenValidParam);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                 .AddJwtBearer(options =>
-                 {
-                     options.RequireHttpsMetadata = false;
-                     options.TokenValidationParameters = new TokenValidationParameters
-                     {
-                         ValidateIssuer = true,
-                         ValidIssuer = Configuration["Jwt:Issuer"],
-                         ValidateAudience = true,
-                         ValidAudience = Configuration["Jwt:Audience"],
-                         ValidateLifetime = true,
-                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])),
-                         ValidateIssuerSigningKey = true,
-                     };
-                 });
+             .AddJwtBearer(options =>
+             {
+                 options.RequireHttpsMetadata = false;
+                 options.TokenValidationParameters = tokenValidParam;
+             });
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+            options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
         }
 
@@ -110,8 +119,8 @@ namespace BankTransaction.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.ConfigureErrorHandler();
-
+            // app.ConfigureErrorHandler();
+            app.UseAPIResponseWrapperMiddleware();
             app.UseRouting();
 
             app.UseAuthentication();

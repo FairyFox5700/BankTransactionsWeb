@@ -1,5 +1,7 @@
 ﻿using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Entities;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -13,10 +15,12 @@ namespace BankTransaction.BAL.Abstract
     {
         public bool IsUserSignedIn(ClaimsPrincipal user);
         Task SignOutPerson();
-        Task<SignInResult> LoginPerson(PersonDTO person);
+        Task<AuthResult> LoginPerson(PersonDTO person);
         Task<IdentityResult> RegisterPerson(PersonDTO person);
         Task<IdentityResult> ConfirmUserEmailAsync(string email, string code);
         Task<IdentityResult> ResetPasswordForPerson(PersonDTO person);
+        public  Task<AuthResult> RegisterPersonWithJwtToken(PersonDTO person);
         Task<bool> SendReserPasswordUrl(PersonDTO person);
+        Task RefreshToken(RefreshTokenDTO model);
     }
 }

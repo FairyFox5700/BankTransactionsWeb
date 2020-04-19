@@ -61,16 +61,16 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
                     {
                         ModelState.AddModelError(string.Empty, "You must confirm your email.");
                     }
-                    else if (result.Succeeded)
+                    else if (result.Success)
                     {
                         logger.LogInformation("User  succesfully logged in.");
                         return RedirectToLocal(model.ReturnUrl);
                     }
-                    else if (result.IsLockedOut)
-                    {
-                        logger.LogWarning("User account locked out.");
-                        return RedirectToAction(nameof(Lockout));
-                    }
+                    //else if (result.IsLockedOut)
+                    //{
+                    //    logger.LogWarning("User account locked out.");
+                    //    return RedirectToAction(nameof(Lockout));
+                    //}
                     else
                     {
                         ModelState.AddModelError(string.Empty, "The attempt to log in was unsuccessfull.");

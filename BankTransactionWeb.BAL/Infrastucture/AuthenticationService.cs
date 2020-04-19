@@ -1,47 +1,58 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Entities;
 using BankTransaction.DAL.Abstract;
+using BankTransaction.Entities;
+using BankTransaction.Models;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
-using BankTransaction.Models;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IUnitOfWork unitOfWork;
+        private readonly IJwtSecurityService jwtSecurityService;
         private readonly IMapper mapper;
         private readonly ILogger<AuthenticationService> logger;
         private readonly ISender emailSender;
         private readonly IUrlHelperFactory urlHelperFactory;
+        private readonly JwtSettings jwtSettings;
+        private readonly TokenValidationParameters tokenValidationParameters;
         private readonly IActionContextAccessor actionContextAccessor;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IUrlHelper urlHelper;
+
         public IUrlHelper URLHelper
         {
             get => urlHelper ?? (urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext));
         }
 
-        public AuthenticationService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AuthenticationService> logger, ISender emailSender,
-            IUrlHelperFactory urlHelperFactory,
+        public AuthenticationService(IUnitOfWork unitOfWork, IJwtSecurityService jwtSecurityService, IMapper mapper, ILogger<AuthenticationService> logger, ISender emailSender,
+            IUrlHelperFactory urlHelperFactory, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters,
            IActionContextAccessor actionContextAccessor, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
+            this.jwtSecurityService = jwtSecurityService;
             this.mapper = mapper;
             this.logger = logger;
             this.emailSender = emailSender;
             this.urlHelperFactory = urlHelperFactory;
+            this.jwtSettings = jwtSettings;
+            this.tokenValidationParameters = tokenValidationParameters;
             this.actionContextAccessor = actionContextAccessor;
             this.httpContextAccessor = httpContextAccessor;
             this.urlHelper = urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext);
@@ -89,6 +100,47 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                     logger.LogError($"An exceprion {ex} occured on registering new user. Inner exeprion {ex.InnerException}");
                     unitOfWork.RollbackTransaction();
                     throw ex;
+                }
+            }
+        }
+
+
+        public async Task<AuthResult> RegisterPersonWithJwtToken(PersonDTO person)
+        {
+            using (var trans = unitOfWork.BeginTransaction())
+            {
+
+                ApplicationUser user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+                if (user == null)
+                {
+                    user = new ApplicationUser { Email = person.Email, UserName = person.UserName, PhoneNumber = person.PhoneNumber };
+                    var result = await unitOfWork.UserManager.CreateAsync(user, person.Password);
+                    await unitOfWork.Save();
+                    if (result.Succeeded)
+                    {
+                        var personMapped = mapper.Map<Person>(person);
+                        personMapped.ApplicationUserFkId = user.Id;
+                        unitOfWork.PersonRepository.Add(personMapped);
+                        await unitOfWork.Save();
+                        await unitOfWork.UserManager.AddToRoleAsync(user, "User");
+                        unitOfWork.CommitTransaction();
+                        return await jwtSecurityService.GenerateJWTToken(user.Email);
+                    }
+                    else
+                    {
+                        return new AuthResult
+                        {
+                            Errors = result.Errors.Select(x => x.Description)
+                        };
+                    }
+                }
+
+                else
+                {
+                    return new AuthResult
+                    {
+                        Errors = new[] { "User with this email is alredy registered" }
+                    };
                 }
             }
         }
@@ -151,32 +203,38 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             }
 
         }
-        public async Task<SignInResult> LoginPerson(PersonDTO person)
+        public async Task<AuthResult> LoginPerson(PersonDTO person)
         {
-            try
+            var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+            if (user != null)
             {
-                var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
-                if (user != null)
+                if (!await unitOfWork.UserManager.IsEmailConfirmedAsync(user))
                 {
-                    if (!await unitOfWork.UserManager.IsEmailConfirmedAsync(user))
+                    return new AuthResult()
                     {
-                        return null;
-                    }
-                    var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password,
-                        person.RememberMe,
-                        lockoutOnFailure: false);
-                    return result;
+                        Errors = new[] { "You must confirm your email adrees first. Check your messages" }
+                    };
                 }
-                return null;
+                var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password,
+                    person.RememberMe,
+                    lockoutOnFailure: false);
+                if (!result.Succeeded)
+                {
+                    return new AuthResult()
+                    {
+                        Errors = new[] { "Check your email and password. Login attemp is not succesfull" }
+                    };
+                }
+                return await jwtSecurityService.GenerateJWTToken(user.Email);
             }
-            catch (Exception ex)
+            return new AuthResult()
             {
-                throw ex;
-            }
-           
-
-
+                Errors = new[] { "User with this email does not exists." }
+            };
         }
+
+
+       
 
 
         public async Task SignOutPerson()
@@ -210,11 +268,22 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             {
                 throw ex;
             }
-          
+
         }
-        public void Dispose()
+
+
+      
+
+           
+
+            public void Dispose()
+            {
+                unitOfWork.Dispose();
+            }
+
+            Task IAuthenticationService.RefreshToken(RefreshTokenDTO model)
         {
-            unitOfWork.Dispose();
+                throw new NotImplementedException();
+            }
         }
     }
-}

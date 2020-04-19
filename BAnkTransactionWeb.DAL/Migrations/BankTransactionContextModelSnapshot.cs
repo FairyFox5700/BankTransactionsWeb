@@ -214,9 +214,9 @@ namespace BankTransaction.DAL.Implementation.Migrations
                         {
                             Id = 1,
                             DataOfBirth = new DateTime(1990, 2, 23, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            LastName = "Володимирович",
+                            LastName = "Volodimirovitch",
                             Name = "Андрій",
-                            Surname = "Коваленко"
+                            Surname = "Kovalenko"
                         },
                         new
                         {
@@ -234,6 +234,41 @@ namespace BankTransaction.DAL.Implementation.Migrations
                             Name = "Masha",
                             Surname = "Koshova"
                         });
+                });
+
+            modelBuilder.Entity("BankTransaction.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpieryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsInvalidated")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JwtId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("BankTransaction.Entities.Shareholder", b =>
@@ -285,10 +320,10 @@ namespace BankTransaction.DAL.Implementation.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("AccountDestinationId")
+                    b.Property<int>("AccountDestinationId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("AccountSourceId")
+                    b.Property<int>("AccountSourceId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Amount")
@@ -501,6 +536,13 @@ namespace BankTransaction.DAL.Implementation.Migrations
                         .WithOne("Person")
                         .HasForeignKey("BankTransaction.Entities.Person", "ApplicationUserFkId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("BankTransaction.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("BankTransaction.Entities.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("AppUserId");
                 });
 
             modelBuilder.Entity("BankTransaction.Entities.Shareholder", b =>

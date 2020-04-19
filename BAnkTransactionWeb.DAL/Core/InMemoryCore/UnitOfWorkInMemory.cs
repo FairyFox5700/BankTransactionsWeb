@@ -92,6 +92,8 @@ namespace BankTransaction.DAL.Implementation.InMemoryCore
 
         public RoleManager<IdentityRole> RoleManager => throw new NotImplementedException();
 
+        public ITokenRepository TokenRepository => throw new NotImplementedException();
+
         public async Task Save()
         {
              await Task.FromResult(0)

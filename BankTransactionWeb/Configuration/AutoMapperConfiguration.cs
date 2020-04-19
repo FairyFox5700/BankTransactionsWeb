@@ -3,8 +3,7 @@ using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Entities;
 using BankTransaction.Web.Areas.Admin.Models.ViewModels;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
-
-using BankTransactionWeb.ViewModel;
+using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Identity;
 
 namespace BankTransaction.Web.Configuration
