@@ -22,7 +22,7 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
 
         public async Task<RefreshToken> GetRefreshTokenForCurrentToken(string token)
         {
-            return await  context.RefreshTokens.SingleOrDefaultAsync(x => x.Token == token);
+            return await  context.RefreshTokens.SingleOrDefaultAsync(x => x.TokenKey == token);
         }
     }
 }

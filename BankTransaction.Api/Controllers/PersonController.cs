@@ -73,7 +73,7 @@ namespace BankTransaction.Api.Controllers
                 return NotFound();
             }
             await personService.DeletePerson(person);
-            return Ok("Deleted succesfully");
+            return Ok("Deleted successfully");
         }
 
     }

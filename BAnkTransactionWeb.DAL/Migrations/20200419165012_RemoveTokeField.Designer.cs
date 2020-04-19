@@ -4,14 +4,16 @@ using BankTransaction.DAL.Implementation.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BankTransaction.DAL.Implementation.Migrations
 {
     [DbContext(typeof(BankTransactionContext))]
-    partial class BankTransactionContextModelSnapshot : ModelSnapshot
+    [Migration("20200419165012_RemoveTokeField")]
+    partial class RemoveTokeField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,9 +261,6 @@ namespace BankTransaction.DAL.Implementation.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("JwtId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TokenKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

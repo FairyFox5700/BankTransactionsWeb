@@ -29,6 +29,8 @@
     <Compile Remove="Migrations\20200409170729_Initilized.Designer.cs" />
     <Compile Remove="Migrations\20200409170948_AlterDB.cs" />
     <Compile Remove="Migrations\20200409170948_AlterDB.Designer.cs" />
+    <Compile Remove="Migrations\20200419171131_ФввЕщлутЛун.cs" />
+    <Compile Remove="Migrations\20200419171131_ФввЕщлутЛун.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

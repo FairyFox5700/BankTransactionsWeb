@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BankTransaction.BAL.Implementation.Helpers
+namespace BankTransaction.BAL.Implementation.Extensions
 {
     public static class DateTimeExtensions
     {

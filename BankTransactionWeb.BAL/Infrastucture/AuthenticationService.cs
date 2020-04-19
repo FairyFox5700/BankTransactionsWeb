@@ -30,8 +30,6 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         private readonly ILogger<AuthenticationService> logger;
         private readonly ISender emailSender;
         private readonly IUrlHelperFactory urlHelperFactory;
-        private readonly JwtSettings jwtSettings;
-        private readonly TokenValidationParameters tokenValidationParameters;
         private readonly IActionContextAccessor actionContextAccessor;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IUrlHelper urlHelper;
@@ -42,7 +40,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         }
 
         public AuthenticationService(IUnitOfWork unitOfWork, IJwtSecurityService jwtSecurityService, IMapper mapper, ILogger<AuthenticationService> logger, ISender emailSender,
-            IUrlHelperFactory urlHelperFactory, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters,
+            IUrlHelperFactory urlHelperFactory, 
            IActionContextAccessor actionContextAccessor, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
@@ -51,8 +49,6 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             this.logger = logger;
             this.emailSender = emailSender;
             this.urlHelperFactory = urlHelperFactory;
-            this.jwtSettings = jwtSettings;
-            this.tokenValidationParameters = tokenValidationParameters;
             this.actionContextAccessor = actionContextAccessor;
             this.httpContextAccessor = httpContextAccessor;
             this.urlHelper = urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext);

@@ -10,7 +10,7 @@ namespace BankTransaction.Entities
         public string JwtId { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ExpieryDate { get; set; }
-        public string Token { get; set; }
+        public string TokenKey { get; set; }
         public bool IsUsed { get; set; }
         public bool IsInvalidated { get; set; }
         public string AppUserId { get; set; }

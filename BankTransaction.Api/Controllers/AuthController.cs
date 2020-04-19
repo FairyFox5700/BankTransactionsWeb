@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using BankTransaction.Api.Models;
 using System.Threading.Tasks;
 using System.Linq;
-using BankTransaction.Models.Validation;
+using BankTransaction.Api.Models;
 using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Api.Controllers

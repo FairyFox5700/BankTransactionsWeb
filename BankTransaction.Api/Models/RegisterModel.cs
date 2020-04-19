@@ -8,7 +8,6 @@ namespace BankTransaction.Api.Models
 {
     public class RegisterModel
     {
-
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
@@ -45,5 +44,8 @@ namespace BankTransaction.Api.Models
         [Phone]
         [Required]
         public string PhoneNumber { get; set; }
+
+
+
     }
 }
