@@ -1,156 +1,11 @@
 ﻿using BankTransaction.Web.Areas.Admin.Models.ViewModels;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
 using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Entities;
 using BankTransaction.Web.ViewModel;
-using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+using BankTransaction.Configuration;
 
 namespace BankTransaction.Mapper
 {
-    public class CompanyMapper : IMapper<Company, CompanyDTO>
-    {
-        public CompanyDTO Map(Company source)
-        {
-            return new CompanyDTO()
-            {
-                Id = source.Id,
-                DateOfCreation = source.DateOfCreation,
-                Shareholders =  source.Shareholders.Select(sh => new ShareholderMapper().Map(sh)).ToList(),
-                Name = source.Name
-            };
-        }
-
-        public Company MapBack(CompanyDTO destination)
-        {
-            return new Company()
-            {
-                Id = destination.Id,
-                DateOfCreation = destination.DateOfCreation,
-                Shareholders = destination.Shareholders.Select(sh => new ShareholderMapper().MapBack(sh)).ToList(),
-                Name = destination.Name
-            };
-        }
-    }
-
-    public class PersonMapper : IMapper<Person, PersonDTO>
-    {
-
-        public PersonDTO Map(Person source)
-        {
-            return new PersonDTO()
-            {
-                Id = source.Id,
-                DataOfBirth = source.DataOfBirth,
-                ApplicationUserFkId = source.ApplicationUserFkId,
-                LastName = source.LastName,
-                Name = source.Name,
-                Surname = source.Surname
-            };
-        }
-
-        public Person MapBack(PersonDTO destination)
-        {
-            return new Person()
-            {
-                Id = destination.Id,
-                DataOfBirth = destination.DataOfBirth,
-                ApplicationUserFkId = destination.ApplicationUserFkId,
-                LastName = destination.LastName,
-                Name = destination.Name,
-                Surname = destination.Surname
-            };
-        }
-    }
-
-
-
-    public class AccountMapper : IMapper<Account, AccountDTO>
-    {
-        public AccountDTO Map(Account source)
-        {
-            return new AccountDTO()
-            {
-                Id = source.Id,
-                Balance = source.Balance,
-                Number = source.Number,
-                Transactions =source.Transactions.Select(tr => new TransactionMapper().Map(tr)).ToList()
-            };
-        }
-
-        public Account MapBack(AccountDTO destination)
-        {
-            return new Account()
-            {
-                Id = destination.Id,
-                Balance = destination.Balance,
-                Number = destination.Number,
-                PersonId = destination.PersonId,
-                Transactions =  destination.Transactions.Select(tr => new TransactionMapper().MapBack(tr)).ToList(),
-            };
-        }
-    }
-
-    public class ShareholderMapper : IMapper<Shareholder, ShareholderDTO>
-    {
-        public ShareholderDTO Map(Shareholder source)
-        {
-            return new ShareholderDTO()
-            {
-                Id = source.Id,
-                Company = new CompanyMapper().Map(source.Company),
-                Person = new PersonMapper().Map(source.Person),
-                PersonId = source.PersonId,
-                CompanyId = source.CompanyId
-            };
-        }
-
-        public Shareholder MapBack(ShareholderDTO destination)
-        {
-            return new Shareholder()
-            {
-                Id = destination.Id,
-                Company = new CompanyMapper().MapBack(destination.Company),
-                Person = new PersonMapper().MapBack(destination.Person),
-                PersonId = destination.PersonId,
-                CompanyId = destination.CompanyId
-            };
-        }
-    }
-
-    public class TransactionMapper : IMapper<Transaction, TransactionDTO>
-    {
-        public TransactionDTO Map(Transaction source)
-        {
-            return new TransactionDTO()
-            {
-                Id = source.Id,
-                AccountDestinationId = source.AccountDestinationId,
-                AccountSourceId = source.AccountSourceId,
-                DateOftransfering = source.DateOftransfering,
-                Amount = source.Amount,
-                SourceAccount = source.SourceAccount
-            };
-        }
-
-        public Transaction MapBack(TransactionDTO destination)
-        {
-            return new Transaction()
-            {
-                Id = destination.Id,
-                AccountDestinationId = destination.AccountDestinationId,
-                AccountSourceId = destination.AccountSourceId,
-                DateOftransfering = destination.DateOftransfering,
-                Amount = destination.Amount,
-                SourceAccount = destination.SourceAccount,
-            };
-        }
-    }
-
-
     public class PersonMapperAddModel : IMapper<PersonDTO, AddPersonViewModel>
     {
         public AddPersonViewModel Map(PersonDTO source)
@@ -497,30 +352,7 @@ namespace BankTransaction.Mapper
         }
     }
 
-    public class ApplicationUserMapper : IMapper<ApplicationUser, PersonDTO>
-    {
-        public PersonDTO Map(ApplicationUser source)
-        {
-            return new PersonDTO()
-            {
-                ApplicationUserFkId = source.Id,
-                Email = source.Email,
-                PhoneNumber = source.PhoneNumber
-            };
-        }
-
-        public ApplicationUser MapBack(PersonDTO destination)
-        {
-            return new ApplicationUser()
-            {
-                Id = destination.ApplicationUserFkId,
-                Email = destination.Email,
-                PhoneNumber = destination.PhoneNumber
-            };
-
-        }
-    }
-
+   
 
     public class RoleMapperAddModel : IMapper<RoleDTO, AddRoleViewModel>
     {
@@ -632,48 +464,8 @@ namespace BankTransaction.Mapper
         }
     }
 
-    public class IdentityRoleMapper : IMapper<IdentityRole, RoleDTO>
-    {
-        public RoleDTO Map(IdentityRole source)
-        {
-            return new RoleDTO()
-            {
-                Id = source.Id,
-                Name = source.Name,
-            };
-        }
-
-        public IdentityRole MapBack(RoleDTO destination)
-        {
-            return new IdentityRole()
-            {
-                Id = destination.Id,
-                Name = destination.Name
-            };
-        }
-    }
-
-    public class personRoleMapper : IMapper<PersonInRoleDTO, IdentityRole>
-    {
-        public IdentityRole Map(PersonInRoleDTO source)
-        {
-            return new IdentityRole()
-            {
-                Name = source.Name,
-                Id = source.Id
-            };
-
-        }
-
-        public PersonInRoleDTO MapBack(IdentityRole destination)
-        {
-            return new PersonInRoleDTO()
-            {
-                Name = destination.Name,
-                Id = destination.Id
-            };
-        }
-    }
+   
+    
 
     public class UsersRoleMapper : IMapper<PersonInRoleDTO, UsersInRoleViewModel>
     {
@@ -707,36 +499,7 @@ namespace BankTransaction.Mapper
         }
     }
 
-    public class PersonRoleMapper : IMapper<PersonInRoleDTO, Person>
-    {
-        public Person Map(PersonInRoleDTO source)
-        {
-            return new Person()
-            {
-                ApplicationUserFkId = source.AppUserId,
-                Id =Convert.ToInt32(source.Id),
-                LastName = source.LastName,
-                Name = source.Name,
-                Surname = source.Surname,
-            };
-
-        }
-
-        public PersonInRoleDTO MapBack(Person destination)
-        {
-            return new PersonInRoleDTO()
-            {
-                AppUserId = destination.ApplicationUserFkId,
-                LastName = destination.LastName,
-                Name = destination.Name,
-                Surname = destination.Surname,
-                UserName = destination.ApplicationUser?.UserName,
-
-            };
-        }
-
-
-    }
+    
 }
 
 

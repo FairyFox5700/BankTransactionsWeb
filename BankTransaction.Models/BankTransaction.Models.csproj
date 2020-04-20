@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BankTransaction.Configuration\BankTransaction.Configuration.csproj" />
     <ProjectReference Include="..\BankTransaction.Entities\BankTransaction.Entities.csproj" />
   </ItemGroup>
 
