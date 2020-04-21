@@ -1,4 +1,5 @@
 ﻿using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,8 @@ namespace BankTransaction.BAL.Abstract
 {
    public interface IPersonService: IDisposable
     {
-       
-        Task<List<PersonDTO>> GetAllPersons(string name = null, string surname = null, string lastname = null,
+
+        Task<IEnumerable<PersonDTO>> GetAllPersons(PaginatedModel paginatedModel = null, string name = null, string surname = null, string lastname = null,
             string accountNumber = null, string transactionNumber = null, string companyName = null);
         Task<PersonDTO> GetPersonById(int id);
         Task<PersonDTO> GetPersonById(ClaimsPrincipal user);

@@ -1,5 +1,7 @@
-﻿using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.Api.Models;
+using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -21,11 +23,13 @@ namespace BankTransaction.Api.Controllers
         }
         // GET /api/Person
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PersonDTO>>> GetAllPersons()
+        public async Task<ActionResult<IEnumerable<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters)
         {
-            var persons = await personService.GetAllPersons();
-            logger.LogInformation("Successfully returned all persons");
-            return persons;
+            //MAPPPER
+            var paginatedModel = new PaginatedModel() { PageIndex= pageQueryParameters.StartIndex, PageSize = pageQueryParameters.Count };
+            var allPersons = await personService.GetAllPersons(paginatedModel);
+            var persons =new PaginatedList<PersonDTO>(allPersons, paginatedModel.PageIndex, paginatedModel.PageSize);
+            return Ok(persons);
         }
         // PUT /api/Person/{id}
         [HttpPut("{id}")]

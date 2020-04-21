@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.DAL.Implementation.InMemoryCore;
+using BankTransaction.DAL.Implementation.Extensions;
 
 namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRepositories
 {
@@ -33,6 +34,13 @@ namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRe
         {
             var persons = container.Persons;
             return await Task.FromResult<ICollection<Person>>(persons)
+                .ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Person>> GetAll(int startIndex, int pageSize)
+        {
+            var persons = container.Persons.Paginate(startIndex,pageSize);
+            return await Task.FromResult<IEnumerable<Person>>(persons)
                 .ConfigureAwait(false);
         }
 

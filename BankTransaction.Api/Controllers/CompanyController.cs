@@ -1,4 +1,5 @@
-﻿using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.Api.Helpers;
+using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,10 +24,11 @@ namespace BankTransaction.Api.Controllers
         }
         // GET /api/Company
         [HttpGet]
+        [Cached(200)]
         public async Task<ActionResult<IEnumerable<CompanyDTO>>> GetAllCompanys()
         {
             var companys = (await companyService.GetAllCompanies()).ToList();
-            return companys;
+            return Ok( companys);
         }
         // PUT /api/Company/{id}
         [HttpPut("{id}")]

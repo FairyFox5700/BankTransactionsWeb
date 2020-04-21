@@ -29,6 +29,7 @@ namespace BankTransaction.Api
             services.AddDALServices(Configuration);
             services.AddBALServices(Configuration);
             services.AddJwtAuthentication(Configuration);
+            services.AddDistributedCache(Configuration);
             services.AddControllersWithViews().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 

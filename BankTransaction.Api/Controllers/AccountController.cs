@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Api.Helpers;
 
 namespace BankTransaction.Api.Controllers
 {
@@ -25,6 +26,7 @@ namespace BankTransaction.Api.Controllers
         // GET /api/Account
         [HttpGet]
         [Authorize(Roles = "Admin")]
+        [Cached(200)]
         public async Task<ActionResult<IEnumerable<AccountDTO>>> GetAllAccounts()
         {
 
