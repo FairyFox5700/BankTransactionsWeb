@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace BankTransaction.Api.Models.Query
+namespace BankTransaction.Entities.Filter
 {
-    public class SearchPersonQuery
+    public class PersonFilter
     {
         public string Name { get; set; }
         public string Surname { get; set; }

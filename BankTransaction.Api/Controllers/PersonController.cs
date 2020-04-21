@@ -1,4 +1,5 @@
 ﻿using BankTransaction.Api.Models;
+using BankTransaction.Api.Models.Query;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models;
@@ -23,11 +24,13 @@ namespace BankTransaction.Api.Controllers
         }
         // GET /api/Person
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters)
+        public async Task<ActionResult<IEnumerable<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters, [FromQuery]SearchPersonQuery personQuery  )
         {
             //MAPPPER
             var paginatedModel = new PaginatedModel() { PageIndex= pageQueryParameters.StartIndex, PageSize = pageQueryParameters.Count };
-            var allPersons = await personService.GetAllPersons(paginatedModel);
+            var filter = new PersonFilterModel() { AccountNumber = personQuery.AccountNumber, CompanyName = personQuery.CompanyName, LastName = personQuery.LastName,
+                Name = personQuery.Name, Surname = personQuery.Surname, TransactionNumber = personQuery.TransactionNumber };
+            var allPersons = await personService.GetAllPersons(filter, paginatedModel);
             var persons =new PaginatedList<PersonDTO>(allPersons, paginatedModel.PageIndex, paginatedModel.PageSize);
             return Ok(persons);
         }

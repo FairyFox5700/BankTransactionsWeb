@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
@@ -35,14 +36,15 @@ namespace BankTransactionWeb.Controllers
             {
                 var listOfPersonsVM = new PersonListViewModel()
                 {
-                    Persons = await personService.GetAllPersons(name, surname, lastname,
-                    accountNumber, accountTransaction, companyName),
-                    Name = name,
-                    SurName = surname,
-                    LastName = lastname,
-                    AccoutNumber = accountNumber,
-                    AccountTransactionNumber = accountTransaction,
-                    CompanyName = companyName
+                    Persons = (await personService.GetAllPersons()).ToList()
+                    //Persons = await personService.GetAllPersons(name, surname, lastname,
+                    //accountNumber, accountTransaction, companyName),
+                    //Name = name,
+                    //SurName = surname,
+                    //LastName = lastname,
+                    //AccoutNumber = accountNumber,
+                    //AccountTransactionNumber = accountTransaction,
+                    //CompanyName = companyName
                 };
                 logger.LogInformation("Successfully returned all persons");
                 return View(listOfPersonsVM);

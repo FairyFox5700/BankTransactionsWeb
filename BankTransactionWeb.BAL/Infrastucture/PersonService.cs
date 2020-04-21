@@ -3,6 +3,7 @@ using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
+using BankTransaction.Entities.Filter;
 using BankTransaction.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -89,48 +90,25 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             unitOfWork.Dispose();
         }
-
-        public async Task<IEnumerable<PersonDTO>> GetAllPersons(PaginatedModel paginatedModel = null, string name = null, string surname = null, string lastname = null,
-            string accountNumber = null, string transactionNumber = null, string companyName = null)
+        public async Task<IEnumerable<PersonDTO>> GetAllPersons(PersonFilterModel personFilter = null, PaginatedModel paginatedModel = null)
         {
             try
             {
                 var persons = new List<Person>().AsEnumerable();
-               // if( paginatedModel!=null)
-                //{
-                    persons = await unitOfWork.PersonRepository.GetAll(paginatedModel.PageIndex, paginatedModel.PageSize);
-                //}
-                //else
-                //{
-                //    persons = await unitOfWork.PersonRepository.GetAll();
-                //}
-                
-                if (!String.IsNullOrEmpty(name))
+                   
+                if (paginatedModel != null || personFilter != null)
                 {
-                    persons = persons.Where(s => s.Name.Contains(name));
+                    ///MAPPER with nuul
+                    var filter = new PersonFilter() { AccountNumber = personFilter.AccountNumber, Surname = personFilter.Surname, CompanyName = personFilter.CompanyName, LastName = personFilter.LastName, Name = personFilter.Name, TransactionNumber = personFilter.TransactionNumber };
+                    persons = await unitOfWork.PersonRepository.GetAll(paginatedModel.PageIndex, paginatedModel.PageSize,filter);
                 }
-                if (!String.IsNullOrEmpty(surname))
+                else
                 {
-                    persons = persons.Where(s => s.Surname.Contains(surname));
+                    persons = await unitOfWork.PersonRepository.GetAll();
                 }
-                if (!String.IsNullOrEmpty(lastname))
-                {
-                    persons = persons.Where(s => s.LastName.Contains(lastname));
-                }
-                if (!String.IsNullOrEmpty(accountNumber))
-                {
-                    persons = persons.Where(s => s.Accounts.Select(e => e.Number).Contains(accountNumber));
-                }
-                if (!String.IsNullOrEmpty(transactionNumber))
-                {
-                    persons = persons.Where(p => p.Accounts.Contains(p.Accounts.Where
-                        (a => a.Transactions.Contains(a.Transactions.Where
-                        (e => e.Id.ToString() == transactionNumber).FirstOrDefault())).FirstOrDefault()));
-                }
-                if (!String.IsNullOrEmpty(companyName))
-                {
-                    persons = (await unitOfWork.ShareholderRepository.GetAll()).Where(sh => sh.Company.Name.Contains(companyName)).Select(sh => sh.Person);
-                }
+                //MAPPER
+               
+
                 return persons.Select(p => mapper.Map<PersonDTO>(p)).ToList();
             }
             catch (Exception ex)
