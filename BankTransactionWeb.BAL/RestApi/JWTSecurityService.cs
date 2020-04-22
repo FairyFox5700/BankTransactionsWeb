@@ -1,10 +1,8 @@
 ﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.DAL.Abstract;
-using BankTransaction.DAL.Implementation.Core;
 using BankTransaction.Entities;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -15,22 +13,19 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BankTransaction.BAL.Implementation.Infrastucture
+namespace BankTransaction.BAL.Implementation.RestApi
 {
     public class JWTSecurityService : IJwtSecurityService
     {
-        private readonly BankTransactionContext context;
-        private readonly IConfiguration config;
+
         private readonly IUnitOfWork unitOfWork;
         private readonly ILogger<JWTSecurityService> logger;
         private readonly JwtSettings jwtSettings;
         private readonly TokenValidationParameters tokenValidationParameters;
 
-        public JWTSecurityService(BankTransactionContext context, IConfiguration config, IUnitOfWork unitOfWork,
+        public JWTSecurityService(IUnitOfWork unitOfWork,
             ILogger<JWTSecurityService> logger, JwtSettings jwtSettings, TokenValidationParameters tokenValidationParameters)
         {
-            this.context = context;
-            this.config = config;
             this.unitOfWork = unitOfWork;
             this.logger = logger;
             this.jwtSettings = jwtSettings;
@@ -63,7 +58,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 var tokeDescription = new SecurityTokenDescriptor
                 {
                     Issuer = jwtSettings.Issuer,
-                    Audience =jwtSettings.Audience,
+                    Audience = jwtSettings.Audience,
                     Subject = new ClaimsIdentity(claims),
                     Expires = DateTime.UtcNow.Add(jwtSettings.TokenLifeTime),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)

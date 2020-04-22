@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransaction.Api.Models.Query
+namespace BankTransaction.Api.Models.Queries
 {
     public class SearchPersonQuery
     {

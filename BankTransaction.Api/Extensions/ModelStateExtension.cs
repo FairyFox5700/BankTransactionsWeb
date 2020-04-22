@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using BankTransaction.Api.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BankTransaction.Api.Models
+namespace BankTransaction.Api.Extensions
 {
     public static class ModelStateExtension
     {
@@ -14,6 +15,5 @@ namespace BankTransaction.Api.Models
                 .ToList();
         }
     }
-
 
 }

@@ -1,4 +1,4 @@
-﻿namespace BankTransaction.Api.Models.Query
+﻿namespace BankTransaction.Api.Models.Queries
 {
     public class PageQueryParameters
     {

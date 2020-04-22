@@ -33,6 +33,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         private readonly IActionContextAccessor actionContextAccessor;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IUrlHelper urlHelper;
+        
 
         public IUrlHelper URLHelper
         {
@@ -168,7 +169,6 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             try
             {
-
                 var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
                 if (user == null)
                 {

@@ -1,6 +1,7 @@
 ﻿
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.Infrastucture;
+using BankTransaction.BAL.Implementation.RestApi;
 using BankTransaction.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;

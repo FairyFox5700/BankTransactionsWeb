@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using BankTransaction.Api.Models;
 using BankTransaction.Models.DTOModels;
+using BankTransaction.Api.Models.Queries;
+using BankTransaction.Api.Models.Responces;
 
 namespace BankTransaction.Api.Controllers
 {

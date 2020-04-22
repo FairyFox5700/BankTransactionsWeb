@@ -1,5 +1,6 @@
 ﻿using BankTransaction.Api.Models;
-using BankTransaction.Api.Models.Query;
+using BankTransaction.Api.Models.Queries;
+using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models;

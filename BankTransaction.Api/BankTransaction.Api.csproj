@@ -26,9 +26,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BankTransaction.Api.Models\BankTransaction.Api.Models.csproj" />
     <ProjectReference Include="..\BankTransaction.BAL.Abstract\BankTransaction.BAL.Abstract.csproj" />
     <ProjectReference Include="..\BankTransactionWeb.BAL\BankTransaction.BAL.Implementation.csproj" />
     <ProjectReference Include="..\BAnkTransactionWeb.DAL\BankTransaction.DAL.Implementation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
 

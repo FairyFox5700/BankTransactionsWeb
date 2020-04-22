@@ -8,6 +8,7 @@ namespace BankTransaction.Models.Validation
     {
         public string Token { get; set; }
         public bool Success { get; set; }
+        public bool Locked { get; set; }
         public string RefreshToken { get; set; }
         public IEnumerable<string> Errors { get; set; }
     }
