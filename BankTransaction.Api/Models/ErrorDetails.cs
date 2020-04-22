@@ -24,7 +24,7 @@ namespace BankTransaction.Api.Models
     public class ApiErrorResonse
     {
         public string Message { get; set; }
-        public List<ValidationError> ValidationErrors { get; set; }
+        public List<ValidationError> ValidationErrors { get; set; } = new List<ValidationError>();
     }
 
 }

@@ -203,7 +203,10 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                         {
                             if (trans.AccountSourceId == account.Id || trans.AccountDestinationId == account.Id)
                             {
-                                listOfTransaction.Add(mapper.Map<TransactionDTO>(trans));
+                                var mappedTransaction = mapper.Map<TransactionDTO>(trans);
+                                mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
+                                mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
+                                listOfTransaction.Add(mappedTransaction);
                             }
                         }
 

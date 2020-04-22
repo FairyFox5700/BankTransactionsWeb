@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace BankTransaction.Web.Controllers
 {
-  
+
     public class AccountController : Controller
     {
         private readonly IAccountService accountService;
@@ -34,40 +34,21 @@ namespace BankTransaction.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllAccounts()
         {
-            try
-            {
-                var accounts = (await accountService.GetAllAccounts()).ToList();//maybe sort them
-                logger.LogInformation("Successfully returned all accounts");
-                return View(accounts);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllAccounts)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            var accounts = (await accountService.GetAllAccounts()).ToList();//maybe sort them
+            return View(accounts);
         }
 
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> AddAccount()
         {
-            try
+            var accountVM = new AddAccountViewModel()
             {
-                var accountVM = new AddAccountViewModel()
-                {
-                    People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName"),
-                    Number = accountService.GenrateCardNumber(16)
-                };
+                People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName"),
+                Number = accountService.GenrateCardNumber(16)
+            };
 
-                return View(accountVM);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddAccount)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            return View(accountVM);
         }
 
         [HttpPost]
@@ -75,58 +56,42 @@ namespace BankTransaction.Web.Controllers
         [Authorize]
         public async Task<IActionResult> AddAccount(AddAccountViewModel accountModel)
         {
-            try
+            if (accountModel == null)
             {
-                if (accountModel == null)
-                {
-                    logger.LogError($"Object of type {typeof(AddAccountViewModel)} send by client was null.");
-                    return BadRequest("Object of type account is null");
-                }
-                if (!ModelState.IsValid)
-                {
-                    logger.LogWarning($"Account model send by client is not valid.");
-                    return BadRequest("Account model is not valid.");
-                }
-                else
-                {
-                    var account = mapper.Map<AccountDTO>(accountModel);
-                    await accountService.AddAccount(account);
-                    return RedirectToAction(nameof(GetAllAccounts));
-                }
+                logger.LogError($"Object of type {typeof(AddAccountViewModel)} send by client was null.");
+                return BadRequest("Object of type account is null");
             }
-            catch (Exception ex)
+            if (!ModelState.IsValid)
             {
-                logger.LogError($"Catch an exception in method {nameof(AddAccount)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
+                logger.LogWarning($"Account model send by client is not valid.");
+                return BadRequest("Account model is not valid.");
             }
+            else
+            {
+                var account = mapper.Map<AccountDTO>(accountModel);
+                await accountService.AddAccount(account);
+                return RedirectToAction(nameof(GetAllAccounts));
+            }
+
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAccount(int id)
         {
-            try
+            var currentAccount = await accountService.GetAccountById(id);
+            if (currentAccount == null)
             {
-                var currentAccount = await accountService.GetAccountById(id);
-                if (currentAccount == null)
-                {
-                    logger.LogError($"Account with id {id} not find");
-                    return NotFound();
-                }
-                else
-                {
-                    var accountModel = mapper.Map<UpdateAccountViewModel>(currentAccount);
-                    accountModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
-                    return View(accountModel);
-                }
+                logger.LogError($"Account with id {id} not find");
+                return NotFound();
             }
-            catch (Exception ex)
+            else
             {
-                logger.LogError($"Catch an exception in method {nameof(UpdateAccount)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
+                var accountModel = mapper.Map<UpdateAccountViewModel>(currentAccount);
+                accountModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
+                return View(accountModel);
             }
+
 
         }
 
@@ -135,53 +100,46 @@ namespace BankTransaction.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAccount([FromForm]UpdateAccountViewModel accountModel)
         {
-            try
+
+            if (accountModel == null)
             {
-                if (accountModel == null)
+                logger.LogError($"Object of type {typeof(AddAccountViewModel)} send by client was null.");
+                return BadRequest("Object of type account is null");
+            }
+            if (!ModelState.IsValid)
+            {
+                logger.LogWarning("Account model send by client is not valid.");
+                return View(accountModel);
+            }
+            else
+            {
+                try
                 {
-                    logger.LogError($"Object of type {typeof(AddAccountViewModel)} send by client was null.");
-                    return BadRequest("Object of type account is null");
+                    var account = await accountService.GetAccountById(accountModel.Id);
+                    if (account == null)
+                    {
+                        logger.LogError($"Account with id {accountModel.Id} not find");
+                        return NotFound();
+                    }
+                    else
+                    {
+                        var updatedAccount = mapper.Map<UpdateAccountViewModel, AccountDTO>(accountModel, account);
+                        await accountService.UpdateAccount(updatedAccount);
+                        return RedirectToAction(nameof(GetAllAccounts));
+                    }
                 }
-                if (!ModelState.IsValid)
+                catch (DbUpdateException ex)
                 {
-                    logger.LogWarning("Account model send by client is not valid.");
+                    logger.LogError($"Unable to update account becuase of {ex.Message}");
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists, " +
+                    "see your system administrator.");
                     return View(accountModel);
                 }
-                else
-                {
-                    try
-                    {
-                        var account = await accountService.GetAccountById(accountModel.Id);
-                        if (account == null)
-                        {
-                            logger.LogError($"Account with id {accountModel.Id} not find");
-                            return NotFound();
-                        }
-                        else
-                        {
-                            var updatedAccount = mapper.Map<UpdateAccountViewModel, AccountDTO>(accountModel, account);
-                            await accountService.UpdateAccount(updatedAccount);
-                            return RedirectToAction(nameof(GetAllAccounts));
-                        }
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        logger.LogError($"Unable to update account becuase of {ex.Message}");
-                        ModelState.AddModelError("", "Unable to save changes. " +
-                        "Try again, and if the problem persists, " +
-                        "see your system administrator.");
-                        return View(accountModel);
-                    }
-
-                }
 
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdateAccount)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+
+
         }
 
         [Authorize(Roles = "Admin")]

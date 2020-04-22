@@ -4,14 +4,17 @@ using BankTransaction.BAL.Implementation;
 using BankTransaction.BAL.Implementation.Extensions;
 using BankTransaction.BAL.Implementation.Infrastucture;
 using BankTransaction.Configuration;
+using BankTransaction.Configuration.Extension;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.DAL.Implementation.Core;
 using BankTransaction.DAL.Implementation.EfCoreDAL;
 using BankTransaction.DAL.Implementation.Extensions;
 using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
 using BankTransaction.Entities;
+using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using BankTransaction.Web.Configuration;
+using BankTransaction.Web.Mapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,8 +46,9 @@ namespace BankTransaction.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages().AddRazorRuntimeCompilation();
-            IMapper mapper = new AutoMapper.Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
-            services.AddSingleton(mapper);
+            // IMapper mapper = new AutoMapper.Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
+            //services.AddSingleton(mapper);
+            services.AddMapperViewConfiguration();
             services.AddDALServices(Configuration);
             services.AddBALServices(Configuration);
             services.AddJwtAuthentication(Configuration);

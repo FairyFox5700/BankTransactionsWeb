@@ -54,34 +54,16 @@
   </Class>
   <Class Name="BankTransaction.DAL.Implementation.Core.BankTransactionContext" Collapsed="true">
     <Position X="5.25" Y="3.25" Width="1.5" />
-    <InheritanceLine Type="BankTransaction.Entities.Transaction" ManuallyRouted="true" FixedToPoint="true">
-      <Path>
-        <Point X="3.75" Y="2.691" />
-        <Point X="3.75" Y="3.278" />
-        <Point X="5.25" Y="3.278" />
-      </Path>
-    </InheritanceLine>
-    <AssociationLine Name="Shareholder" Type="BankTransaction.Entities.Shareholder">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-0.514" Y="0.032" />
-      </MemberNameLabel>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AICAEAAAAAAAAAACAAAAAAAAEAAgAACAAAAABAEAAEA=</HashCode>
-      <FileName>EfCoreDAL\EfCore\BankTransactionContext.cs</FileName>
+      <HashCode>AICAEAAAAAIAAAACAAAAAAAAEAAgAACAAAAABAEAAEA=</HashCode>
+      <FileName>Core\BankTransactionContext.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Company" />
-      <Property Name="Person" />
-      <Property Name="Shareholder" />
-      <Property Name="Account" />
-    </ShowAsAssociation>
   </Class>
   <Class Name="BankTransaction.DAL.Implementation.EfCoreDAL.UnitOfWork" Collapsed="true">
     <Position X="13.25" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAICAIChICAQAAARAAAgAQAAAAAICAAAAAgAAAAAqAA=</HashCode>
-      <FileName>EfCoreDAL\UnitOfWork.cs</FileName>
+      <HashCode>AAICAYChICEQAAARAAAgAQAAAAAICAAAAAgAAAAAqAA=</HashCode>
+      <FileName>Core\UnitOfWork.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="context" />

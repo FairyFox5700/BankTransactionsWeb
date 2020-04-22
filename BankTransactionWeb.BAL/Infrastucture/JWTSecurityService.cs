@@ -62,6 +62,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 }
                 var tokeDescription = new SecurityTokenDescriptor
                 {
+                    Issuer = jwtSettings.Issuer,
+                    Audience =jwtSettings.Audience,
                     Subject = new ClaimsIdentity(claims),
                     Expires = DateTime.UtcNow.Add(jwtSettings.TokenLifeTime),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
@@ -127,7 +129,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             else
             {
                 var tokenIdentifier = principal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
-                var refreshToken = await unitOfWork.TokenRepository.GetRefreshTokenForCurrentToken(model.Token);
+                var refreshToken = await unitOfWork.TokenRepository.GetRefreshTokenForCurrentToken(model.RefreshToken);
                 if (refreshToken == null)
                 {
                     return new AuthResult { Errors = new[] { "This refresh token does not exists" } };

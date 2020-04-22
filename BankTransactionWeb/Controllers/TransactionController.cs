@@ -36,19 +36,20 @@ namespace BankTransactionWeb.Controllers
         [Authorize]
         public async Task<IActionResult> MyTransaction()
         {
-            try
-            {
+            //{
+            //    try
+            //    {
+            throw new Exception();
                 var transactions = (await transactionService.GetAllUserTransactions(HttpContext.User));//maybe sort them
-                logger.LogInformation("Successfully returned all  user transactions");
                 var transactionListVM = transactions.Select(tr => mapper.Map<TransactionListViewModel>(tr)).ToList();
                 return View("~/Views/Transaction/GetAllTransactions.cshtml",transactionListVM);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(MyTransaction)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    logger.LogError($"Catch an exception in method {nameof(MyTransaction)}. The exception is {ex.Message}. " +
+            //        $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+            //    return StatusCode(500, "Internal server error");
+            //}
         }
 
         [HttpGet]

@@ -14,6 +14,7 @@ namespace BankTransaction.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   // [ServiceFilter(typeof(ValidationFilter))]
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> userManager;
@@ -78,10 +79,11 @@ namespace BankTransaction.Api.Controllers
 
         [HttpPost]
         [Route("register")]
+        //[ServiceFilter(typeof(ValidationFilter))]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            if (!ModelState.IsValid)
-                return  BadRequest(  new ApiErrorResonse() { ValidationErrors = ModelState.GetErrors().ToList() });
+            //if (!ModelState.IsValid)
+            //    return  BadRequest(  new ApiErrorResonse() { ValidationErrors = ModelState.GetErrors().ToList() });
             var person = mapper.Map<PersonDTO>(model);
             var result = await authService.RegisterPersonWithJwtToken(person);
             if (result.Success)
