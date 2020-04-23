@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Entities;
 using BankTransaction.DAL.Abstract;
+using BankTransaction.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -35,24 +35,20 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 var accountMapped = mapper.Map<Account>(account);
                 unitOfWork.AccountRepository.Add(accountMapped);
                 await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(AddAccount)} instance of account successfully added");
             }
             catch (Exception ex)
             {
                 throw ex;
-
             }
         }
 
         public async Task DeleteAccount(AccountDTO account)
         {
-
             try
             {
                 var accountMapped = mapper.Map<Account>(account);
                 unitOfWork.AccountRepository.Delete(accountMapped);
                 await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(DeleteAccount)} instance of account successfully added");
             }
             catch (Exception ex)
             {
@@ -80,15 +76,15 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             }
         }
 
-        public async  Task<IEnumerable<AccountDTO>> GetAllAccounts()
+        public async Task<IEnumerable<AccountDTO>> GetAllAccounts()
         {
             try
             {
-                var accounts= (await unitOfWork.AccountRepository.GetAll());
-            return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
+                var accounts = (await unitOfWork.AccountRepository.GetAll());
+                return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
             }
             catch (Exception ex)
-            { 
+            {
                 throw ex;
             }
         }
@@ -114,13 +110,12 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             try
             {
                 var accountMapped = mapper.Map<Account>(account);
-            unitOfWork.AccountRepository.Update(accountMapped);
-            await unitOfWork.Save();
+                unitOfWork.AccountRepository.Update(accountMapped);
+                await unitOfWork.Save();
             }
             catch (Exception ex)
             {
                 throw ex;
-
             }
         }
 
@@ -133,10 +128,6 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             }
             return genCardNumber.ToString();
         }
-
-
-
-
 
     }
 }

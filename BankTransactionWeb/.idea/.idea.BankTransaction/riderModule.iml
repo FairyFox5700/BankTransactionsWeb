@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$/../../../BAnkTransactionWeb.DAL" />
     <content url="file://$MODULE_DIR$/../../../BankTransaction.Api" />
+    <content url="file://$MODULE_DIR$/../../../BankTransaction.Api.Models" />
     <content url="file://$MODULE_DIR$/../../../BankTransaction.BAL.Abstract" />
     <content url="file://$MODULE_DIR$/../../../BankTransaction.Configuration" />
     <content url="file://$MODULE_DIR$/../../../BankTransaction.DAL.Abstract" />

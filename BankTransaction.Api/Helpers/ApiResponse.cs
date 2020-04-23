@@ -7,10 +7,13 @@ using System.Runtime.Serialization;
 
 namespace BankTransaction.Api.Helpers
 {
-    
+
     [DataContract]
     public class ApiResponse
     {
+
+        public static readonly ApiResponse Forbidden = new ApiResponse ( 403, new ApiErrorResonse { Message = "Forbidden", ValidationErrors = null }) ;
+        public static readonly ApiResponse Unauthorized = new ApiResponse(401, new ApiErrorResonse { Message = "Unauthorized", ValidationErrors = null });
         [DataMember]
         public int StatusCode { get; set; }
         [DataMember]
@@ -21,7 +24,7 @@ namespace BankTransaction.Api.Helpers
 
         [DataMember(EmitDefaultValue = false)]
         public object Result { get; set; }
-        public ApiResponse(int statusCode = 200, object result = null)
+        public ApiResponse( object result = null, int statusCode = 200)
         {
             StatusCode = statusCode;
             Result = result;

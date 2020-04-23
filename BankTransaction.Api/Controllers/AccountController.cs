@@ -7,10 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.Api.Helpers;
+using System.Net;
+using BankTransaction.Api.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace BankTransaction.Api.Controllers
 {
-    [Authorize]
+    //[Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("api/[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
@@ -25,14 +29,12 @@ namespace BankTransaction.Api.Controllers
         }
         // GET /api/Account
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+       // [Authorize(Roles = "Admin")]
         [Cached(200)]
         public async Task<ActionResult<IEnumerable<AccountDTO>>> GetAllAccounts()
         {
-
             var accounts = (await accountService.GetAllAccounts()).ToList();
-            logger.LogInformation("Successfully returned all accounts");
-            return accounts;
+            return Ok(accounts);
         }
         // PUT /api/Account/{id}
         [HttpPut("{id}")]
@@ -40,28 +42,25 @@ namespace BankTransaction.Api.Controllers
         {
             if (id != account.Id)
             {
-                return BadRequest();
+                return  BadRequest(new ApiErrorResonse { Message = "Id and request id does not match" });
             }
             var currentAccount = await accountService.GetAccountById(id);
             if (currentAccount == null)
             {
-                logger.LogError($"Account with id {id} not find");
-                return NotFound();
+                return NotFound(new ApiErrorResonse { Message = "Current account not found" });
             }
-
             await accountService.UpdateAccount(account);
             return Ok(currentAccount);
 
         }
 
-        // POST: api/AAccount
+        // POST: api/Account
         [HttpPost]
         public async Task<IActionResult> AddAccount(AccountDTO account)
         {
             if (account == null)
             {
-                logger.LogError("Object of type account send by client was null.");
-                return BadRequest("Object of type account is null");
+                return BadRequest(new ApiErrorResonse { Message = "Query object is null" });
             }
             else
             {
@@ -77,11 +76,11 @@ namespace BankTransaction.Api.Controllers
             var account = await accountService.GetAccountById(id);
             if (account == null)
             {
-                logger.LogError($"Account with id {id} not find");
-                return NotFound();
+                return NotFound(new ApiErrorResonse { Message = "Query object is null" ,ValidationErrors=null});
             }
             await accountService.DeleteAccount(account);
-            return Ok("Deleted succesfully");
+            //return Ok("Deleted succesfully");
+            return NotFound(new ApiErrorResonse { Message = "Query object is nu2ll", ValidationErrors = null });
 
         }
     }

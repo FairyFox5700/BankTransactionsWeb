@@ -45,7 +45,10 @@ namespace BankTransaction.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+          
             services.AddRazorPages().AddRazorRuntimeCompilation();
+            //services.AddMvc();
             // IMapper mapper = new AutoMapper.Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
             //services.AddSingleton(mapper);
             services.AddMapperViewConfiguration();
@@ -53,6 +56,7 @@ namespace BankTransaction.Web
             services.AddBALServices(Configuration);
             services.AddJwtAuthentication(Configuration);
             services.AddIdentiyConfig();
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,8 +76,15 @@ namespace BankTransaction.Web
 
                 app.UseExceptionHandler("/Home/Error");
             }
-            app.UseStaticFiles();
 
+            app.UseCors(c=>c.SetIsOriginAllowed(x=>_=true).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+            app.UseStaticFiles();
+           
+
+
+            //app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org")
+            //                .AllowAnyHeader()
+            //                .AllowAnyMethod());
             app.UseRouting();
 
             app.UseAuthentication();

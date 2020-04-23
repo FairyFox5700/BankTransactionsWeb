@@ -28,8 +28,8 @@
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">DateOfCreation</th>
+                                <th scope="col"> <a asp-action="GetAllCompanies" id="aSortCompany" asp-controller="Company" asp-route-sortOrder="@ViewData["NameSortParm"]">Name</a></th>
+                                <th scope="col"><a asp-action="GetAllCompanies" asp-controller="Company" asp-route-sortOrder="@ViewData["DateSortParm"]">DateOfCreation</a></th>
                                 <th scope="col">Options</th>
                             </tr>
                         </thead>
@@ -62,3 +62,4 @@
         </div>
     </div>
 </form>
+

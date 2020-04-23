@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Linq;
@@ -34,10 +35,11 @@ namespace BankTransaction.Api.Helpers
                     await next(context);
                     var feature = context.Features.Get<ModelStateFeature>();
                     var ModelState = context.Features.Get<ModelStateFeature>()?.ModelState;
+                    var body = await FormatResponse(context.Response);
 
                     if (context.Response.StatusCode == (int)HttpStatusCode.OK)
                     {
-                        var body = await FormatResponse(context.Response);
+                        //var body = await FormatResponse(context.Response);
                         await HandleSuccessRequestAsync(context, body, context.Response.StatusCode);
 
                     }
@@ -47,7 +49,7 @@ namespace BankTransaction.Api.Helpers
                     }
                     else
                     {
-                        await HandleNotSuccessRequestAsync(context, context.Response.StatusCode);
+                        await HandleNotSuccessRequestAsync(context, context.Response.StatusCode, body);
                     }
                 }
                 catch (Exception ex)
@@ -63,23 +65,20 @@ namespace BankTransaction.Api.Helpers
             }
         }
 
-        private Task HandleNotSuccessRequestAsync(HttpContext context, int statusCode)
+        private Task HandleNotSuccessRequestAsync(HttpContext context, int statusCode, string body)
         {
-
             context.Response.ContentType = "application/json";
-            var apiErrorResponce = new ApiErrorResonse();
-            //int code = (int)HttpStatusCode.InternalServerError;
-            if (statusCode == (int)HttpStatusCode.NotFound)
-                apiErrorResponce.Message = "The specified URI does not exist. Please verify and try again.";
-            else if (statusCode == (int)HttpStatusCode.BadRequest)
-                apiErrorResponce.Message = "The specified URI does not mach any pattern";
-            else if (statusCode == (int)HttpStatusCode.NoContent)
-                apiErrorResponce.Message = ("The specified URI does not contain any content.");
+            var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResonse>(body);
+            if (apiErrorResponce != null && apiErrorResponce is ApiErrorResonse)
+                apiErrorResponce = apiErrorResponce;
+            else
+                apiErrorResponce = new ApiErrorResonse { Message = "Your request cannot be processed. Please contact a support." };
+
+
             var apiResponce = new ApiResponse(statusCode, apiErrorResponce);
             context.Response.StatusCode = statusCode;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
-
         }
 
         private Task HandleNotSuccessValidationAsync(HttpContext context, int statusCode, ModelStateDictionary modelState)
@@ -113,9 +112,13 @@ namespace BankTransaction.Api.Helpers
         {
             context.Response.ContentType = "application/json";
             string jsonString, bodyText = string.Empty;
-            bodyText = body.ToString();
+
+            if (!IsValidJson(body.ToString(), logger))
+                bodyText = JsonConvert.SerializeObject(body);
+            else
+                bodyText = body.ToString();
             dynamic bodyContent = JsonConvert.DeserializeObject<dynamic>(bodyText);
-            var apiResponse = new ApiResponse(statusCode, bodyContent);
+            var apiResponse = new ApiResponse(bodyContent, statusCode);
             jsonString = JsonConvert.SerializeObject(apiResponse);
             return context.Response.WriteAsync(jsonString);
         }
@@ -153,6 +156,35 @@ namespace BankTransaction.Api.Helpers
             var plainBodyText = await new StreamReader(response.Body).ReadToEndAsync();
             response.Body.Seek(0, SeekOrigin.Begin);
             return plainBodyText;
+        }
+
+        private static bool IsValidJson(string input, ILogger<ApiResponseMiddleware> logger)
+        {
+            input = input.Trim();
+            if ((input.StartsWith("{") && input.EndsWith("}")) || //For object
+            (input.StartsWith("[") && input.EndsWith("]"))) //For array
+            {
+                try
+                {
+                    var obj = JToken.Parse(input);
+                    return true;
+                }
+                catch (JsonReaderException jex)
+                {
+                    //Exception in parsing json
+                    logger.LogError(jex.Message);
+                    return false;
+                }
+                catch (Exception ex) //some other exception
+                {
+                    logger.LogError(ex.ToString());
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

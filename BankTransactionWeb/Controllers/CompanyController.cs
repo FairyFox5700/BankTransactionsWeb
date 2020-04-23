@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BankTransaction.Web.Controllers
@@ -24,22 +25,40 @@ namespace BankTransaction.Web.Controllers
             this.logger = logger;
             this.mapper = mapper;
         }
-
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            var companys = (await companyService.GetAllCompanies());
+            return View(companys);
+        }
         [HttpGet]
         public async Task<IActionResult> GetAllCompanies()
         {
-            try
+            var companys = (await companyService.GetAllCompanies());
+            return View(companys);
+
+        }
+        public async Task<IActionResult> GetAllCompanies(string sortOrder)
+        {
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+            var companys = (await companyService.GetAllCompanies());
+            switch (sortOrder)
             {
-                var companys = (await companyService.GetAllCompanies());//maybe sort them
-                logger.LogInformation("Successfully returned all companies");
-                return View(companys);
+                case "name_desc":
+                    companys = companys.OrderByDescending(s => s.Name);
+                    break;
+                case "Date":
+                    companys = companys.OrderBy(s => s.DateOfCreation);
+                    break;
+                case "date_desc":
+                    companys = companys.OrderByDescending(s => s.DateOfCreation);
+                    break;
+                default:
+                    companys = companys.OrderBy(s => s.Name);
+                    break;
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllCompanies)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            return  PartialView("AllCimpaniesGrid",companys);
         }
 
         [HttpGet]
