@@ -45,7 +45,7 @@ namespace BankTransaction.Web.Controllers
             var accountVM = new AddAccountViewModel()
             {
                 People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName"),
-                Number = accountService.GenrateCardNumber(16)
+                Number = accountService.GenerateCardNumber(16)
             };
 
             return View(accountVM);
@@ -199,5 +199,6 @@ namespace BankTransaction.Web.Controllers
             base.Dispose(disposing);
         }
 
+       
     }
 }

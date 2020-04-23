@@ -2,6 +2,7 @@
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
+using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,86 +14,57 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class AdminService : IAdminService
     {
-        private readonly ILogger<AdminService> logger;
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
 
-        public AdminService(ILogger<AdminService> logger, IUnitOfWork unitOfWork, IMapper mapper)
+        public AdminService( IUnitOfWork unitOfWork, IMapper mapper)
         {
-            this.logger = logger;
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
         }
 
-        public Task<IdentityResult> AddRole(RoleDTO role)
+        public async Task<IdentityUserResult> AddRole(RoleDTO role)
         {
-            try
+            var identityRole = new IdentityRole
             {
-                var identityRole = new IdentityRole
-                {
-                    Name = role.Name
-                };
-                var result = unitOfWork.RoleManager.CreateAsync(identityRole);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                Name = role.Name
+            };
+            var result = await unitOfWork.RoleManager.CreateAsync(identityRole);
+            return result.Succeeded ? IdentityUserResult.SUCCESS : IdentityUserResult.GenerateErrorResponce(result);
         }
 
 
-        public async Task<IdentityResult> DeleteRole(string id)
+        public async Task<IdentityUserResult> DeleteRole(string id)
         {
-            try
-            {
-
-                var roleReturned = await unitOfWork.RoleManager.FindByIdAsync(id);
-                if (roleReturned == null)
-                    return null;
-                var result = await unitOfWork.RoleManager.DeleteAsync(roleReturned);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
+            var roleReturned = await unitOfWork.RoleManager.FindByIdAsync(id);
+            if (roleReturned == null)
+                return new IdentityUserResult(){NotFound = true,Errors = new List<string>(){$"Role with {id} not found"}};
+            var result = await unitOfWork.RoleManager.DeleteAsync(roleReturned);
+            return result.Succeeded ? IdentityUserResult.SUCCESS : IdentityUserResult.GenerateErrorResponce(result);
         }
-        public async Task<IdentityResult> AddUserToRole(string id, bool isUserSelected, string roleName)
+        public async Task<IdentityUserResult> AddUserToRole(string id, bool isUserSelected, string roleName)
         {
-            try
-            {
                 var user = await unitOfWork.UserManager.FindByIdAsync(id);
                 if (user == null)
-                    return null;
+                    return new IdentityUserResult(){NotFound = true,Errors = new List<string>(){$"User with {id}  not found"}};
                 if (isUserSelected && !(await unitOfWork.UserManager.IsInRoleAsync(user, roleName)))
                 {
-                    return await unitOfWork.UserManager.AddToRoleAsync(user, roleName);
+                     var result =await unitOfWork.UserManager.AddToRoleAsync(user, roleName);
+                     return result.Succeeded ? IdentityUserResult.SUCCESS : IdentityUserResult.GenerateErrorResponce(result);
                 }
                 else if (!isUserSelected && (await unitOfWork.UserManager.IsInRoleAsync(user, roleName)))
                 {
-                    return await unitOfWork.UserManager.RemoveFromRoleAsync(user, roleName);
+                    var result = await unitOfWork.UserManager.RemoveFromRoleAsync(user, roleName);
+                    return result.Succeeded
+                        ? IdentityUserResult.SUCCESS
+                        : IdentityUserResult.GenerateErrorResponce(result);
                 }
-                return null;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                return  new IdentityUserResult{Errors = new List<string>(){"An error occured while adding user to role"}};;
         }
 
         public IEnumerable<RoleDTO> GetAllRoles()
         {
-            try
-            {
-                return unitOfWork.RoleManager.Roles.Select(e => mapper.Map<RoleDTO>(e));
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
+            return unitOfWork.RoleManager.Roles.Select(e => mapper.Map<RoleDTO>(e));
         }
         public void Dispose()
         {
@@ -100,106 +72,73 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         }
         public async Task<IEnumerable<PersonInRoleDTO>> GetAllUsersInCurrentRole(string id)
         {
-            try
+            var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
+            if (identityRole == null)
             {
-                var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
-                if (identityRole == null)
-                {
-                    return null;
-                }
-                var resultList = new List<PersonInRoleDTO>();
-                foreach (var user in await unitOfWork.PersonRepository.GetAll())
-                {
-                    var userInRole = mapper.Map<PersonInRoleDTO>(user);
-                    if (userInRole == null || user.ApplicationUser == null)
-                        continue;
-                    if (await unitOfWork.UserManager.IsInRoleAsync(user.ApplicationUser, identityRole.Name))
-                    {
-                        userInRole.IsSelected = true;
-                    }
-                    else
-                        userInRole.IsSelected = false;
-                    resultList.Add(userInRole);
-                }
-                return resultList;
+                return null;
             }
-            catch (Exception ex)
+            var resultList = new List<PersonInRoleDTO>();
+            foreach (var user in await unitOfWork.PersonRepository.GetAll())
             {
-                throw ex;
+                var userInRole = mapper.Map<PersonInRoleDTO>(user);
+                if (userInRole == null || user.ApplicationUser == null)
+                    continue;
+                if (await unitOfWork.UserManager.IsInRoleAsync(user.ApplicationUser, identityRole.Name))
+                {
+                    userInRole.IsSelected = true;
+                }
+                else
+                    userInRole.IsSelected = false;
+                resultList.Add(userInRole);
             }
-
+            return resultList;
         }
 
         public async Task<RoleDTO> GetRoleById(string id)
         {
-            try
-            {
-                var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
-                if (identityRole == null)
-                {
-                    return null;
-                }
-                return mapper.Map<RoleDTO>(identityRole);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
+            var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
+            return identityRole == null ? null : mapper.Map<RoleDTO>(identityRole);
         }
 
 
         public async Task<RoleDTO> GetRoleWithUsers(string id)
         {
-            try
+            var identityRole = await GetRoleById(id);
+            if (identityRole == null)
             {
-                var identityRole = await GetRoleById(id);
-                if (identityRole == null)
+                return null;
+            }
+            var roleMapped = mapper.Map<RoleDTO>(identityRole);
+            {
+                foreach (var user in unitOfWork.UserManager.Users)
                 {
-                    return null;
-                }
-                var roleMapped = mapper.Map<RoleDTO>(identityRole);
-                {
-                    foreach (var user in unitOfWork.UserManager.Users)
+                    if (await unitOfWork.UserManager.IsInRoleAsync(user, identityRole.Name))
                     {
-                        if (await unitOfWork.UserManager.IsInRoleAsync(user, identityRole.Name))
-                        {
-                            roleMapped.Users.Add(user.UserName);
-                        }
+                        roleMapped.Users.Add(user.UserName);
                     }
                 }
-
-                return roleMapped;
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"An error ocurred : {ex.Message}. Inner exeption : {ex.InnerException}");
-                throw ex;
-
-            }
+            return roleMapped;
         }
 
-        public async Task<IdentityResult> UpdateRole(RoleDTO role)
+        public async Task<IdentityUserResult> UpdateRole(RoleDTO role)
         {
-            try
+            var identityRole = await unitOfWork.RoleManager.FindByIdAsync(role.Id);
+            if (identityRole == null)
             {
-                var identityRole = await unitOfWork.RoleManager.FindByIdAsync(role.Id);
-                identityRole.Name = role.Name;
-                if (identityRole == null)
-                {
-                    return null;
-                }
-                var result = await unitOfWork.RoleManager.UpdateAsync(identityRole);
-                return result;
+                return new IdentityUserResult(){NotFound = true,Errors = new List<string>(){$"Role with {role.Id}  not found"}};
             }
-            catch (Exception ex)
+            identityRole.Name = role.Name;
+            var result = await unitOfWork.RoleManager.UpdateAsync(identityRole);
+            if (result.Succeeded)
             {
-                logger.LogError($"An error ocurred : {ex.Message}. Inner exeption : {ex.InnerException}");
-                throw ex;
+                return IdentityUserResult.SUCCESS;
+            }
+            else
+            {
+                return IdentityUserResult.GenerateErrorResponce(result);
+            }
 
-            }
-            
         }
-
     }
 }

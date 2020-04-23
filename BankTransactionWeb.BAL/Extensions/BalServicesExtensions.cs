@@ -17,7 +17,7 @@ namespace BankTransaction.BAL.Implementation.Extensions
 {
     public static class BalServicesExtensions
     {
-        public static IServiceCollection AddBALServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddBalServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<ICompanyService, CompanyService>();
             services.AddTransient<ITransactionService, TransactionService>();

@@ -20,8 +20,6 @@ namespace BankTransaction.BAL.Implementation.Extensions
             {
                 return services;
             }
-         
-
             services.AddSingleton<IConnectionMultiplexer>(mx => ConnectionMultiplexer.Connect(redisOptions.ConnectionString));
             services.AddStackExchangeRedisCache(options => options.Configuration = redisOptions.ConnectionString);
             services.AddSingleton<IRedisCacheService, RedisCacheService>();

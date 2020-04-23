@@ -15,6 +15,6 @@ namespace BankTransaction.BAL.Abstract
         Task UpdateAccount(AccountDTO account);
         Task DeleteAccount(AccountDTO account);
         Task<IEnumerable<AccountDTO>> GetMyAccounts(ClaimsPrincipal user);
-        string GenrateCardNumber(int numberOfDigits);
+        string GenerateCardNumber(int numberOfDigits);
     }
 }

@@ -26,38 +26,17 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         }
         public async Task AddCompany(CompanyDTO company)
         {
-            try
-            {
                 var companyMapped = mapper.Map<Company>(company);
                 unitOfWork.CompanyRepository.Add(companyMapped);
                 await unitOfWork.Save();
                 logger.LogInformation($"In method {nameof(AddCompany)} instance of company successfully added");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddCompany)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
         }
 
         public async Task DeleteCompany(CompanyDTO company)
         {
-            try
-            {
-                var companyMapped = mapper.Map<Company>(company);
-                unitOfWork.CompanyRepository.Delete(companyMapped);
-                await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(DeleteCompany)} instance of company successfully added");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(DeleteCompany)} in class {nameof(PersonService)}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+            var companyMapped = mapper.Map<Company>(company);
+            unitOfWork.CompanyRepository.Delete(companyMapped);
+            await unitOfWork.Save();
         }
 
         public void Dispose()
@@ -68,51 +47,24 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         public async Task<IEnumerable<CompanyDTO>> GetAllCompanies()
         {
 
-            try
-            {
-                var companys = await unitOfWork.CompanyRepository.GetAll();
-                return companys.Select(company => mapper.Map<CompanyDTO>(company)).ToList();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllCompanies)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+var companies = await unitOfWork.CompanyRepository.GetAll();
+                return companies.Select(company => mapper.Map<CompanyDTO>(company)).ToList();
+           
         }
 
         public async Task<CompanyDTO> GetCompanyById(int id)
         {
-            try
-            {
                 var companyFinded = await unitOfWork.CompanyRepository.GetById(id);
                 return mapper.Map<CompanyDTO>(companyFinded);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetCompanyById)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+           
         }
 
         public async Task UpdateCompany(CompanyDTO company)
         {
-            try
-            {
                 var companyMapped = mapper.Map<Company>(company);
                 unitOfWork.CompanyRepository.Update(companyMapped);
                 await unitOfWork.Save();
-            }
-            catch (Exception ex)
-            {
-                    logger.LogError($"Catch an exception in method {nameof(UpdateCompany)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+         
         }
     }
 }

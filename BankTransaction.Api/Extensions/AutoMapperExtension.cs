@@ -10,7 +10,7 @@ namespace BankTransaction.Models.Mapper
         {
             var mapperConfiguration = new MapperConfiguration(c =>
             {
-                c.AddProfile(new ApiModelToBisnessMap());
+                c.AddProfile(new ApiModelToBissnessMap());
                 c.AddProfile(new BisnessToDomainProfile());
             });
 

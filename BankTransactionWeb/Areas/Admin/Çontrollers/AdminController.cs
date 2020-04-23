@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.Web.Areas.Admin.Models.ViewModels;
+using BankTransaction.Models.Validation;
 
 namespace BankTransaction.Web.Areas.Admin.Controllers
 {
@@ -62,7 +63,6 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
             //return View("~/Areas/Admin/Views/Admin/AddRole.cshtml", model);
         }
 
-
         private void AddModelErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
@@ -71,6 +71,14 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
             }
         }
 
+        private void AddModelErrors(IdentityUserResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
+        }
+      
         [HttpGet]
         public IActionResult GetAllRoles()
         {
@@ -115,107 +123,68 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateRole(UpdateRoleViewModel model)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (!ModelState.IsValid)
-                {
-                    logger.LogError("Update role model send by client is not valid.");
-                    return View(model);
-                }
-
-                var roleToUpdate = mapper.Map<RoleDTO>(model);
-                var result = await adminService.UpdateRole(roleToUpdate);
-                if (result == null)
-                {
-                    logger.LogError($"Role with id {model.Id} was not finded");
-                    return NotFound();
-                }
-                else if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
-                }
-                else if (result == null)
-                {
-                    return NotFound();
-                }
-                AddModelErrors(result);
                 return View(model);
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdateRole)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
 
+            var roleToUpdate = mapper.Map<RoleDTO>(model);
+            var result = await adminService.UpdateRole(roleToUpdate);
+            if (result.NotFound)
+            {
+                return NotFound(result);
+            }
+            if (result.Succeeded)
+            {
+                return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
+            }
+            AddModelErrors(result);
+            return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateUsersInRole(string roleId)
         {
-            try
+            ViewBag.roleId = roleId;
+            var users = await adminService.GetAllUsersInCurrentRole(roleId);
+            if (users == null)
             {
-
-                ViewBag.roleId = roleId;
-                var users = await adminService.GetAllUsersInCurrentRole(roleId);
-                if (users == null)
-                {
-                    logger.LogError($"Role with id {roleId} was not finded");
-                    return NotFound();
-                }
-                var model = users.Select(u => mapper.Map<UsersInRoleViewModel>(u)).ToList();
-                return View(model);
+                //smth here
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdateUsersInRole)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
-            //return View("~/Areas/Admin/Views/Admin/UpdateUsersInRole.cshtml", model);
+            var model = users.Select(u => mapper.Map<UsersInRoleViewModel>(u)).ToList();
+            return View(model);
         }
 
         [HttpPost]
         public async Task<IActionResult> UpdateUsersInRole(List<UsersInRoleViewModel> model, string roleId)
         {
-            try
+            ViewBag.roleId = roleId;
+            if (!ModelState.IsValid)
             {
-                ViewBag.roleId = roleId;
-                if (!ModelState.IsValid)
-                {
-                    logger.LogError("User in role model send by client is not valid.");
-                    return View(roleId);
-                }
-                var currentRole = await adminService.GetRoleById(roleId);
-                if (currentRole == null)
-                {
-                    logger.LogError($"Role with id {roleId} was not finded");
-                    return NotFound();
-                }
-                for (int i = 0; i < model.Count(); i++)
-                {
-                    var result = await adminService.AddUserToRole(model[i].AppUserId, model[i].IsSelected, currentRole.Name);
-                    if (result == null)
-                        continue;
-                   else if (result.Succeeded)
-                    {
-                        if (i < model.Count - 1)
-                            continue;
-                        else return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
-                    }
-
-                }
-                return RedirectToAction(nameof(GetAllRoles));
+                return View(roleId);
             }
-            catch (Exception ex)
+            var currentRole = await adminService.GetRoleById(roleId);
+            if (currentRole == null)
             {
-                logger.LogError($"Catch an exception in method {nameof(UpdateUsersInRole)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
+                //smth here
+                return NotFound();
             }
-
-            //return View("~/Areas/Admin/Views/Admin/UpdateRoleViewModel.cshtml", new { roleId = roleId });
-
+            for (var i = 0; i < model.Count(); i++)
+            {
+                var result = await adminService.AddUserToRole(model[i].AppUserId, model[i].IsSelected, currentRole.Name);
+                if (result.NotFound)
+                    return NotFound((result));
+                if (!result.Succeeded) continue;
+                if (i < model.Count - 1)
+                    continue;
+                else
+                {
+                    AddModelErrors(result);
+                    return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
+                }
+            }
+            return RedirectToAction(nameof(GetAllRoles));
         }
 
         //[HttpGet]
@@ -227,13 +196,10 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> DeleteRole(string id)
         {
-            try
-            {
                 var result = await adminService.DeleteRole(id);
-                if (result == null)
+                if (result.NotFound)
                 {
-                    logger.LogError($"Role with Id = {id} cannot be found");
-                    return NotFound();
+                    return NotFound(result);
                 }
                 else if (result.Succeeded)
                 {
@@ -241,14 +207,6 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
                 }
                 AddModelErrors(result);
                 return RedirectToAction(nameof(GetAllRoles), "Admin", new { area = "Admin" });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(DeleteRole)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
-
         }
 
         protected override void Dispose(bool disposing)

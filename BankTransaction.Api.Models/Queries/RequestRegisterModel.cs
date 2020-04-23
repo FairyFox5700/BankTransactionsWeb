@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BankTransaction.Api.Models.Queries
 {
-    public class RegisterModel
+    public class RequestRegisterModel
     {
         [Required]
         [EmailAddress]

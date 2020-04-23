@@ -53,7 +53,7 @@ namespace BankTransaction.Web
             //services.AddSingleton(mapper);
             services.AddMapperViewConfiguration();
             services.AddDALServices(Configuration);
-            services.AddBALServices(Configuration);
+            services.AddBalServices(Configuration);
             services.AddJwtAuthentication(Configuration);
             services.AddIdentiyConfig();
            

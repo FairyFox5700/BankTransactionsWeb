@@ -5,7 +5,7 @@ using System.Text;
 namespace BankTransaction.Models.Validation
 {
     public class AuthResult
-    {
+    {//jwt
         public string Token { get; set; }
         public bool Success { get; set; }
         public bool Locked { get; set; }

@@ -15,12 +15,10 @@ namespace BankTransaction.BAL.Abstract
     {
         public bool IsUserSignedIn(ClaimsPrincipal user);
         Task SignOutPerson();
-        Task<AuthResult> LoginPerson(PersonDTO person);
-        Task<IdentityResult> RegisterPerson(PersonDTO person);
-        Task<IdentityResult> ConfirmUserEmailAsync(string email, string code);
-        Task<IdentityResult> ResetPasswordForPerson(PersonDTO person);
-        public  Task<AuthResult> RegisterPersonWithJwtToken(PersonDTO person);
-        Task<bool> SendReserPasswordUrl(PersonDTO person);
-        Task RefreshToken(RefreshTokenDTO model);
+        Task<IdentityUserResult> LoginPerson(PersonDTO person);
+        Task<IdentityUserResult> RegisterPerson(PersonDTO person);
+        Task<IdentityUserResult> ConfirmUserEmailAsync(string email, string code);
+        Task<IdentityUserResult>  ResetPasswordForPerson(PersonDTO person);
+        Task<bool> SendResetPasswordUrl(PersonDTO person);
     }
 }

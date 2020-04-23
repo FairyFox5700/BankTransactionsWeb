@@ -32,7 +32,7 @@ namespace BankTransaction.Api
             services.AddMapperDomainConfiguration();
             //services.AddAutoMapper(typeof(Startup));
             services.AddDALServices(Configuration);
-            services.AddBALServices(Configuration);
+            services.AddBalServices(Configuration);
             services.AddJwtAuthentication(Configuration);
             services.AddDistributedCache(Configuration);
             services.AddControllersWithViews().AddNewtonsoftJson(options =>

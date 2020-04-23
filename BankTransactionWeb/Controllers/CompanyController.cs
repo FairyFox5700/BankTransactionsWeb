@@ -71,8 +71,6 @@ namespace BankTransaction.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddCompany(AddCompanyViewModel companyModel)
         {
-            try
-            {
                 if (companyModel == null)
                 {
                     logger.LogError($"Object of type {typeof(AddCompanyViewModel)} send by client was null.");
@@ -89,13 +87,6 @@ namespace BankTransaction.Web.Controllers
                     await companyService.AddCompany(company);
                     return RedirectToAction(nameof(GetAllCompanies));
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddCompany)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
         }
 
         [HttpGet]

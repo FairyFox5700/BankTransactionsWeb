@@ -11,6 +11,7 @@ using BankTransaction.Api.Models;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
+using BankTransaction.BAL.Abstract.RestApi;
 
 namespace BankTransaction.Api.Controllers
 {
@@ -21,22 +22,22 @@ namespace BankTransaction.Api.Controllers
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IMapper mapper;
-        private readonly IAuthenticationService authService;
+        private readonly IJwtAuthenticationService authService;
         private readonly IJwtSecurityService jwtService;
 
-        public AuthController(UserManager<ApplicationUser> userManager, IMapper mapper, IAuthenticationService service, IJwtSecurityService JwtService)
+        public AuthController(UserManager<ApplicationUser> userManager, IMapper mapper, IJwtAuthenticationService service, IJwtSecurityService jwtService)
         {
             this.userManager = userManager;
             this.mapper = mapper;
             this.authService = service;
-            jwtService = JwtService;
+            this.jwtService = jwtService;
         }
 
 
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody]LoginModel model)
+        public async Task<IActionResult> Login([FromBody]RequestLoginModel model)
         {
             //modelState
             var person = mapper.Map<PersonDTO>(model);
@@ -61,14 +62,14 @@ namespace BankTransaction.Api.Controllers
         public async Task<IActionResult> RefreshToken([FromBody]AuthSuccesfullModel model )
         {
             ///MAPPPPPPERPRPRPRPRPRPRRP
-            var tokenDto = new RefreshTokenDTO { Token = model.Token, RefreshToken = model.RefreshToken };
+            //var tokenDto = new RefreshTokenDTO { Token = model.Token, RefreshToken = model.RefreshToken };
+            var tokenDto = mapper.Map<RefreshTokenDTO>(model);
             var result = await jwtService.RefreshToken(tokenDto);
             if (result.Success)
             {
                 return Ok(new AuthSuccesfullModel
                 {
                     Token = result.Token,
-
                     RefreshToken = result.RefreshToken
                 });
             }
@@ -82,7 +83,7 @@ namespace BankTransaction.Api.Controllers
         [HttpPost]
         [Route("register")]
         //[ServiceFilter(typeof(ValidationFilter))]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] RequestRegisterModel model)
         {
             //if (!ModelState.IsValid)
             //    return  BadRequest(  new ApiErrorResonse() { ValidationErrors = ModelState.GetErrors().ToList() });
