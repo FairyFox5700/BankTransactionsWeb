@@ -2,6 +2,7 @@
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Models;
 using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Api.Models.Mapper
@@ -16,6 +17,12 @@ namespace BankTransaction.Api.Models.Mapper
             CreateMap<PersonDTO, RequestRegisterModel>();
             CreateMap<RefreshTokenDTO,AuthSuccesfullModel>();
             CreateMap<AuthSuccesfullModel,RefreshTokenDTO>();
+            CreateMap<PaginatedModel<PersonDTO>, PageQueryParameters>().ReverseMap();
+            CreateMap<PaginatedModel<ShareholderDTO>, PageQueryParameters>().ReverseMap();
+            CreateMap<SearchPersonQuery,PersonFilterModel>();
+            CreateMap<ShareholderFilterModel, SearchShareholderQuery>().ReverseMap();
+            CreateMap<PersonFilterModel, SearchPersonQuery>();
+             
         }
     }
 }

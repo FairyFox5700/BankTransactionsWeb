@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Models;
+using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,27 +36,12 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllShareholders(string companyName, DateTime? dateOfCompanyCreation = null)
+        public async Task<IActionResult> GetAllShareholders(ShareholderSearchModel searchModel=null, PageQueryParameters pageQueryParameters=null)
         {
-            try
-            {
-                var sh = await shareholderService.GetAllShareholders(companyName, dateOfCompanyCreation);
-                var listOfShareholdersVM = new ShareholdersListViewModel()
-                {
-
-                    Shareholders = (sh).ToList(),
-                    CompanyName = companyName,
-                    DateOfCompanyCreation = dateOfCompanyCreation
-                };
-                logger.LogInformation("Successfully returned all shareholders");
-                return View(listOfShareholdersVM);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllShareholders)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            var filter = mapper.Map<ShareholderFilterModel>(searchModel);
+            var allshareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
+            var listOfShareholdersVM = new PaginatedList<ShareholderDTO>(allshareholders);
+            return View(listOfShareholdersVM);
         }
 
         public async Task<IActionResult> AddShareholder()
@@ -63,8 +50,8 @@ namespace BankTransactionWeb.Controllers
             {
                 var shareholderVM = new AddShareholderViewModel()
                 {
-                    People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName"),
-                    Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name")
+                   // People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName"),
+                   // Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name")
                 };
 
                 return View(shareholderVM);
@@ -122,8 +109,8 @@ namespace BankTransactionWeb.Controllers
                 else
                 {
                     var shareholderModel = mapper.Map<UpdateShareholderViewModel>(currentShareholder);
-                    shareholderModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
-                    shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+                    //shareholderModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
+                   // shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
                     return View(shareholderModel);
                 }
 

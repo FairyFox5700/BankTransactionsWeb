@@ -4,6 +4,7 @@ using BankTransaction.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using BankTransaction.Entities.Filter;
 
 namespace BankTransaction.Models.Mapper
 {
@@ -12,17 +13,15 @@ namespace BankTransaction.Models.Mapper
         public BisnessToDomainProfile()
         {
 
-            CreateMap<Person, PersonDTO>();
-            CreateMap<PersonDTO, Person>();
-            CreateMap<Company, CompanyDTO>();
-            CreateMap<CompanyDTO, Company>();
-            CreateMap<Account, AccountDTO>();
-            CreateMap<AccountDTO, Account>();
+            CreateMap<PersonDTO, Person>().ReverseMap();
+            CreateMap<CompanyDTO, Company>().ReverseMap();
+            CreateMap<AccountDTO, Account>().ReverseMap();
             CreateMap<Shareholder, ShareholderDTO>();
-            CreateMap<ShareholderDTO, Shareholder>();
-            CreateMap<Transaction, TransactionDTO>();
-            CreateMap<TransactionDTO, Transaction>();
-
+            CreateMap<ShareholderDTO, Shareholder>().ReverseMap();
+            CreateMap<Transaction, TransactionDTO>().ReverseMap();;
+            //fitering
+            CreateMap<PersonFilterModel, PersonFilter>().ReverseMap();
+            CreateMap<ShareholderFilterModel, ShareholderFilter>().ReverseMap();
             CreateMap<ApplicationUser, PersonDTO>()
             .ForMember(e => e.ApplicationUserFkId, s => s.MapFrom(a => a.Id));
             CreateMap<PersonDTO, ApplicationUser>()

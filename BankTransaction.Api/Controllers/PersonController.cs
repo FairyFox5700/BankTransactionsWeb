@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace BankTransaction.Api.Controllers
 {
@@ -17,22 +18,30 @@ namespace BankTransaction.Api.Controllers
     {
         private readonly IPersonService personService;
         private readonly ILogger<PersonController> logger;
+        private readonly IMapper mapper;
 
-        public PersonController(IPersonService personService, ILogger<PersonController> logger)
+        public PersonController(IPersonService personService, ILogger<PersonController> logger, IMapper mapper )
         {
             this.personService = personService;
             this.logger = logger;
+            this.mapper = mapper;
         }
         // GET /api/Person
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters, [FromQuery]SearchPersonQuery personQuery  )
         {
-            //MAPPPER
-            var paginatedModel = new PaginatedModel() { PageIndex= pageQueryParameters.StartIndex, PageSize = pageQueryParameters.Count };
-            var filter = new PersonFilterModel() { AccountNumber = personQuery.AccountNumber, CompanyName = personQuery.CompanyName, LastName = personQuery.LastName,
-                Name = personQuery.Name, Surname = personQuery.Surname, TransactionNumber = personQuery.TransactionNumber };
-            var allPersons = await personService.GetAllPersons(filter, paginatedModel);
-            var persons =new PaginatedList<PersonDTO>(allPersons, paginatedModel.PageIndex, paginatedModel.PageSize);
+           
+           var paginatedModel = mapper.Map<PaginatedModel<PersonDTO>>(pageQueryParameters);
+
+            var filter = mapper.Map<PersonFilterModel>(personQuery);
+            PaginatedModel<PersonDTO> allPersons = null;
+            if(filter!=null)
+            {
+                allPersons = await personService.GetAllPersons(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
+            }
+            else
+                allPersons = await personService.GetAllPersons(pageQueryParameters.PageNumber, pageQueryParameters.PageSize);
+            var persons =new PaginatedList<PersonDTO>(allPersons, paginatedModel);
             return Ok(persons);
         }
         // PUT /api/Person/{id}

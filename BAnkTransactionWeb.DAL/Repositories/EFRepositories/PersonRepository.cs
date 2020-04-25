@@ -8,32 +8,29 @@ using System.Linq;
 using BankTransaction.DAL.Implementation.Extensions;
 using System.Threading.Tasks;
 using BankTransaction.Entities.Filter;
+using Microsoft.AspNetCore.Identity;
 
 namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
 {
     public class PersonRepository : BaseRepository<Person>, IPersonRepository
     {
         private readonly BankTransactionContext context;
-
         public PersonRepository(BankTransactionContext context) : base(context)
         {
             this.context = context;
         }
-        public override async Task<IEnumerable<Person>> GetAll()
+        public override async Task<PaginatedPlainModel<Person>> GetAll(int startIndex, int pageSize)
         {
-            return await context.Persons.Include(p => p.ApplicationUser).ToListAsync();
+            var persons = await PaginatedPlainModel<Person>.Paginate(context.Persons.Include(p => p.ApplicationUser), startIndex, pageSize);
+            return persons;
         }
-       
-
-
-        public async Task<IEnumerable<Person>> GetAll(int startIndex, int pageSize, PersonFilter personFilter=null)
+        public async Task<PaginatedPlainModel<Person>> GetAll(int startIndex, int pageSize, PersonFilter personFilter)
         {
-            var persons = await context.Persons.Include(p => p.ApplicationUser).Paginate<Person>(startIndex, pageSize).ToListAsync();
-            var filteredPersons = SearchByFilters(personFilter, persons);
-            return filteredPersons;
+            var filteredPersons = SearchByFilters(personFilter, context.Persons.Include(p => p.ApplicationUser).AsQueryable());
+            var persons = await PaginatedPlainModel<Person>.Paginate(filteredPersons, startIndex, pageSize);
+            return persons;
         }
-
-        private IEnumerable<Person> SearchByFilters(PersonFilter personFilter, IEnumerable<Person> persons)
+        private IQueryable<Person> SearchByFilters(PersonFilter personFilter, IQueryable<Person> persons)
         {
             if(personFilter!=null)
             {
@@ -80,6 +77,15 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
             }
         }
 
+        public Task<Person> GetPersonByAccount(string applicatioUserID)
+        {
+            return context.Persons.FirstOrDefaultAsync(e => e.ApplicationUserFkId == applicatioUserID);
+        }
+        //TODO
+        public Task<IEnumerable<Person>> GetAllUsersInCurrentRole(IdentityRole identityRole)
+        {
+            throw new NotImplementedException();
+        }
     }
-   
+
 }

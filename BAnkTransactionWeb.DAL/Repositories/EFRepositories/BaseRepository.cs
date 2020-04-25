@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using BankTransaction.Entities.Filter;
 
 namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
 {
@@ -31,12 +32,7 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
 
         public virtual void Delete(TEntity entity)
         {
-            //if (entity == null) throw new ArgumentNullException(nameof(entity));
-            //if (context.Entry(entity).State == EntityState.Detached)
-            //{
-            //    DBSet.Attach(entity);
-            //}
-            //DBSet.Remove(entity);
+
             var dbEntityEntry = this.context.Entry(entity);
             if (dbEntityEntry.State != EntityState.Detached)
             {
@@ -50,9 +46,9 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
             }
         }
 
-        public virtual  async Task<IEnumerable<TEntity>> GetAll()
+        public virtual  async Task<PaginatedPlainModel<TEntity>> GetAll(int startIndex, int pageSize)
         {
-            return await DBSet.ToListAsync();
+            return await PaginatedPlainModel<TEntity>.Paginate(DBSet.AsTracking(), startIndex,pageSize);
         }
 
         public virtual async Task<TEntity> GetById(int id)

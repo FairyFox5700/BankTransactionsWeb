@@ -1,40 +1,53 @@
 ﻿@model BankTransaction.Web.ViewModel.AddAccountViewModel
 @{
     ViewData["Title"] = "AddAccount";
-     if(User.IsInRole("Admin"))
+    if (User.IsInRole("Admin"))
     {
-            Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
+        Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
     }
 }
+    <head>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+
+    </head>
 
     <form asp-controller="Account" asp-action="AddAccount" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
         <div class="form-group row ">
-            <label asp-for="Number" class="col-sm-2 col-form-label"></label>
-            <div class="form-group">
-                <input asp-for="Number" class="form-control" placeholder="Account number *"  />
-                <span asp-validation-for="Number" class="text-danger"></span>
-            </div>
+            <label class="col-sm-2 col-form-label">New account</label>
+            <label class="col-sm-2 col-form-label">for @Model.Person?.Name @Model.Person?.LastName @Model.Person?.Surname</label>
+            <input asp-for="PersonId" hidden />
         </div>
-        <div class="form-group row ">
-            <label asp-for="Balance" class="col-sm-2 col-form-label"></label>
-            <div class="form-group">
-                <input asp-for="Balance" class="form-control" placeholder="Balance *" value="" />
-                <span asp-validation-for="Balance" class="text-danger"></span>
+            <div class="form-group row ">
+                <label asp-for="Number" class="col-sm-2 col-form-label"></label>
+                <div class="form-group">
+                    <input asp-for="Number" class="form-control" placeholder="Account number *" />
+                    <span asp-validation-for="Number" class="text-danger"></span>
+                </div>
             </div>
-        </div>
-        <div class="form-group row ">
-            <label asp-for="PersonId" class="col-sm-2 col-form-label">Person</label>
-            <div class="col-sm-5">
-                <select asp-for="PersonId" class="form-control" asp-items="@Model.People">
-                    <option>Please select person</option>
-                </select>
+            <div class="form-group row ">
+                <label asp-for="Balance" class="col-sm-2 col-form-label"></label>
+                <div class="form-group">
+                    <input asp-for="Balance" class="form-control" placeholder="Balance *" value="" />
+                    <span asp-validation-for="Balance" class="text-danger"></span>
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-sm-10">
-                <input class="btn btn-success" type="submit" asp-controller="Account" asp-action="AddAccount" value="Confirm" />
-                <a asp-controller="Account" asp-action="GetAllAccounts" class="btn btn-primary">Cancel</a>
+            @*<div class="form-group row ">
+                <label asp-for="PersonId" class="col-sm-2 col-form-label">Person</label>
+                <div class="col-sm-5">
+                    <select asp-for="PersonId"  id="PersonDropDown" class="form-control" asp-items="@Model.People">
+                        <option>Please select person</option>
+                    </select>
+                </div>
+            </div>*@
+            <div class="form-group row">
+                <div class="col-sm-10">
+                    <input class="btn btn-success" type="submit" asp-controller="Account" asp-action="AddAccount" value="Confirm" />
+                    <a asp-controller="Account" asp-action="GetAllAccounts" class="btn btn-primary">Cancel</a>
+                </div>
             </div>
-        </div>
     </form>
+

@@ -1,6 +1,7 @@
-﻿@model List<BankTransaction.BAL.Implementation.DTOModels.CompanyDTO>
+﻿@model PaginatedList<CompanyDTO>
 @{
     ViewData["Title"] = "All companies";
+    ViewBag.Index = 0;
     if (User.IsInRole("Admin"))
     {
         Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
@@ -22,7 +23,7 @@
 
         <div class="card-body">
             <div class="table-responsive">
-                @if (Model.Any())
+                @if (Model.Data.Any())
                 {
                     <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                         <thead>
@@ -34,16 +35,16 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for (int i = 0; i < Model.Count(); i++)
+                            @foreach (var company in Model.Data)
                             {
                                 <tr>
-                                    <th scope="row">@(i + 1)</th>
-                                    <td>@Model[i].Name </td>
-                                    <td>@Model[i].DateOfCreation </td>
+                                    <th scope="row">@(ViewBag.Index += 1)</th>
+                                    <td>@company.Name </td>
+                                    <td>@company.DateOfCreation </td>
 
                                     <td>
-                                        <button class="btn-primary" asp-action="UpdateCompany" asp-controller="Company" asp-route-id="@Model[i].Id">Update</button>
-                                        <button class="btn-danger" asp-action="DeleteCompany" asp-controller="Company" asp-route-id="@Model[i].Id">Delete</button>
+                                        <button class="btn-primary" asp-action="UpdateCompany" asp-controller="Company" asp-route-id="@company.Id">Update</button>
+                                        <button class="btn-danger" asp-action="DeleteCompany" asp-controller="Company" asp-route-id="@company.Id">Delete</button>
                                     </td>
                                 </tr>
                             }
@@ -60,6 +61,7 @@
                 }
             </div>
         </div>
+        @await Html.PartialAsync("_PaginationTableLayout")
     </div>
 </form>
 

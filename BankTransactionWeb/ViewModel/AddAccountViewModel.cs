@@ -15,9 +15,11 @@ namespace BankTransaction.Web.ViewModel
         [Range(0, 99999999999)]
         [DataType(DataType.Currency)]
         public decimal Balance { get; set; } = 0;
-        public SelectList People { get; set; }
+        //public SelectList People { get; set; }
+        public PersonDTO Person { get; set; }
         [Required]
         [Display(Name ="Current person id")]
         public int PersonId { get;set;}
+        //public int Name { get; set; }
     }
 }

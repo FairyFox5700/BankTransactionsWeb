@@ -12,15 +12,15 @@ namespace BankTransaction.Api.Helpers
     public class ApiResponse
     {
 
-        public static readonly ApiResponse Forbidden = new ApiResponse ( 403, new ApiErrorResonse { Message = "Forbidden", ValidationErrors = null }) ;
-        public static readonly ApiResponse Unauthorized = new ApiResponse(401, new ApiErrorResonse { Message = "Unauthorized", ValidationErrors = null });
+        public static readonly ApiResponse Forbidden = new ApiResponse ( 403, new ApiErrorResponse { Message = "Forbidden", ValidationErrors = null }) ;
+        public static readonly ApiResponse Unauthorized = new ApiResponse(401, new ApiErrorResponse { Message = "Unauthorized", ValidationErrors = null });
         [DataMember]
         public int StatusCode { get; set; }
         [DataMember]
         public bool IsError { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public ApiErrorResonse ResponseException { get; set; }
+        public ApiErrorResponse ResponseException { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
         public object Result { get; set; }
@@ -30,7 +30,7 @@ namespace BankTransaction.Api.Helpers
             Result = result;
             this.IsError = false;
         }
-        public ApiResponse(int statusCode, ApiErrorResonse apiError)
+        public ApiResponse(int statusCode, ApiErrorResponse apiError)
         {
             this.StatusCode = statusCode;
             this.ResponseException = apiError;

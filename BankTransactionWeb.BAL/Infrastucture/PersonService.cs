@@ -60,24 +60,17 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                     if (user != null)
                     {
                         var personMapped = mapper.Map<Person>(person);
-                        //personMapped.ApplicationUserFkId = null;
-                        //unitOfWork.PersonRepository.Update(personMapped);
-                        //await unitOfWork.Save();
                         unitOfWork.PersonRepository.Delete(personMapped);
                         await unitOfWork.Save();
                         var result = await unitOfWork.UserManager.DeleteAsync(user);
                         unitOfWork.CommitTransaction();
                         logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully deleted");
                         return result;
-
-                        //return result;
                     }
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError($"Catch an exception in method {nameof(DeletePerson)} in class {nameof(PersonService)}. The exception is {ex.Message}. " +
-                       $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                     unitOfWork.RollbackTransaction();
                     throw ex;
 
@@ -90,36 +83,25 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             unitOfWork.Dispose();
         }
-        public async Task<IEnumerable<PersonDTO>> GetAllPersons(PersonFilterModel personFilter = null, PaginatedModel paginatedModel = null)
+        public async Task<PaginatedModel<PersonDTO>> GetAllPersons(int pageNumber, int pageSize, PersonFilterModel personFilter = null)
         {
-            try
-            {
-                var persons = new List<Person>().AsEnumerable();
+                PaginatedPlainModel<Person> persons =null;
                    
-                if (paginatedModel != null || personFilter != null)
+                if (personFilter != null)
                 {
-                    ///MAPPER with nuul
-                    var filter = new PersonFilter() { AccountNumber = personFilter.AccountNumber, Surname = personFilter.Surname, CompanyName = personFilter.CompanyName, LastName = personFilter.LastName, Name = personFilter.Name, TransactionNumber = personFilter.TransactionNumber };
-                    persons = await unitOfWork.PersonRepository.GetAll(paginatedModel.PageIndex, paginatedModel.PageSize,filter);
+                    var filter = mapper.Map<PersonFilter>(personFilter);
+                    persons = await unitOfWork.PersonRepository.GetAll(pageNumber,pageSize,filter);
                 }
                 else
                 {
-                    persons = await unitOfWork.PersonRepository.GetAll();
+                    persons = await unitOfWork.PersonRepository.GetAll(pageNumber, pageSize);
                 }
-                //MAPPER
-               
-
-                return persons.Select(p => mapper.Map<PersonDTO>(p)).ToList();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllPersons)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+                return new PaginatedModel<PersonDTO>(persons.Select(p => mapper.Map<PersonDTO>(p)),persons.PageNumber, persons.PageSize,persons.TotalCount, persons.TotalPages);
+          
 
         }
+
+
 
         public async Task<PersonDTO> GetPersonById(int id)
         {
@@ -144,7 +126,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             try
             {
                 var id = unitOfWork.UserManager.GetUserId(user);
-                var personFinded = (await unitOfWork.PersonRepository.GetAll()).Where(e => e.ApplicationUserFkId == id).FirstOrDefault();
+                var personFinded = await unitOfWork.PersonRepository.GetPersonByAccount(id);
                 var appUser = personFinded.ApplicationUser;
                 var personModel = mapper.Map<ApplicationUser, PersonDTO>(appUser);
                 return mapper.Map(personFinded, personModel);

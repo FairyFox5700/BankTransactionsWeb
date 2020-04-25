@@ -25,7 +25,7 @@ namespace BankTransaction.Api.Models
             //if (!context.ModelState.IsValid)
             //{
             //    var errorListModel = context.ModelState
-            //        .Where(x => x.Value.Errors.Count > 0)
+            //        .Where(x => x.Value.Errors.PageSize > 0)
             //        .ToDictionary(er => er.Key, er => er.Value.Errors.Select(x => x.ErrorMessage))
             //        .ToList();
             //    var errorResponce = new ApiErrorResonse();

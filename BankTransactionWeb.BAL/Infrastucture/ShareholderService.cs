@@ -10,6 +10,8 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.BAL.Implementation.Extensions;
+using BankTransaction.Models;
+using BankTransaction.Entities.Filter;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
@@ -27,38 +29,16 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         }
         public async Task AddShareholder(ShareholderDTO shareholder)
         {
-            try
-            {
-                var shareholderMapped = mapper.Map<Shareholder>(shareholder);
-                unitOfWork.ShareholderRepository.Add(shareholderMapped);
-                await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(AddShareholder)} instance of sahreholder successfully added");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddShareholder)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+            var shareholderMapped = mapper.Map<Shareholder>(shareholder);
+            unitOfWork.ShareholderRepository.Add(shareholderMapped);
+            await unitOfWork.Save();
         }
 
         public async Task DeleteShareholder(ShareholderDTO shareholder)
         {
-            try
-            {
-                var shareholderMapped = mapper.Map<Shareholder>(shareholder);
-                unitOfWork.ShareholderRepository.Delete(shareholderMapped);
-                await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(DeleteShareholder)} instance of sahreholder successfully deleted");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(DeleteShareholder)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+            var shareholderMapped = mapper.Map<Shareholder>(shareholder);
+            unitOfWork.ShareholderRepository.Delete(shareholderMapped);
+            await unitOfWork.Save();
         }
 
         public void Dispose()
@@ -66,33 +46,21 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             unitOfWork.Dispose();
         }
 
-        public async Task<IEnumerable<ShareholderDTO>> GetAllShareholders(string companyName=null, DateTime? dateOfCompanyCreation=null)
+        public async Task<PaginatedModel<ShareholderDTO>> GetAllShareholders(int pageNumber, int pageSize,ShareholderFilterModel shareholderFilterModel =null )
         {
-            try
-            {
-                var shareholders = (await unitOfWork.ShareholderRepository.GetAll());
-                if (!String.IsNullOrEmpty(companyName))
-                {
-                    shareholders = shareholders.Where(s => s.Company.Name.Contains(companyName));
-                }
-                if (dateOfCompanyCreation!=null)
-                {
-                    shareholders = shareholders.Where(s => s.Company.DateOfCreation.EqualsUpToSeconds(dateOfCompanyCreation??DateTime.Now));
-                }
-                return shareholders.Select(shareholder => mapper.Map<ShareholderDTO>(shareholder)).ToList();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllShareholders)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
+            PaginatedPlainModel<Shareholder> shareholders = null;
 
+            if (shareholderFilterModel != null)
+            {
+                var filter = mapper.Map<ShareholderFilter>(shareholderFilterModel);
+                shareholders = await unitOfWork.ShareholderRepository.GetAll(pageNumber, pageSize, filter);
             }
+            else
+            {
+                shareholders = await unitOfWork.ShareholderRepository.GetAll(pageNumber, pageSize);
+            }
+            return new PaginatedModel<ShareholderDTO>(shareholders.Select(shareholder => mapper.Map<ShareholderDTO>(shareholder)), shareholders.PageNumber, shareholders.PageSize, shareholders.TotalCount, shareholders.TotalPages);
         }
-
-
-
-
 
         public async Task<ShareholderDTO> GetShareholderById(int id)
         {

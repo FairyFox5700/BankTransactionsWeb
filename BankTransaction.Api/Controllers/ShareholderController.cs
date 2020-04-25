@@ -1,5 +1,9 @@
-﻿using BankTransaction.BAL.Abstract;
+﻿using AutoMapper;
+using BankTransaction.Api.Models.Queries;
+using BankTransaction.Api.Models.Responces;
+using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -13,20 +17,29 @@ namespace BankTransaction.Api.Controllers
     public class ShareholderController : ControllerBase
     {
         private readonly IShareholderService shareholderService;
+        private readonly IMapper mapper;
         private readonly ILogger<ShareholderController> logger;
 
-        public ShareholderController(IShareholderService shareholderService, ILogger<ShareholderController> logger)
+        public ShareholderController(IShareholderService shareholderService,IMapper mapper, ILogger<ShareholderController> logger)
         {
             this.shareholderService = shareholderService;
+            this.mapper = mapper;
             this.logger = logger;
         }
         // GET /api/Shareholder
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ShareholderDTO>>> GetAllShareholders()
+        public async Task<IActionResult> GetAllShareholders([FromQuery]PageQueryParameters pageQueryParameters,[FromQuery]SearchShareholderQuery searchShareholderQuery)
         {
-            var shareholders = (await shareholderService.GetAllShareholders()).ToList();
-            logger.LogInformation("Successfully returned all shareholders");
-            return shareholders;
+            var paginatedModel = mapper.Map<PaginatedModel<ShareholderDTO>>(pageQueryParameters);
+            var filter = mapper.Map<ShareholderFilterModel>(searchShareholderQuery);
+            PaginatedModel<ShareholderDTO> shareholders = null;
+            if (searchShareholderQuery != null)
+            {
+               shareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize,filter);
+            }
+            shareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize);
+            var paginatedShareholders = new PaginatedList<ShareholderDTO>(shareholders, paginatedModel );
+            return Ok (paginatedShareholders);
         }
         // PUT /api/Shareholder/{id}
         [HttpPut("{id}")]
@@ -39,7 +52,6 @@ namespace BankTransaction.Api.Controllers
             var currentShareholder = await shareholderService.GetShareholderById(id);
             if (currentShareholder == null)
             {
-                logger.LogError($"Shareholder with id {id} not find");
                 return NotFound();
             }
             await shareholderService.UpdateShareholder(shareholder);
@@ -53,7 +65,6 @@ namespace BankTransaction.Api.Controllers
         {
             if (shareholder == null)
             {
-                logger.LogError("Object of type shareholder send by client was null.");
                 return BadRequest("Object of type shareholder is null");
             }
             else
@@ -69,7 +80,6 @@ namespace BankTransaction.Api.Controllers
             var shareholder = await shareholderService.GetShareholderById(id);
             if (shareholder == null)
             {
-                logger.LogError($"Shareholder with id {id} not find");
                 return NotFound();
             }
             await shareholderService.DeleteShareholder(shareholder);

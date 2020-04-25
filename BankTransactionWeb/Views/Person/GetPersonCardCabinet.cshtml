@@ -28,6 +28,21 @@
                         <i class="ace-icon fas fa-cogs fa-sm fa-fw mr-2  bigger-110"></i>
                         <span class="bigger-110">Settings</span>
                     </a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="AddAccount" asp-controller="Account"  asp-route-id="@Model.Id"  class="btn btn-sm btn-block btn-success">
+                            <i class="ace-icon fa fa-user bigger-120"></i>
+                            <span class="bigger-110">Add new account</span>
+                        </a>
+                        <a asp-action="MyTransaction" asp-controller="Transaction" class="btn btn-sm btn-block btn-primary">
+                            <i class="ace-icon fa fa-money-bill bigger-110"></i>
+                            <span class="bigger-110">My transactions</span>
+                        </a>
+                        <a asp-action="UpdatePerson" asp-controller="Person" asp-route-id="@Model.Id" class="btn btn-sm btn-block btn-primary">
+                            <i class="ace-icon fas fa-cogs fa-sm fa-fw mr-2  bigger-110"></i>
+                            <span class="bigger-110">Settings</span>
+                        </a>
+                    }
                 </div>
                 <div class="col-xs-12 col-sm-7">
                     <h4 class="blue">

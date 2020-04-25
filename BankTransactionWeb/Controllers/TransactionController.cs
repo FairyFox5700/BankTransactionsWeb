@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Models;
+using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,21 +56,15 @@ namespace BankTransactionWeb.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllTransactions()
+        public async Task<IActionResult> GetAllTransactions(PageQueryParameters pageQueryParameters)
         {
-            try
-            {
-                var transactions = (await transactionService.GetAllTransactions());//maybe sort them
-                logger.LogInformation("Successfully returned all transactions");
+          
+                var transactions = (await transactionService.GetAllTransactions(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
                 var transactionListVM = transactions.Select(tr => mapper.Map<TransactionListViewModel>(tr)).ToList();
+           // var transactionListVM3 = new PaginatedList<TransactionListViewModel>(transactionListVM);
                 return View(transactionListVM);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllTransactions)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+
+
         }
 
         [Authorize(Roles = "Admin")]
@@ -79,7 +75,7 @@ namespace BankTransactionWeb.Controllers
 
                 var transactionVM = new AddTransactionViewModel()
                 {
-                    Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number")
+                    //Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number")
                 };
 
                 return View(transactionVM);
@@ -140,7 +136,7 @@ namespace BankTransactionWeb.Controllers
                 else
                 {
                     var transactionModel = mapper.Map<UpdateTransactionViewModel>(currentTransaction);
-                    transactionModel.Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number");
+                    //transactionModel.Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number");
                     return View(transactionModel);
                 }
             }

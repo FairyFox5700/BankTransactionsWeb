@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BankTransaction.Models;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
@@ -44,14 +45,14 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             unitOfWork.Dispose();
         }
 
-        public async Task<IEnumerable<CompanyDTO>> GetAllCompanies()
+        public async Task<PaginatedModel<CompanyDTO>> GetAllCompanies(int pageNumber, int pageSize)
         {
 
-var companies = await unitOfWork.CompanyRepository.GetAll();
-                return companies.Select(company => mapper.Map<CompanyDTO>(company)).ToList();
+            var companies = await unitOfWork.CompanyRepository.GetAll(pageNumber,pageSize);
+            return new PaginatedModel<CompanyDTO>(companies.Select(company => mapper.Map<CompanyDTO>(company)), companies.PageNumber, companies.PageSize, companies.TotalCount, companies.TotalPages);
            
         }
-
+    
         public async Task<CompanyDTO> GetCompanyById(int id)
         {
                 var companyFinded = await unitOfWork.CompanyRepository.GetById(id);

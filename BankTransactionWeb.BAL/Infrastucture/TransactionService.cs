@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BankTransaction.Models.Validation;
+using BankTransaction.Models;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
@@ -62,12 +63,13 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             }
         }
 
-        public async Task<IEnumerable<TransactionDTO>> GetAllTransactions()
+
+        public async Task<PaginatedModel<TransactionDTO>> GetAllTransactions(int pageNumber, int pageSize)
         {
             try
             {
 
-                var transactions = (await unitOfWork.TransactionRepository.GetAll()).ToList();
+                var transactions = (await unitOfWork.TransactionRepository.GetAll(pageNumber, pageSize));
                 var listOfTransaction = new List<TransactionDTO>();
                 foreach (var transaction in transactions)
                 {
@@ -75,15 +77,12 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                     mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
                     mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
                     listOfTransaction.Add(mappedTransaction);
-
                 }
 
-                return listOfTransaction.ToList();
+                return new PaginatedModel<TransactionDTO>(listOfTransaction, transactions.PageNumber, transactions.PageSize, transactions.TotalCount, transactions.TotalPages);
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(GetAllTransactions)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
 
             }
@@ -122,20 +121,20 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
             }
         }
-        public async Task<int> TransActionCountByData(DateTime dataOfTrnsaction)
-        {
-            try
-            {
-                return (await unitOfWork.TransactionRepository.GetAll()).Where(e => e.DateOftransfering == dataOfTrnsaction).Count();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(TransActionCountByData)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
+        //public async Task<int> TransActionCountByData(DateTime dataOfTrnsaction)
+        //{
+        //    try
+        //    {
+        //        return (await unitOfWork.TransactionRepository.GetAll()).Where(e => e.DateOftransfering == dataOfTrnsaction).Count();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.LogError($"Catch an exception in method {nameof(TransActionCountByData)} in class {this.GetType()}. The exception is {ex.Message}. " +
+        //           $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+        //        throw ex;
 
-            }
-        }
+        //    }
+        //}
 
 
         public async Task ExecuteTransaction(int accountSourceId, string accountDestinationNumber, decimal amount)
@@ -144,8 +143,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             {
                 try
                 {
-                    var source = (await unitOfWork.AccountRepository.GetAll()).Where(a => a.Id == accountSourceId).FirstOrDefault();
-                    var destination = (await unitOfWork.AccountRepository.GetAll()).Where(a => a.Number == accountDestinationNumber).FirstOrDefault();
+                    var source = (await unitOfWork.AccountRepository.GetById(accountSourceId));
+                    var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(accountDestinationNumber));
                     if (source == null) throw new ValidationException("Source account is not founded", "");
                     if (destination == null) throw new ValidationException("Destination account is not founded", "");
                     if ((source.Balance -= amount) >= 0)
@@ -192,22 +191,19 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             try
             {
                 var id = unitOfWork.UserManager.GetUserId(user);
-                var personFinded = (await unitOfWork.PersonRepository.GetAll()).Where(e => e.ApplicationUserFkId == id).FirstOrDefault();
+                var personFinded = (await unitOfWork.PersonRepository.GetPersonByAccount(id));
                 var userAccounts = (await unitOfWork.PersonRepository.GetById(personFinded.Id)).Accounts;
                 var listOfTransaction = new List<TransactionDTO>();
                 foreach (var account in userAccounts)
                 {
-                    foreach (var trans in await unitOfWork.TransactionRepository.GetAll())
+                    foreach (var trans in await unitOfWork.TransactionRepository.GetAllTransactionsByAccountId(account.Id))
                     {
                         if (trans != null)
                         {
-                            if (trans.AccountSourceId == account.Id || trans.AccountDestinationId == account.Id)
-                            {
-                                var mappedTransaction = mapper.Map<TransactionDTO>(trans);
-                                mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
-                                mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
-                                listOfTransaction.Add(mappedTransaction);
-                            }
+                            var mappedTransaction = mapper.Map<TransactionDTO>(trans);
+                            mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
+                            mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
+                            listOfTransaction.Add(mappedTransaction);
                         }
 
                     }
@@ -223,6 +219,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
             }
         }
+
+      
     }
 }
 

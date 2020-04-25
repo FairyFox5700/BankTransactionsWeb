@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using BankTransaction.DAL.Implementation.InMemoryCore;
 using BankTransaction.DAL.Implementation.Extensions;
 using BankTransaction.Entities.Filter;
+using Microsoft.AspNetCore.Identity;
 
 namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRepositories
 {
@@ -31,23 +32,15 @@ namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRe
             container.Persons.Remove(entity);
         }
 
-        public async  Task<IEnumerable<Person>> GetAll()
+
+        public async Task<PaginatedPlainModel<Person>> GetAll(int startIndex, int pageSize, PersonFilter personFilter = null)
         {
-            var persons = container.Persons;
-            return await Task.FromResult<ICollection<Person>>(persons)
-                .ConfigureAwait(false);
+            var filteredPersons = SearchByFilters(personFilter, container.Persons.AsQueryable());
+            var persons =await  PaginatedPlainModel<Person>.Paginate(filteredPersons, startIndex, pageSize);
+            return await Task.FromResult(persons).ConfigureAwait(false); 
         }
 
-
-
-        public async Task<IEnumerable<Person>> GetAll(int startIndex, int pageSize, PersonFilter personFilter = null)
-        {
-            var persons = container.Persons.Paginate(startIndex, pageSize);
-            var filteredPersons = SearchByFilters(personFilter, persons);
-            return await Task.FromResult<IEnumerable<Person>>(filteredPersons).ConfigureAwait(false); ;
-        }
-
-        private IEnumerable<Person> SearchByFilters(PersonFilter personFilter, IEnumerable<Person> persons)
+        private IQueryable<Person> SearchByFilters(PersonFilter personFilter, IQueryable<Person> persons)
         {
             if (personFilter != null)
             {
@@ -75,7 +68,7 @@ namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRe
                 }
                 if (!String.IsNullOrEmpty(personFilter?.CompanyName))
                 {
-                    persons = container.Shareholders.Where(sh => sh.Company.Name.Contains(personFilter.CompanyName)).Select(sh => sh.Person);
+                    persons = container.Shareholders.AsQueryable().Where(sh => sh.Company.Name.Contains(personFilter.CompanyName)).Select(sh => sh.Person);
                 }
             }
             return persons;
@@ -100,6 +93,23 @@ namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRe
                 entityToUpdate.DataOfBirth = entity.DataOfBirth;
                 entityToUpdate.Accounts = entity.Accounts;
             }
+        }
+
+        //No account for user now
+        public Task<Person> GetPersonByAccount(string applicatioUserID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<PaginatedPlainModel<Person>> GetAll(int startIndex, int pageSize)
+        {
+            var persons = await PaginatedPlainModel<Person>.Paginate(container.Persons.AsQueryable(), startIndex, pageSize);
+            return await Task.FromResult(persons).ConfigureAwait(false);
+        }
+        //TODO 
+        public Task<IEnumerable<Person>> GetAllUsersInCurrentRole(IdentityRole identityRole)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,40 +27,42 @@ namespace BankTransaction.Web.Controllers
             this.mapper = mapper;
         }
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(PageQueryParameters pageQueryParameters)
         {
-            var companys = (await companyService.GetAllCompanies());
+            var companys = (await companyService.GetAllCompanies(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
             return View(companys);
         }
         [HttpGet]
-        public async Task<IActionResult> GetAllCompanies()
+        public async Task<IActionResult> GetAllCompanies(PageQueryParameters pageQueryParameters)
         {
-            var companys = (await companyService.GetAllCompanies());
-            return View(companys);
+            var companys = (await companyService.GetAllCompanies(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
+            var listOfComapniesVM = new PaginatedList<CompanyDTO>(companys);
+            return View(listOfComapniesVM);
+        }
+   
 
-        }
-        public async Task<IActionResult> GetAllCompanies(string sortOrder)
-        {
-            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
-            var companys = (await companyService.GetAllCompanies());
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    companys = companys.OrderByDescending(s => s.Name);
-                    break;
-                case "Date":
-                    companys = companys.OrderBy(s => s.DateOfCreation);
-                    break;
-                case "date_desc":
-                    companys = companys.OrderByDescending(s => s.DateOfCreation);
-                    break;
-                default:
-                    companys = companys.OrderBy(s => s.Name);
-                    break;
-            }
-            return  PartialView("AllCimpaniesGrid",companys);
-        }
+        //public async Task<IActionResult> GetAllCompanies(string sortOrder, PageQueryParameters pageQueryParameters)
+        //{
+        //    ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+        //    ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+        //    var companys = (await companyService.GetAllCompanies(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
+        //    switch (sortOrder)
+        //    {
+        //        case "name_desc":
+        //            companys = companys.OrderByDescending(s => s.Name);
+        //            break;
+        //        case "Date":
+        //            companys = companys.OrderBy(s => s.DateOfCreation);
+        //            break;
+        //        case "date_desc":
+        //            companys = companys.OrderByDescending(s => s.DateOfCreation);
+        //            break;
+        //        default:
+        //            companys = companys.OrderBy(s => s.Name);
+        //            break;
+        //    }
+        //    return  PartialView("AllCimpaniesGrid",companys);
+        //}
 
         [HttpGet]
         public IActionResult AddCompany()

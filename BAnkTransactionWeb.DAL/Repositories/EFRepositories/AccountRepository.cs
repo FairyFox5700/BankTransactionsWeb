@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BankTransaction.Entities.Filter;
 
 namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
 {
@@ -20,12 +21,12 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
            
         }
 
-        public override async Task<IEnumerable<Account>> GetAll()
+        public override async Task<PaginatedPlainModel<Account>> GetAll(int startIndex, int pageSize)
         {
             try
             {
-                var entity = await context.Accounts.Include(p => p.Transactions).ToListAsync();
-                return entity;
+                var accounts = await PaginatedPlainModel<Account>.Paginate(context.Accounts.Include(p => p.Transactions), startIndex, pageSize);
+                return accounts;
             }
             catch (Exception ex)
             {
@@ -33,6 +34,9 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
             }
         }
 
-
+        public Task<Account> GetTransactionByDestinationNumber(string accountDestinationNumber)
+        {
+            return context.Accounts.Include(p => p.Transactions).FirstAsync(e=>e.Number == accountDestinationNumber);
+        }
     }
 }

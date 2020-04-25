@@ -1,11 +1,15 @@
-﻿namespace BankTransaction.Api.Models.Queries
+﻿using System;
+using System.Collections.Generic;
+
+namespace BankTransaction.Web.Models
 {
     public class PageQueryParameters
     {
         const int MaxPageSize = 30;
         private int pageNumber { get; set; }
-        public int PageNumber {
-            get=>pageNumber;
+        public int PageNumber
+        {
+            get => pageNumber;
             set
             {
                 if (value >= 1)
@@ -15,7 +19,7 @@
 
 
         private int pageSize;
-        public int PageSize 
+        public int PageSize
         {
             get
             {
@@ -24,7 +28,7 @@
             set
             {
                 if (value >= 1)
-                    pageSize = (value  > MaxPageSize) ? MaxPageSize : value;
+                    pageSize = (value > MaxPageSize) ? MaxPageSize : value;
             }
         }
 
@@ -40,4 +44,6 @@
             PageSize = count;
         }
     }
+
 }
+

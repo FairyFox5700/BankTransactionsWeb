@@ -1,6 +1,7 @@
-﻿@model List<BankTransaction.BAL.Implementation.DTOModels.AccountDTO>
+﻿@model PaginatedList<AccountDTO>
 @{
     ViewData["Title"] = "All accounts";
+      ViewBag.Index = 0;
    if(User.IsInRole("Admin"))
     {
             Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
@@ -13,18 +14,18 @@
                     <div class="col-6">
                         <h6 class="m-0 font-weight-bold text-primary">All accounts</h6>
                     </div>
-                    @if(User.IsInRole("Admin"))
+                    @if (User.IsInRole("Admin"))
                     {
-                    <div class="col-6 ">
-                        <button class="btn btn-dark" asp-action="AddAccount" asp-controller="Account">Add new</button>
-                    </div>
+                        <div class="col-6 ">
+                            <button class="btn btn-dark" asp-action="AddAccount" asp-controller="Account">Add new</button>
+                        </div>
                     }
                 </div>
             </div>
 
             <div class="card-body">
                 <div class="table-responsive">
-                    @if (Model.Any())
+                    @if (Model.Data.Any())
                     {
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
@@ -39,17 +40,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @for (int i = 0; i < Model.Count(); i++)
+                                @foreach (var account in Model.Data)
                                 {
                                     <tr>
-                                        <th scope="row">@(i + 1)</th>
-                                        <td>@Model[i]?.Number </td>
-                                        <td>@Model[i]?.Balance </td>
+                                        <th scope="row" >@(ViewBag.Index += 1)</th>
+                                        <td>@account?.Number </td>
+                                        <td>@account?.Balance </td>
                                         @if (User.IsInRole("Admin"))
                                         {
                                             <td>
-                                                <button class="btn-primary" asp-action="UpdateAccount" asp-controller="Account" asp-route-id="@Model[i].Id">Update</button>
-                                                <button class="btn-danger" asp-action="DeleteAccount" asp-controller="Account" asp-route-id="@Model[i].Id">Delete</button>
+                                                <button class="btn-primary" asp-action="UpdateAccount" asp-controller="Account" asp-route-id="@account.Id">Update</button>
+                                                <button class="btn-danger" asp-action="DeleteAccount" asp-controller="Account" asp-route-id="@account.Id">Delete</button>
                                             </td>
                                         }
                                     </tr>
@@ -67,5 +68,6 @@
                     }
                 </div>
             </div>
+            @await Html.PartialAsync("_PaginationTableLayout")
         </div>
         </form>

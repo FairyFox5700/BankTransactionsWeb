@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,23 +33,32 @@ namespace BankTransaction.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllAccounts()
+        public async Task<IActionResult> GetAllAccounts(PageQueryParameters pageQueryParameters = null) 
         {
-            var accounts = (await accountService.GetAllAccounts()).ToList();//maybe sort them
-            return View(accounts);
+            var allAccounts = await accountService.GetAllAccounts(pageQueryParameters.PageNumber, pageQueryParameters.PageSize);
+            var listOfaccountsVM = new PaginatedList<AccountDTO>(allAccounts);
+            return View(listOfaccountsVM);
+
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> AddAccount()
+        public async Task<IActionResult> AddAccount(int id)
         {
-            var accountVM = new AddAccountViewModel()
+            var person = await personService.GetPersonById(id);
+            if(person!=null)
             {
-                People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName"),
-                Number = accountService.GenerateCardNumber(16)
+                var accountVM = new AddAccountViewModel()
+                {
+                    Number = accountService.GenerateCardNumber(16),
+                    Person = person,
+                    PersonId =id
+                };
+                return View(accountVM);
             };
+            return NotFound("Soorry. Person not found");
 
-            return View(accountVM);
+           
         }
 
         [HttpPost]
@@ -58,12 +68,10 @@ namespace BankTransaction.Web.Controllers
         {
             if (accountModel == null)
             {
-                logger.LogError($"Object of type {typeof(AddAccountViewModel)} send by client was null.");
                 return BadRequest("Object of type account is null");
             }
             if (!ModelState.IsValid)
             {
-                logger.LogWarning($"Account model send by client is not valid.");
                 return BadRequest("Account model is not valid.");
             }
             else
@@ -88,7 +96,7 @@ namespace BankTransaction.Web.Controllers
             else
             {
                 var accountModel = mapper.Map<UpdateAccountViewModel>(currentAccount);
-                accountModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
+                //accountModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
                 return View(accountModel);
             }
 

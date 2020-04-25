@@ -1,6 +1,8 @@
-﻿@model BankTransaction.Web.ViewModel.ShareholdersListViewModel
+﻿@model PaginatedList<ShareholderDTO>
 @{
+
     ViewData["Title"] = "All shareholders";
+       ViewBag.Index = 0;
     if (User.IsInRole("Admin"))
     {
         Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
@@ -21,19 +23,19 @@
 
         <div class="card-body">
             <div class="table-responsive">
-                @if (Model.Shareholders.Any())
+                @if (Model.Data.Any())
                 {
                     @*<form asp-controller="Shareholder" asp-action="GetAllShareholders" method="get">*@
                     <h3> Search by parameters</h3>
                     <br />
                     <div class="form-row align-items-center">
                         <div class="col-auto my-1">
-                            <label asp-for="CompanyName" class="dark control-label"></label>
-                            <input asp-for="CompanyName" class="form-contol" placeholder="type company name" />
+                            <label class="dark control-label">"Company name</label>
+                            <input name="CompanyName" type="text" class="form-contol" placeholder="type company name" />
                         </div>
                         <div class="col-auto my-1">
-                            <label asp-for="DateOfCompanyCreation" class="dark control-label"></label>
-                            <input asp-for="DateOfCompanyCreation" class="form-contol" placeholder="type date of company creation" />
+                            <label class="dark control-label">Date of company creation</label>
+                            <input name="CompanyName" type="date" class="form-contol" placeholder="type date of company creation" />
                         </div>
                         <div class="col-auto my-1">
                             <input type="submit" value="Search" class="btn btn-primary" />
@@ -51,17 +53,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for (int i = 0; i < Model.Shareholders.Count(); i++)
+                            @foreach (var shareholder in Model.Data)
                             {
                                 <tr>
-                                    <th scope="row">@(i + 1)</th>
-                                    <td>@Model.Shareholders[i].Person?.Name </td>
-                                    <td>@Model.Shareholders[i].Person?.Surname </td>
-                                    <td>@Model.Shareholders[i].Person?.LastName</td>
-                                    <td>@Model.Shareholders[i].Company?.Name </td>
+                                    <th scope="row">@(ViewBag.Index += 1)</th>
+                                    <td>@shareholder.Person?.Name </td>
+                                    <td>@shareholder.Person?.Surname </td>
+                                    <td>@shareholder.Person?.LastName</td>
+                                    <td>@shareholder.Company?.Name </td>
                                     <td>
-                                        <button class="btn-primary" asp-action="UpdateShareholder" asp-controller="Shareholder" asp-route-id="@Model.Shareholders[i].Id">Update</button>
-                                        <button class="btn-danger" asp-action="DeleteShareholder" asp-controller="Shareholder" asp-route-id="@Model.Shareholders[i].Id">Delete</button>
+                                        <button class="btn-primary" asp-action="UpdateShareholder" asp-controller="Shareholder" asp-route-id="@shareholder.Id">Update</button>
+                                        <button class="btn-danger" asp-action="DeleteShareholder" asp-controller="Shareholder" asp-route-id="@shareholder.Id">Delete</button>
                                     </td>
                                 </tr>
                             }
@@ -78,5 +80,6 @@
                 }
             </div>
         </div>
+        @await Html.PartialAsync("_PaginationTableLayout")
     </div>
 </form>

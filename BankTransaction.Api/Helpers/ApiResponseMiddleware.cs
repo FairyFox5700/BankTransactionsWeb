@@ -68,11 +68,11 @@ namespace BankTransaction.Api.Helpers
         private Task HandleNotSuccessRequestAsync(HttpContext context, int statusCode, string body)
         {
             context.Response.ContentType = "application/json";
-            var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResonse>(body);
-            if (apiErrorResponce != null && apiErrorResponce is ApiErrorResonse)
+            var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResponse>(body);
+            if (apiErrorResponce != null && apiErrorResponce is ApiErrorResponse)
                 apiErrorResponce = apiErrorResponce;
             else
-                apiErrorResponce = new ApiErrorResonse { Message = "Your request cannot be processed. Please contact a support." };
+                apiErrorResponce = new ApiErrorResponse { Message = "Your request cannot be processed. Please contact a support." };
 
 
             var apiResponce = new ApiResponse(statusCode, apiErrorResponce);
@@ -88,7 +88,7 @@ namespace BankTransaction.Api.Helpers
                 .Where(x => x.Value.Errors.Count > 0)
                 .ToDictionary(er => er.Key, er => er.Value.Errors.Select(x => x.ErrorMessage))
                 .ToList();
-            var apiErrorResponce = new ApiErrorResonse();
+            var apiErrorResponce = new ApiErrorResponse();
             foreach (var error in errorListModel)
             {
                 foreach (var erValue in error.Value)
@@ -126,7 +126,7 @@ namespace BankTransaction.Api.Helpers
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            var apiErrorResponce = new ApiErrorResonse();
+            var apiErrorResponce = new ApiErrorResponse();
             int code = (int)HttpStatusCode.InternalServerError;
             if (exception is DbUpdateException)
             {

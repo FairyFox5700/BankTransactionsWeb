@@ -12,7 +12,7 @@ namespace BankTransaction.BAL.Abstract
         Task<IdentityUserResult> AddUserToRole(string id, bool isUserSelected, string roleName);
         Task<IdentityUserResult> AddRole(RoleDTO role);
         IEnumerable<RoleDTO> GetAllRoles();
-        Task<IEnumerable<PersonInRoleDTO>> GetAllUsersInCurrentRole(string id);
+        //Task<IEnumerable<PersonInRoleDTO>> GetAllUsersInCurrentRole(string id);
         Task<RoleDTO> GetRoleById(string id);
         Task<RoleDTO> GetRoleWithUsers(string id);
         Task<IdentityUserResult> UpdateRole(RoleDTO role);

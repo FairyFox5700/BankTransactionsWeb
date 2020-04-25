@@ -12,7 +12,7 @@ namespace BankTransaction.BAL.Abstract
    public interface IPersonService: IDisposable
     {
 
-        Task<IEnumerable<PersonDTO>> GetAllPersons(PersonFilterModel personFilter = null, PaginatedModel paginatedModel = null);
+        Task<PaginatedModel<PersonDTO>> GetAllPersons(int pageNumber, int pageSize, PersonFilterModel personFilter = null);
         Task<PersonDTO> GetPersonById(int id);
         Task<PersonDTO> GetPersonById(ClaimsPrincipal user);
         Task AddPerson(PersonDTO person);

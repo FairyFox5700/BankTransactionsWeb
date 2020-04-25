@@ -142,19 +142,19 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
             return View(model);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> UpdateUsersInRole(string roleId)
-        {
-            ViewBag.roleId = roleId;
-            var users = await adminService.GetAllUsersInCurrentRole(roleId);
-            if (users == null)
-            {
-                //smth here
-                return NotFound();
-            }
-            var model = users.Select(u => mapper.Map<UsersInRoleViewModel>(u)).ToList();
-            return View(model);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> UpdateUsersInRole(string roleId)
+        //{
+        //    ViewBag.roleId = roleId;
+        //   // var users = await adminService.GetAllUsersInCurrentRole(roleId);
+        //    if (users == null)
+        //    {
+        //        //smth here
+        //        return NotFound();
+        //    }
+        //    var model = users.Select(u => mapper.Map<UsersInRoleViewModel>(u)).ToList();
+        //    return View(model);
+        //}
 
         [HttpPost]
         public async Task<IActionResult> UpdateUsersInRole(List<UsersInRoleViewModel> model, string roleId)

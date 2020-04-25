@@ -70,29 +70,29 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             unitOfWork.Dispose();
         }
-        public async Task<IEnumerable<PersonInRoleDTO>> GetAllUsersInCurrentRole(string id)
-        {
-            var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
-            if (identityRole == null)
-            {
-                return null;
-            }
-            var resultList = new List<PersonInRoleDTO>();
-            foreach (var user in await unitOfWork.PersonRepository.GetAll())
-            {
-                var userInRole = mapper.Map<PersonInRoleDTO>(user);
-                if (userInRole == null || user.ApplicationUser == null)
-                    continue;
-                if (await unitOfWork.UserManager.IsInRoleAsync(user.ApplicationUser, identityRole.Name))
-                {
-                    userInRole.IsSelected = true;
-                }
-                else
-                    userInRole.IsSelected = false;
-                resultList.Add(userInRole);
-            }
-            return resultList;
-        }
+        //public async Task<IEnumerable<PersonInRoleDTO>> GetAllUsersInCurrentRole(string id)
+        //{
+        //    var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
+        //    if (identityRole == null)
+        //    {
+        //        return null;
+        //    }
+        //    var resultList = new List<PersonInRoleDTO>();
+        //    foreach (var user in await unitOfWork.PersonRepository.GetAllUsersInCurrentRole(identityRole))
+        //    {
+        //        var userInRole = mapper.Map<PersonInRoleDTO>(user);
+        //        if (userInRole == null || user.ApplicationUser == null)
+        //            continue;
+        //        if (await unitOfWork.UserManager.IsInRoleAsync(user.ApplicationUser, identityRole.Name))
+        //        {
+        //            userInRole.IsSelected = true;
+        //        }
+        //        else
+        //            userInRole.IsSelected = false;
+        //        resultList.Add(userInRole);
+        //    }
+        //    return resultList;
+        //}
 
         public async Task<RoleDTO> GetRoleById(string id)
         {

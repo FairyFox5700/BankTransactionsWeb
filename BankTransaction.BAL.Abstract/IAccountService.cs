@@ -1,4 +1,5 @@
 ﻿using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Models;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -9,7 +10,7 @@ namespace BankTransaction.BAL.Abstract
 {
     public interface IAccountService : IDisposable
     {
-        Task<IEnumerable<AccountDTO>> GetAllAccounts();
+        Task<PaginatedModel<AccountDTO>> GetAllAccounts(int pageNumber, int pageSize);
         Task<AccountDTO> GetAccountById(int id);
         Task AddAccount(AccountDTO account);
         Task UpdateAccount(AccountDTO account);

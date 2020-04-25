@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Models;
 using BankTransaction.Web.Areas.Admin.Models.ViewModels;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
+using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -15,6 +17,11 @@ namespace BankTransaction.Web.Mapper
     {
         public MapperProfile()
         {
+            //filter
+            CreateMap<PersonSearchModel, PersonFilterModel> ().ReverseMap();
+            CreateMap<PageQueryParameters, PersonFilterModel>();
+            CreateMap<PaginatedModel<PersonDTO>, PageQueryParameters>().ReverseMap();
+            CreateMap<ShareholderFilterModel, ShareholderSearchModel>().ReverseMap();
             //for person
             CreateMap<PersonDTO, AddPersonViewModel>();
             CreateMap<AddPersonViewModel, PersonDTO>();

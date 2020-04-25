@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Models;
+using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -8,12 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
 {
-   // [Authorize(Roles = "Admin")]
+    // [Authorize(Roles = "Admin")]
     public class PersonController : Controller
     {
         private readonly IPersonService personService;
@@ -29,32 +30,13 @@ namespace BankTransactionWeb.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAllPersons(string name, string surname, string lastname,
-            string accountNumber, string accountTransaction, string companyName)
+        public async Task<IActionResult> GetAllPersons([FromQuery]PersonSearchModel personSearch = null, PageQueryParameters pageQueryParameters = null)
         {
-            try
-            {
-                var listOfPersonsVM = new PersonListViewModel()
-                {
-                    Persons = (await personService.GetAllPersons()).ToList()
-                    //Persons = await personService.GetAllPersons(name, surname, lastname,
-                    //accountNumber, accountTransaction, companyName),
-                    //Name = name,
-                    //SurName = surname,
-                    //LastName = lastname,
-                    //AccoutNumber = accountNumber,
-                    //AccountTransactionNumber = accountTransaction,
-                    //CompanyName = companyName
-                };
-                logger.LogInformation("Successfully returned all persons");
-                return View(listOfPersonsVM);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllPersons)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+
+            var filter = mapper.Map<PersonFilterModel>(personSearch);
+            var allPersons = await personService.GetAllPersons(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
+            var listOfPersonsVM = new PaginatedList<PersonDTO>(allPersons);
+            return View(listOfPersonsVM);
         }
 
 
@@ -86,7 +68,7 @@ namespace BankTransactionWeb.Controllers
 
         }
 
-      
+
 
 
         [HttpPost]
@@ -106,7 +88,7 @@ namespace BankTransactionWeb.Controllers
                     try
                     {
                         var updatedPerson = mapper.Map<PersonDTO>(personModel);
-                        var result= await personService.UpdatePerson(updatedPerson);
+                        var result = await personService.UpdatePerson(updatedPerson);
                         if (result == null)
                         {
                             logger.LogError($"Person with id {personModel.Id} not find");
@@ -144,15 +126,22 @@ namespace BankTransactionWeb.Controllers
             }
         }
 
+
+        public async Task<IActionResult> PersonSearch([FromQuery]PersonSearchModel personSearch)
+        {
+            var filter = mapper.Map<PersonFilterModel>(personSearch);
+            var allPersons = await personService.GetAllPersons(1, 30, filter);
+            return Json(allPersons);
+        }
         [HttpGet]
-       // [Authorize(Roles = "User")]
-       [Authorize]
-        public async Task<IActionResult> GetPersonCardCabinet()
+        // [Authorize(Roles = "User")]
+        [Authorize]
+        public async Task<IActionResult> GetPersonCardCabinet(int id =0)
         {
             try
             {
+                var currentPerson = id == 0 ? await personService.GetPersonById(HttpContext.User) : await personService.GetPersonById(id);
 
-                var currentPerson = await personService.GetPersonById(HttpContext.User);
                 if (currentPerson == null)
                 {
                     logger.LogError($"Person  not find");

@@ -21,7 +21,7 @@ namespace BankTransaction.Api.Models
     //    //}
     //}
 
-    public class ApiErrorResonse
+    public class ApiErrorResponse
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Message { get; set; }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.DAL.Implementation.InMemoryCore;
+using BankTransaction.Entities.Filter;
 
 namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRepositories
 {
@@ -52,11 +53,18 @@ namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRe
             }
         }
 
-        public async Task<IEnumerable<Account>> GetAll()
+      
+
+        public async Task<PaginatedPlainModel<Account>> GetAll(int startIndex, int pageSize)
         {
-           var accounts = container.Accounts;
-            return await Task.FromResult<ICollection<Account>>(accounts)
-                .ConfigureAwait(false);
+            var accounts = await PaginatedPlainModel<Account>.Paginate(container.Accounts.AsQueryable(), startIndex, pageSize);
+            return await Task.FromResult(accounts).ConfigureAwait(false);
+        }
+
+        public async Task<Account> GetTransactionByDestinationNumber(string accountDestinationNumber)
+        {
+            var accounts = container.Accounts.Where(e => e.Number == accountDestinationNumber).FirstOrDefault();
+            return await Task.FromResult(accounts).ConfigureAwait(false);
         }
     }
 }

@@ -148,6 +148,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password,
                 person.RememberMe,
                 lockoutOnFailure: true);
+            if (result.Succeeded)
+                return IdentityUserResult.SUCCESS;
             if (!result.Succeeded)
             {
                 return new IdentityUserResult()

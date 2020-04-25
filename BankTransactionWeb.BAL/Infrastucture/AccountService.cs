@@ -3,6 +3,7 @@ using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
+using BankTransaction.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -49,22 +50,22 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
         public async Task<AccountDTO> GetAccountById(int id)
         {
-
-                var accountFinded = await unitOfWork.AccountRepository.GetById(id);
-                return mapper.Map<AccountDTO>(accountFinded);
+            var accountFinded = await unitOfWork.AccountRepository.GetById(id);
+            return mapper.Map<AccountDTO>(accountFinded);
         }
 
-        public async Task<IEnumerable<AccountDTO>> GetAllAccounts()
+        public async Task<PaginatedModel<AccountDTO>> GetAllAccounts(int pageNumber, int pageSize)
         {
-                var accounts = (await unitOfWork.AccountRepository.GetAll());
-                return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
+
+                var accounts = (await unitOfWork.AccountRepository.GetAll(pageNumber, pageSize));
+            return new PaginatedModel<AccountDTO>(accounts.Select(account => mapper.Map<AccountDTO>(account)), accounts.PageNumber, accounts.PageSize, accounts.TotalCount, accounts.TotalPages);
         }
 
         public async Task<IEnumerable<AccountDTO>> GetMyAccounts(ClaimsPrincipal user)
         {
             
                 var id = unitOfWork.UserManager.GetUserId(user);
-                var personFinded = (await unitOfWork.PersonRepository.GetAll()).Where(e => e.ApplicationUserFkId == id).FirstOrDefault();
+                var personFinded = await unitOfWork.PersonRepository.GetPersonByAccount(id);
                 var accounts = (await unitOfWork.PersonRepository.GetById(personFinded.Id)).Accounts;
                 return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
         }
