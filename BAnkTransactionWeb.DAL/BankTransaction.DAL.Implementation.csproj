@@ -47,14 +47,18 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="RestSharp" Version="106.10.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="EfCoreDAL\" />
     <Folder Include="InMemoryDAL\Repositories\" />
+    <Folder Include="RestApi\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BankTransaction.Api.Models\BankTransaction.Api.Models.csproj" />
     <ProjectReference Include="..\BankTransaction.DAL.Abstract\BankTransaction.DAL.Abstract.csproj" />
     <ProjectReference Include="..\BankTransaction.Entities\BankTransaction.Entities.csproj" />
   </ItemGroup>

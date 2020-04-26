@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Abstract.RestApi;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace BankTransaction.BAL.Implementation.RestApi
 {
-    public class JwtAuthenticationService
+    public class JwtAuthenticationService:IJwtAuthenticationService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IJwtSecurityService jwtSecurityService;
@@ -31,14 +32,12 @@ namespace BankTransaction.BAL.Implementation.RestApi
         {
             throw new NotImplementedException();
         }
-        public async Task<AuthResult> LoginPerson(PersonDTO person)
+        public async Task<AuthResult> LoginPerson(string email, string password)
         {
-            var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
+            var user = await unitOfWork.UserManager.FindByEmailAsync(email);
             if (user != null)
             {
-                var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password,
-                    person.RememberMe,
-                    lockoutOnFailure: false);
+                var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, password,false,false);
                 if (!result.Succeeded)
                 {
                     return new AuthResult()
@@ -102,6 +101,8 @@ namespace BankTransaction.BAL.Implementation.RestApi
                 }
             }
         }
+
+      
     }
 
    

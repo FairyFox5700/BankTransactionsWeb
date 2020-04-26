@@ -83,7 +83,8 @@ namespace BankTransaction.BAL.Implementation.RestApi
                     Token = tokenJwtHandler.WriteToken(token),
                     Errors = null,
                     Success = true,
-                    RefreshToken = refreshToken.TokenKey
+                    RefreshToken = refreshToken.TokenKey,
+                    ExpieryDate = refreshToken.ExpieryDate
                 };
             }
             catch (Exception ex)
@@ -114,6 +115,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
                JwtRegisteredClaimNames.Exp).Value);
             var expieryDateInUtc = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 .AddSeconds(expieryUnixDate);
+            //TODO this
             if (expieryDateInUtc > DateTime.UtcNow)
             {
                 return new AuthResult()

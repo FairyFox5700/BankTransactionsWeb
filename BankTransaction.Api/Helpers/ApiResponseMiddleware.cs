@@ -117,9 +117,17 @@ namespace BankTransaction.Api.Helpers
                 bodyText = JsonConvert.SerializeObject(body);
             else
                 bodyText = body.ToString();
-            dynamic bodyContent = JsonConvert.DeserializeObject<dynamic>(bodyText);
-            var apiResponse = new ApiResponse(bodyContent, statusCode);
-            jsonString = JsonConvert.SerializeObject(apiResponse);
+            if (statusCode == StatusCodes.Status401Unauthorized)
+            {
+                jsonString = JsonConvert.SerializeObject(ApiResponse.Unauthorized);
+                return context.Response.WriteAsync(jsonString);
+            }
+            else
+            {
+                dynamic bodyContent = JsonConvert.DeserializeObject<dynamic>(bodyText);
+                var apiResponse = new ApiResponse(bodyContent, statusCode);
+                jsonString = JsonConvert.SerializeObject(apiResponse);
+            }
             return context.Response.WriteAsync(jsonString);
         }
 

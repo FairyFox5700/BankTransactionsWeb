@@ -1,5 +1,6 @@
 ﻿
 using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Abstract.RestApi;
 using BankTransaction.BAL.Implementation.Infrastucture;
 using BankTransaction.BAL.Implementation.RestApi;
 using BankTransaction.Configuration;
@@ -31,6 +32,7 @@ namespace BankTransaction.BAL.Implementation.Extensions
             services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.TryAddSingleton<IUrlHelperFactory, UrlHelperFactory>();
             services.AddTransient<IJwtSecurityService, JWTSecurityService>();
+            services.AddTransient<IJwtAuthenticationService, JwtAuthenticationService>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
             services.AddSingleton(emailConfig);

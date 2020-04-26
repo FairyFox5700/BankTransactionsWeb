@@ -41,7 +41,7 @@ namespace BankTransaction.Api.Controllers
         {
             //modelState
             var person = mapper.Map<PersonDTO>(model);
-            var result = await authService.LoginPerson(person);
+            var result = await authService.LoginPerson(model.Email, model.Password);
             if (result.Success)
             {
                 return Ok(new AuthSuccesfullModel
@@ -61,8 +61,7 @@ namespace BankTransaction.Api.Controllers
         [Route("refreshToken")]
         public async Task<IActionResult> RefreshToken([FromBody]AuthSuccesfullModel model )
         {
-            ///MAPPPPPPERPRPRPRPRPRPRRP
-            //var tokenDto = new RefreshTokenDTO { Token = model.Token, RefreshToken = model.RefreshToken };
+
             var tokenDto = mapper.Map<RefreshTokenDTO>(model);
             var result = await jwtService.RefreshToken(tokenDto);
             if (result.Success)

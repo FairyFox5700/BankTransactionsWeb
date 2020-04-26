@@ -1,11 +1,12 @@
 ﻿using BankTransaction.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
 
-namespace BankTransaction.Api.Helpers
+namespace BankTransaction.Api.Models
 {
 
     [DataContract]
@@ -37,6 +38,15 @@ namespace BankTransaction.Api.Helpers
             this.IsError = true;
         }
 
+        public override  string ToString()
+        {
+            return JsonConvert.SerializeObject(this).ToString();
+        }
+
+        public ApiResponse()
+        {
+                
+        }
     }
 }
 

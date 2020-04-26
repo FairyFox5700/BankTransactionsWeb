@@ -9,9 +9,12 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace BankTransaction.Api.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("api/[controller]")]
     public class PersonController : ControllerBase
@@ -26,6 +29,7 @@ namespace BankTransaction.Api.Controllers
             this.logger = logger;
             this.mapper = mapper;
         }
+
         // GET /api/Person
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters, [FromQuery]SearchPersonQuery personQuery  )
