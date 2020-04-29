@@ -15,9 +15,6 @@
                 <div class="col-6">
                     <h6 class="m-0 font-weight-bold text-primary">All shareholders</h6>
                 </div>
-                <div class="col-6 ">
-                    <button class="btn-dark" asp-action="AddShareholder" asp-controller="Shareholder">Add new</button>
-                </div>
             </div>
         </div>
 
@@ -25,17 +22,16 @@
             <div class="table-responsive">
                 @if (Model.Data.Any())
                 {
-                    @*<form asp-controller="Shareholder" asp-action="GetAllShareholders" method="get">*@
                     <h3> Search by parameters</h3>
                     <br />
-                    <div class="form-row align-items-center">
+                    <div class="form-inline">
                         <div class="col-auto my-1">
-                            <label class="dark control-label">"Company name</label>
+                            <label class="dark control-label">Company name</label>
                             <input name="CompanyName" type="text" class="form-contol" placeholder="type company name" />
                         </div>
                         <div class="col-auto my-1">
                             <label class="dark control-label">Date of company creation</label>
-                            <input name="CompanyName" type="date" class="form-contol" placeholder="type date of company creation" />
+                            <input name="CompanyName" type="date" class="form-contol" />
                         </div>
                         <div class="col-auto my-1">
                             <input type="submit" value="Search" class="btn btn-primary" />

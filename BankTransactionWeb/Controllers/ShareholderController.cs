@@ -2,6 +2,7 @@
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models;
+using BankTransaction.Web.Helpers;
 using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
@@ -36,7 +36,8 @@ namespace BankTransactionWeb.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllShareholders(ShareholderSearchModel searchModel=null, PageQueryParameters pageQueryParameters=null)
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
+        public async Task<IActionResult> GetAllShareholders(ShareholderSearchModel searchModel = null, PageQueryParameters pageQueryParameters = null)
         {
             var filter = mapper.Map<ShareholderFilterModel>(searchModel);
             var allshareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
@@ -44,83 +45,56 @@ namespace BankTransactionWeb.Controllers
             return View(listOfShareholdersVM);
         }
 
-        public async Task<IActionResult> AddShareholder()
+        public async Task<IActionResult> AddShareholder(int id)
         {
-            try
+            var person = await personService.GetPersonById(id);
+            if (person != null)
             {
                 var shareholderVM = new AddShareholderViewModel()
                 {
-                   // People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName"),
-                   // Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name")
+                    Person = person,
+                    PersonId = id,
+                    Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name")
                 };
-
                 return View(shareholderVM);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            };
+            return NotFound("Sorry. Current user not found");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddShareholder(AddShareholderViewModel shareholderModel)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                if (shareholderModel == null)
-                {
-                    logger.LogError($"Object of type {typeof(AddShareholderViewModel)} send by client was null.");
-                    return BadRequest("Object of type shareholder is null");
-                }
-                if (!ModelState.IsValid)
-                {
-                    logger.LogError($"Shareholder model send by client is not valid.");
-                    return BadRequest("Shareholder model is not valid.");
-                }
-                else
-                {
-                    var shareholder = mapper.Map<ShareholderDTO>(shareholderModel);
-                    await shareholderService.AddShareholder(shareholder);
-                    return RedirectToAction(nameof(GetAllShareholders));
-                }
+                return View(shareholderModel);
             }
-            catch (Exception ex)
+            else
             {
-                logger.LogError($"Catch an exception in method {nameof(AddShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
+                var shareholder = mapper.Map<ShareholderDTO>(shareholderModel);
+                await shareholderService.AddShareholder(shareholder);
+                return RedirectToAction(nameof(GetAllShareholders));
             }
+
         }
 
         [HttpGet]
         public async Task<IActionResult> UpdateShareholder(int id)
         {
-            try
-            {
-                var currentShareholder = await shareholderService.GetShareholderById(id);
+            var currentShareholder = await shareholderService.GetShareholderById(id);
                 if (currentShareholder == null)
-                {
-                    logger.LogError($"Shareholder with id {id} not find");
-                    return NotFound();
+                { 
+                    return NotFound($"Shareholder with id {id} not find");
                 }
                 else
                 {
                     var shareholderModel = mapper.Map<UpdateShareholderViewModel>(currentShareholder);
-                    //shareholderModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
-                   // shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+                    shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+                shareholderModel.Person = await personService.GetPersonById(id); 
                     return View(shareholderModel);
                 }
 
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdateShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+          
 
         }
 
@@ -128,76 +102,55 @@ namespace BankTransactionWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateShareholder([FromForm]UpdateShareholderViewModel shareholderModel)
         {
-            try
+            if (shareholderModel == null)
             {
-                if (shareholderModel == null)
+                return BadRequest("Object of type shareholder is null");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(shareholderModel);
+            }
+            else
+            {
+                try
                 {
-                    logger.LogError($"Object of type {typeof(UpdateShareholderViewModel)} send by client was null.");
-                    return BadRequest("Object of type shareholder is null");
+                    var shareholder = await shareholderService.GetShareholderById(shareholderModel.Id);
+                    if (shareholder == null)
+                    {
+                        return NotFound($"Shareholder with id {shareholderModel.Id} not find");
+                    }
+                    else
+                    {
+                        var updatedShareholder = mapper.Map<UpdateShareholderViewModel, ShareholderDTO>(shareholderModel, shareholder);
+                        await shareholderService.UpdateShareholder(updatedShareholder);
+                        return RedirectToAction(nameof(GetAllShareholders));
+                    }
                 }
-                if (!ModelState.IsValid)
+                catch (DbUpdateException ex)
                 {
-                    logger.LogError("Shareholder model send by client is not valid.");
+                    logger.LogError($"Unable to update shareholder because of {ex.Message}");
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists, " +
+                    "see your system administrator.");
                     return View(shareholderModel);
                 }
-                else
-                {
-                    try
-                    {
-                        var shareholder = await shareholderService.GetShareholderById(shareholderModel.Id);
-                        if (shareholder == null)
-                        {
-                            logger.LogError($"Shareholder with id {shareholderModel.Id} not find");
-                            return NotFound();
-                        }
-                        else
-                        {
-                            var updatedShareholder = mapper.Map<UpdateShareholderViewModel, ShareholderDTO>(shareholderModel, shareholder);
-                            await shareholderService.UpdateShareholder(updatedShareholder);
-                            return RedirectToAction(nameof(GetAllShareholders));
-                        }
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        logger.LogError($"Unable to update shareholder because of {ex.Message}");
-                        ModelState.AddModelError("", "Unable to save changes. " +
-                        "Try again, and if the problem persists, " +
-                        "see your system administrator.");
-                        return View(shareholderModel);
-                    }
-
-                }
 
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdateShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+
         }
 
 
         public async Task<IActionResult> DeleteShareholder(int id)
         {
-            try
-            {
-                var shareholder = await shareholderService.GetShareholderById(id);
-                if (shareholder == null)
-                {
-                    logger.LogError($"Shareholder with id {id} not find");
-                    return NotFound();
-                }
-                await shareholderService.DeleteShareholder(shareholder);
-                return RedirectToAction(nameof(GetAllShareholders));
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(DeleteShareholder)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
 
+            var shareholder = await shareholderService.GetShareholderById(id);
+            if (shareholder == null)
+            {
+
+                return NotFound($"Shareholder with id {id} not find");
+            }
+            await shareholderService.DeleteShareholder(shareholder);
+            return RedirectToAction(nameof(GetAllShareholders));
         }
 
 

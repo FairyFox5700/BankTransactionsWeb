@@ -14,19 +14,19 @@
         </div>
 
         <div class="form-group row">
-            <label asp-for="AccountSourceId" class="col-sm-2 col-form-label"></label>
+            <label asp-for="AccountSourceNumber" class="col-sm-2 col-form-label"></label>
             <div class="col-sm-5">
-                <select asp-for="AccountSourceId" asp-items="@Model.Accounts">
-                    <option>Please select account source</option>
-                </select>
+                <div class="form-group">
+                    <input asp-for="AccountSourceNumber" class="form-contol" />
+                </div>
             </div>
         </div>
         <div class="form-group row">
-            <label asp-for="AccountDestinationId" class="col-sm-2 col-form-label"></label>
+            <label asp-for="AccountDestinationNumber" class="col-sm-2 col-form-label"></label>
             <div class="col-sm-5">
-                <select asp-for="AccountDestinationId" asp-items="@Model.Accounts">
-                    <option>Please select account destination</option>
-                </select>
+                <div class="form-group">
+                    <input asp-for="AccountDestinationNumber" class="form-contol" />
+                </div>
             </div>
         </div>
         <div class="form-group row ">

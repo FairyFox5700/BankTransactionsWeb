@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Models;
+using BankTransaction.Web.Helpers;
 using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
 {
-    
+
     public class TransactionController : Controller
     {
         private readonly ITransactionService transactionService;
@@ -36,116 +36,41 @@ namespace BankTransactionWeb.Controllers
         //auth User
         [HttpGet]
         [Authorize]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
         public async Task<IActionResult> MyTransaction()
         {
-            //{
-            //    try
-            //    {
-            throw new Exception();
-                var transactions = (await transactionService.GetAllUserTransactions(HttpContext.User));//maybe sort them
-                var transactionListVM = transactions.Select(tr => mapper.Map<TransactionListViewModel>(tr)).ToList();
-                return View("~/Views/Transaction/GetAllTransactions.cshtml",transactionListVM);
-            //}
-            //catch (Exception ex)
-            //{
-            //    logger.LogError($"Catch an exception in method {nameof(MyTransaction)}. The exception is {ex.Message}. " +
-            //        $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-            //    return StatusCode(500, "Internal server error");
-            //}
+            var transactions = (await transactionService.GetAllUserTransactions(HttpContext.User));
+            return View(transactions);
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
         public async Task<IActionResult> GetAllTransactions(PageQueryParameters pageQueryParameters)
         {
-          
-                var transactions = (await transactionService.GetAllTransactions(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
-                var transactionListVM = transactions.Select(tr => mapper.Map<TransactionListViewModel>(tr)).ToList();
-           // var transactionListVM3 = new PaginatedList<TransactionListViewModel>(transactionListVM);
-                return View(transactionListVM);
+
+            var transactions = (await transactionService.GetAllTransactions(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
+            var transactionListVM = new PaginatedList<TransactionDTO>(transactions);
+            return View(transactionListVM);
 
 
         }
 
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddTransaction()
-        {
-            try
-            {
-
-                var transactionVM = new AddTransactionViewModel()
-                {
-                    //Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number")
-                };
-
-                return View(transactionVM);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddTransaction)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddTransaction(AddTransactionViewModel transactionModel)
-        {
-            try
-            {
-                if (transactionModel == null)
-                {
-                    logger.LogError($"Object of type {typeof(AddTransactionViewModel)} send by client was null.");
-                    return BadRequest("Object of type transaction is null");
-                }
-                if (!ModelState.IsValid)
-                {
-                    logger.LogError($"Transaction model send by client is not valid.");
-                    return BadRequest("Transaction model is not valid.");
-                }
-                else
-                {
-                    var transaction = mapper.Map<TransactionDTO>(transactionModel);
-                    await transactionService.AddTransaction(transaction);
-                    return RedirectToAction(nameof(GetAllTransactions));
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddTransaction)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
-        }
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTransaction(int id)
         {
-            try
-            {
-
                 var currentTransaction = await transactionService.GetTransactionById(id);
                 if (currentTransaction == null)
                 {
-                    logger.LogError($"Transaction with id {id} not find");
-                    return NotFound();
+                    return NotFound($"Transaction with id {id} not find");
                 }
                 else
                 {
                     var transactionModel = mapper.Map<UpdateTransactionViewModel>(currentTransaction);
-                    //transactionModel.Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number");
                     return View(transactionModel);
                 }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdateTransaction)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
 
         }
 
@@ -154,81 +79,65 @@ namespace BankTransactionWeb.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTransaction([FromForm]UpdateTransactionViewModel transactionModel)
         {
-            try
+            if (transactionModel == null)
             {
-                if (transactionModel == null)
+                return BadRequest("Object of type transaction is null");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(transactionModel);
+            }
+            else
+            {
+                try
                 {
-                    logger.LogError($"Object of type {typeof(UpdateTransactionViewModel)} send by client was null.");
-                    return BadRequest("Object of type transaction is null");
+                    var transaction = await transactionService.GetTransactionById(transactionModel.Id);
+                    if (transaction == null)
+                    {
+                        return NotFound($"Transaction with id {transactionModel.Id} not find");
+                    }
+                    else
+                    {
+                        var updatedTransaction = mapper.Map<UpdateTransactionViewModel, TransactionDTO>(transactionModel, transaction);
+                        var result =await transactionService.UpdateTransaction(updatedTransaction);
+                        if (result.IsError)
+                        {
+                            ModelState.AddModelError("",result.Message);
+                            return View(transactionModel);
+                        }
+                            return RedirectToAction("Error", "Home", result.Message);
+                        return RedirectToAction(nameof(GetAllTransactions));
+                    }
                 }
-                if (!ModelState.IsValid)
+                catch (DbUpdateException ex)
                 {
-                    logger.LogError("Transaction model send by client is not valid.");
+                    logger.LogError($"Unable to update transaction becuase of {ex.Message}");
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists, " +
+                    "see your system administrator.");
                     return View(transactionModel);
                 }
-                else
-                {
-                    try
-                    {
-                        var transaction = await transactionService.GetTransactionById(transactionModel.Id);
-                        if (transaction == null)
-                        {
-                            logger.LogError($"Transaction with id {transactionModel.Id} not find");
-                            return NotFound();
-                        }
-                        else
-                        {
-                            var updatedTransaction = mapper.Map<UpdateTransactionViewModel, TransactionDTO>(transactionModel, transaction);
-                            await transactionService.UpdateTransaction(updatedTransaction);
-                            return RedirectToAction(nameof(GetAllTransactions));
-                        }
-                    }
-                    catch (DbUpdateException ex)
-                    {
-                        logger.LogError($"Unable to update transaction becuase of {ex.Message}");
-                        ModelState.AddModelError("", "Unable to save changes. " +
-                        "Try again, and if the problem persists, " +
-                        "see your system administrator.");
-                        return View(transactionModel);
-                    }
-
-                }
 
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdateTransaction)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+
         }
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTransaction(int id)
         {
+            var transaction = await transactionService.GetTransactionById(id);
+            if (transaction == null)
+            {
+                return NotFound($"Transaction with id {id} not find");
+            }
             try
             {
-                var transaction = await transactionService.GetTransactionById(id);
-                if (transaction == null)
-                {
-                    logger.LogError($"Transaction with id {id} not find");
-                    return NotFound();
-                }
-                try
-                {
-                    await transactionService.DeleteTransaction(transaction);
-                    return RedirectToAction(nameof(GetAllTransactions));
-                }
-                catch (DbUpdateException ex)
-                {
-                    logger.LogError($"Unable to update person becuase of {ex.Message}");
-                    return StatusCode(500, "Internal server error");
-                }
+                await transactionService.DeleteTransaction(transaction);
+                return RedirectToAction(nameof(GetAllTransactions));
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(DeleteTransaction)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                logger.LogError($"Unable to update person becuase of {ex.Message}");
                 return StatusCode(500, "Internal server error");
             }
 
@@ -237,21 +146,12 @@ namespace BankTransactionWeb.Controllers
         [Authorize]
         public async Task<IActionResult> ExecuteTransaction()
         {
-            try
+            var executeTransactionVM = new ExecuteTransactionViewModel()
             {
-                var executeTransactionVM = new ExecuteTransactionViewModel()
-                {
-                    Accounts = new SelectList(await accountService.GetMyAccounts(HttpContext.User), "Id", "Number")
-                };
+                Accounts = new SelectList(await accountService.GetMyAccounts(HttpContext.User), "Id", "Number")
+            };
 
-                return View(executeTransactionVM);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(ExecuteTransaction)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            return View(executeTransactionVM);
 
         }
 
@@ -262,32 +162,33 @@ namespace BankTransactionWeb.Controllers
         {
             try
             {
-                try
+                executeTransactionViewModel.Accounts = new SelectList(await accountService.GetMyAccounts(HttpContext.User), "Id", "Number");
+                if (ModelState.IsValid)
                 {
-                    executeTransactionViewModel.Accounts = new SelectList(await accountService.GetMyAccounts(HttpContext.User), "Id", "Number");
-                    if (ModelState.IsValid)
+                    var result =await transactionService.ExecuteTransaction(executeTransactionViewModel.AccountSourceId,
+                        executeTransactionViewModel.AccountDestinationNumber, executeTransactionViewModel.Amount);
+                    if(result.IsError)
                     {
-                        await transactionService.ExecuteTransaction(executeTransactionViewModel.AccountSourceId,
-                            executeTransactionViewModel.AccountDestinationNumber, executeTransactionViewModel.Amount);
-                        return RedirectToAction(nameof(GetAllTransactions));
-                    }
-                    else
-                    {
+                        ModelState.AddModelError("", result.Message);
                         return View(executeTransactionViewModel);
                     }
+                    return RedirectToAction(nameof(SuccessfulTransaction),result.Message);
                 }
-                catch (ValidationException vex)
+                else
                 {
-                    ModelState.AddModelError("", vex.Message);
                     return View(executeTransactionViewModel);
                 }
             }
-            catch (Exception ex)
+            catch (ValidationException vex)
             {
-                logger.LogError($"Catch an exception in method {nameof(ExecuteTransaction)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
+                ModelState.AddModelError("", vex.Message);
+                return View(executeTransactionViewModel);
             }
+        }
+
+        public IActionResult SuccessfulTransaction(string message)
+        {
+            return View(message);
         }
 
 
@@ -304,3 +205,56 @@ namespace BankTransactionWeb.Controllers
 
     }
 }
+
+//[Authorize(Roles = "Admin")]
+//public async Task<IActionResult> AddTransaction()
+//{
+//    try
+//    {
+
+//        var transactionVM = new AddTransactionViewModel()
+//        {
+//            //Accounts = new SelectList(await accountService.GetAllAccounts(), "Id", "Number")
+//        };
+
+//        return View(transactionVM);
+//    }
+//    catch (Exception ex)
+//    {
+//        logger.LogError($"Catch an exception in method {nameof(AddTransaction)}. The exception is {ex.Message}. " +
+//            $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+//        return StatusCode(500, "Internal server error");
+//    }
+//}
+
+//[HttpPost]
+//[ValidateAntiForgeryToken]
+//[Authorize(Roles = "Admin")]
+//public async Task<IActionResult> AddTransaction(AddTransactionViewModel transactionModel)
+//{
+//    try
+//    {
+//        if (transactionModel == null)
+//        {
+//            logger.LogError($"Object of type {typeof(AddTransactionViewModel)} send by client was null.");
+//            return BadRequest("Object of type transaction is null");
+//        }
+//        if (!ModelState.IsValid)
+//        {
+//            logger.LogError($"Transaction model send by client is not valid.");
+//            return BadRequest("Transaction model is not valid.");
+//        }
+//        else
+//        {
+//            var transaction = mapper.Map<TransactionDTO>(transactionModel);
+//            await transactionService.AddTransaction(transaction);
+//            return RedirectToAction(nameof(GetAllTransactions));
+//        }
+//    }
+//    catch (Exception ex)
+//    {
+//        logger.LogError($"Catch an exception in method {nameof(AddTransaction)}. The exception is {ex.Message}. " +
+//            $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
+//        return StatusCode(500, "Internal server error");
+//    }
+//}

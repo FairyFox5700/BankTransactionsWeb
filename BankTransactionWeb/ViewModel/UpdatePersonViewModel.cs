@@ -31,7 +31,7 @@ namespace BankTransaction.Web.ViewModel
         [Phone]
         [Required]
         [StringLength( 10 , MinimumLength = 10)]
-        public string PhoneNumber{ get; set; }
+        public string PhoneNumber { get; set; }
         public string ApplicationUserFkId { get; set; }
     }
 }

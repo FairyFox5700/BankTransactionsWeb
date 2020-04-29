@@ -81,7 +81,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                     }
                     else
                     {
-                        return  new IdentityUserResult(){NotFound = true,Errors = new List<string>(){"Current user not found"}};
+                        return  new IdentityUserResult(){NotFound = true,Errors = new List<string>(){"Current user already registered"}};
                     }
                 }
                 catch (Exception e)
@@ -154,7 +154,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             {
                 return new IdentityUserResult()
                 {
-                    Errors =  new List<string>(){ "Check your email and password. Login attempt tis not succesful" }
+                    Errors =  new List<string>(){ "Check your email and password. Login attempt is not succesful" }
                 };
             }
             if (result.IsLockedOut)

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Web.Helpers;
 using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -33,6 +34,7 @@ namespace BankTransaction.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
         public async Task<IActionResult> GetAllAccounts(PageQueryParameters pageQueryParameters = null) 
         {
             var allAccounts = await accountService.GetAllAccounts(pageQueryParameters.PageNumber, pageQueryParameters.PageSize);
@@ -56,7 +58,7 @@ namespace BankTransaction.Web.Controllers
                 };
                 return View(accountVM);
             };
-            return NotFound("Soorry. Person not found");
+            return NotFound("Sorry. Current user not found");
 
            
         }
@@ -66,10 +68,7 @@ namespace BankTransaction.Web.Controllers
         [Authorize]
         public async Task<IActionResult> AddAccount(AddAccountViewModel accountModel)
         {
-            if (accountModel == null)
-            {
-                return BadRequest("Object of type account is null");
-            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest("Account model is not valid.");
@@ -96,7 +95,6 @@ namespace BankTransaction.Web.Controllers
             else
             {
                 var accountModel = mapper.Map<UpdateAccountViewModel>(currentAccount);
-                //accountModel.People = new SelectList(await personService.GetAllPersons(), "Id", "Name", "Surname", "LastName");
                 return View(accountModel);
             }
 
@@ -111,12 +109,10 @@ namespace BankTransaction.Web.Controllers
 
             if (accountModel == null)
             {
-                logger.LogError($"Object of type {typeof(AddAccountViewModel)} send by client was null.");
                 return BadRequest("Object of type account is null");
             }
             if (!ModelState.IsValid)
             {
-                logger.LogWarning("Account model send by client is not valid.");
                 return View(accountModel);
             }
             else
@@ -126,7 +122,6 @@ namespace BankTransaction.Web.Controllers
                     var account = await accountService.GetAccountById(accountModel.Id);
                     if (account == null)
                     {
-                        logger.LogError($"Account with id {accountModel.Id} not find");
                         return NotFound();
                     }
                     else
@@ -153,51 +148,32 @@ namespace BankTransaction.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAccount(int id)
         {
+            var account = await accountService.GetAccountById(id);
+            if (account == null)
+            {
+                logger.LogError($"Account with id {id} not find");
+                return NotFound();
+            }
             try
             {
-                var account = await accountService.GetAccountById(id);
-                if (account == null)
-                {
-                    logger.LogError($"Account with id {id} not find");
-                    return NotFound();
-                }
-                try
-                {
-                    await accountService.DeleteAccount(account);
-                    return RedirectToAction(nameof(GetAllAccounts));
-                }
-                catch (DbUpdateException ex)
-                {
-                    logger.LogError($"Unable to update person becuase of {ex.Message}");
-                    return StatusCode(500, "Internal server error");
-                }
+                await accountService.DeleteAccount(account);
+                return RedirectToAction(nameof(GetAllAccounts));
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(DeleteAccount)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                logger.LogError($"Unable to update person becuase of {ex.Message}");
                 return StatusCode(500, "Internal server error");
             }
 
         }
 
-        //auth User
         [HttpGet]
         [Authorize]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
         public async Task<IActionResult> MyAccounts()
         {
-            try
-            {
-                var accounts = (await accountService.GetMyAccounts(HttpContext.User)).ToList();//maybe sort them
-                logger.LogInformation("Successfully returned all accounts");
-                return View("~/Views/Account/GetAllAccounts.cshtml", accounts);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(MyAccounts)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            var accounts = (await accountService.GetMyAccounts(HttpContext.User)).ToList();
+            return View(accounts);
         }
 
         protected override void Dispose(bool disposing)

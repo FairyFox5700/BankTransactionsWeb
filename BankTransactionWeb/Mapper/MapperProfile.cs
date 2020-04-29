@@ -19,61 +19,45 @@ namespace BankTransaction.Web.Mapper
         {
             //filter
             CreateMap<PersonSearchModel, PersonFilterModel> ().ReverseMap();
-            CreateMap<PageQueryParameters, PersonFilterModel>();
+            CreateMap<PageQueryParameters, PersonFilterModel>().ReverseMap(); 
             CreateMap<PaginatedModel<PersonDTO>, PageQueryParameters>().ReverseMap();
             CreateMap<ShareholderFilterModel, ShareholderSearchModel>().ReverseMap();
             //for person
-            CreateMap<PersonDTO, AddPersonViewModel>();
-            CreateMap<AddPersonViewModel, PersonDTO>();
-            CreateMap<PersonDTO, UpdatePersonViewModel>();
-            CreateMap<UpdatePersonViewModel, PersonDTO>();
 
+            CreateMap<PersonDTO, AddPersonViewModel>().ReverseMap(); 
+            CreateMap<PersonDTO, UpdatePersonViewModel>().ReverseMap(); 
             //for acccount
-            CreateMap<AccountDTO, AddAccountViewModel>();
-            CreateMap<AddAccountViewModel, AccountDTO>();
-            CreateMap<AccountDTO, UpdateAccountViewModel>();
-            CreateMap<UpdateAccountViewModel, AccountDTO>();
+            CreateMap<AccountDTO, AddAccountViewModel>().ReverseMap(); 
+            CreateMap<UpdateAccountViewModel, AccountDTO>().ReverseMap();
             //for company
-            CreateMap<UpdateCompanyViewModel, CompanyDTO>();
-            CreateMap<CompanyDTO, UpdateCompanyViewModel>();
-            CreateMap<AddCompanyViewModel, CompanyDTO>();
-            CreateMap<CompanyDTO, AddCompanyViewModel>();
+            CreateMap<UpdateCompanyViewModel, CompanyDTO>().ReverseMap();
+            CreateMap<AddCompanyViewModel, CompanyDTO>().ReverseMap();
             //for shareholder
-            CreateMap<UpdateShareholderViewModel, ShareholderDTO>();
-            CreateMap<ShareholderDTO, UpdateShareholderViewModel>();
-            CreateMap<AddShareholderViewModel, ShareholderDTO>();
-            CreateMap<ShareholderDTO, AddShareholderViewModel>();
+            CreateMap<UpdateShareholderViewModel, ShareholderDTO>().ReverseMap();
+            CreateMap<AddShareholderViewModel, ShareholderDTO>().ReverseMap();
             //for transaction
-            CreateMap<TransactionDTO, TransactionListViewModel>()
-            .ForMember(vm => vm.AccountDestinationeNumber, dto => dto.MapFrom(s => s.DestinationAccount.Number))
-            .ForMember(vm => vm.AccountSourceNumber, dto => dto.MapFrom(s => s.SourceAccount.Number));
+            //CreateMap<TransactionDTO, TransactionListViewModel>()
+            //.ForMember(vm => vm.AccountDestinationeNumber, dto => dto.MapFrom(s => s.DestinationAccount.Number))
+            //.ForMember(vm => vm.AccountSourceNumber, dto => dto.MapFrom(s => s.SourceAccount.Number));
 
-            CreateMap<TransactionDTO, UpdateTransactionViewModel>();
+            CreateMap<TransactionDTO, UpdateTransactionViewModel>().ForMember(vm => vm.AccountDestinationNumber, dto => dto.MapFrom(s => s.DestinationAccount.Number))
+            .ForMember(vm => vm.AccountSourceNumber, dto => dto.MapFrom(s => s.SourceAccount.Number)).ReverseMap() ;
             CreateMap<AddTransactionViewModel, TransactionDTO>();
-            CreateMap<UpdateTransactionViewModel, TransactionDTO>();
-            CreateMap<TransactionDTO, UpdateTransactionViewModel>();
+           // CreateMap<UpdateTransactionViewModel, TransactionDTO>();
+  
             //Identity
-            CreateMap<LoginViewModel, PersonDTO>();
-            CreateMap<PersonDTO, LoginViewModel>();
-            CreateMap<RegisterViewModel, PersonDTO>();
-            CreateMap<PersonDTO, RegisterViewModel>();
+            CreateMap<LoginViewModel, PersonDTO>().ReverseMap();
+            CreateMap<RegisterViewModel, PersonDTO>().ReverseMap();
             //role
-            CreateMap<RoleDTO, AddRoleViewModel>();
-            CreateMap<AddRoleViewModel, RoleDTO>();
-            CreateMap<RoleDTO, UpdateRoleViewModel>();
-            CreateMap<UpdateRoleViewModel, RoleDTO>();
-            CreateMap<RoleDTO, ListRoleViewModel>();
-            CreateMap<ListRoleViewModel, RoleDTO>();
-            CreateMap<UsersInRoleViewModel, PersonDTO>();
-            CreateMap<PersonDTO, UsersInRoleViewModel>();
-            CreateMap<ResetPasswordViewModel, PersonDTO>();
-            CreateMap<PersonDTO, ResetPasswordViewModel>();
-            CreateMap<IdentityRole, RoleDTO>();
-            CreateMap<RoleDTO, IdentityRole>();
-            CreateMap<PersonInRoleDTO, IdentityRole>();
-            CreateMap<IdentityRole, PersonInRoleDTO>();
-            CreateMap<UsersInRoleViewModel, PersonInRoleDTO>();
-            CreateMap<PersonInRoleDTO, UsersInRoleViewModel>();
+            CreateMap<RoleDTO, AddRoleViewModel>().ReverseMap();
+            CreateMap<RoleDTO, UpdateRoleViewModel>().ReverseMap();
+            CreateMap<RoleDTO, ListRoleViewModel>().ReverseMap();
+            CreateMap<UsersInRoleViewModel, PersonDTO>().ReverseMap();
+            CreateMap<ResetPasswordViewModel, PersonDTO>().ReverseMap();
+            CreateMap<IdentityRole, RoleDTO>().ReverseMap();
+            CreateMap<PersonInRoleDTO, IdentityRole>().ReverseMap();
+            CreateMap<UsersInRoleViewModel, PersonInRoleDTO>().ReverseMap();
+
         }
        
        

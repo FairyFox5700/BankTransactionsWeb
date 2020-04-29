@@ -12,7 +12,7 @@ namespace BankTransaction.Web.ViewModel
         public int? CompanyId { get; set; }
         public PersonDTO Person { get; set; }
         public CompanyDTO Company { get; set; }
-        public SelectList People{ get; set; }
+       // public SelectList People{ get; set; }
         public SelectList Comapnanies { get; set; }
     }
 }

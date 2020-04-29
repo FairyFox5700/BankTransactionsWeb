@@ -4,11 +4,21 @@
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
 }
 
-    <form asp-controller="Person" asp-action="GetAllPersons" method="get">
+    <form  method="get">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">All roles</h6>
+                <div class="row">
+                    <div class="col-6">
+                        <h6 class="m-0 font-weight-bold text-primary">All roles</h6>
+                    </div>
+                    <div class="col-6 ">
+                        <button class="btn btn-dark" asp-action="AddRole" asp-controller="Admin" asp-area="Admin">Add new</button>
+                    </div>
+                </div>
+               
+
             </div>
+           
             <div class="card-body">
                 <div class="table-responsive">
                     @if (Model.Any())

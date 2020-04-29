@@ -14,5 +14,6 @@ namespace BankTransaction.BAL.Abstract
         Task AddCompany(CompanyDTO company);
         Task UpdateCompany(CompanyDTO company);
         Task DeleteCompany(CompanyDTO company);
+        Task<IEnumerable<CompanyDTO>> GetAllCompanies();
     }
 }

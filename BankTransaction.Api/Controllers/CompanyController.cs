@@ -42,7 +42,6 @@ namespace BankTransaction.Api.Controllers
             var currentCompany = await companyService.GetCompanyById(id);
             if (currentCompany == null)
             {
-                logger.LogError($"Company with id {id} not find");
                 return NotFound();
             }
             await companyService.UpdateCompany(company);
@@ -55,7 +54,6 @@ namespace BankTransaction.Api.Controllers
         {
             if (company == null)
             {
-                logger.LogError("Object of type company send by client was null.");
                 return BadRequest("Object of type company is null");
             }
             else
@@ -71,7 +69,6 @@ namespace BankTransaction.Api.Controllers
             var company = await companyService.GetCompanyById(id);
             if (company == null)
             {
-                logger.LogError($"Company with id {id} not find");
                 return NotFound();
             }
             await companyService.DeleteCompany(company);

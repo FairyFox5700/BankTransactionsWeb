@@ -23,7 +23,7 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
 
         public async Task<PaginatedPlainModel<Shareholder>> GetAll(int startIndex, int pageSize, ShareholderFilter shareholderFilter = null)
         {
-            var filteredShareholders = SearchByFilters(shareholderFilter, context.Shareholders.Include(c => c.Company).AsQueryable());
+            var filteredShareholders = SearchByFilters(shareholderFilter, context.Shareholders.Include(c => c.Company).Include(c=>c.Person).AsQueryable());
             var shareholders = await PaginatedPlainModel<Shareholder>.Paginate(filteredShareholders, startIndex, pageSize);
             return shareholders;
 
@@ -38,7 +38,7 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
                 }
                 if (shareholderFilter?.DateOfCompanyCreation != new DateTime())
                 {
-                    shareholders = shareholders.Where(s => s.Company.DateOfCreation.EqualsUpToSeconds(shareholderFilter.DateOfCompanyCreation??DateTime.Now));
+                    shareholders = shareholders.Where(s => s.Company.DateOfCreation.EqualsUpToSeconds(shareholderFilter.DateOfCompanyCreation));
                 }
             }
             return shareholders;

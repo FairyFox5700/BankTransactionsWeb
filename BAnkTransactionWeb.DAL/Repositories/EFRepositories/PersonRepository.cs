@@ -79,13 +79,32 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
 
         public Task<Person> GetPersonByAccount(string applicatioUserID)
         {
-            return context.Persons.FirstOrDefaultAsync(e => e.ApplicationUserFkId == applicatioUserID);
+            return context.Persons.Include(p => p.ApplicationUser).Include(p => p.Accounts).FirstOrDefaultAsync(e => e.ApplicationUserFkId == applicatioUserID);
         }
         //TODO
         public Task<IEnumerable<Person>> GetAllUsersInCurrentRole(IdentityRole identityRole)
         {
             throw new NotImplementedException();
+          
         }
+
     }
 
 }
+//foreach( var user in context.Users)
+//     var userRoleViewModel = new UserRoleViewModel
+//     {
+//         UserId = user.Id,
+//         UserName = user.UserName
+//     };
+
+// if (await userManager.IsInRoleAsync(user, role.Name))
+// {
+//     userRoleViewModel.IsSelected = true;
+// }
+// else
+// {
+//     userRoleViewModel.IsSelected = false;
+// }
+
+// model.Add(userRoleViewModel);

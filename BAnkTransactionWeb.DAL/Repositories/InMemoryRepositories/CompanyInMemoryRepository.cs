@@ -47,17 +47,18 @@ namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRe
             }
         }
 
-        public async Task<IEnumerable<Company>> GetAll()
-        {
-            var companies = container.Companies;
-            return await Task.FromResult<ICollection<Company>>(companies)
-                .ConfigureAwait(false);
-        }
 
         public async Task<PaginatedPlainModel<Company>> GetAll(int startIndex, int pageSize)
         {
             var comapnies = await PaginatedPlainModel<Company>.Paginate(container.Companies.AsQueryable(), startIndex, pageSize);
             return await Task.FromResult(comapnies).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Company>> GetAllCompanies()
+        {
+            var companies = container.Companies;
+            return await Task.FromResult<ICollection<Company>>(companies)
+                .ConfigureAwait(false);
         }
     }
 }

@@ -2,10 +2,9 @@
 @{
     ViewData["Title"] = "All accounts";
       ViewBag.Index = 0;
-   if(User.IsInRole("Admin"))
-    {
-            Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
-    }
+ 
+      Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
+
 }
     <form asp-controller="Acount" asp-action="GetAllAccounts" method="get">
         <div class="card shadow mb-4">
@@ -14,12 +13,6 @@
                     <div class="col-6">
                         <h6 class="m-0 font-weight-bold text-primary">All accounts</h6>
                     </div>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <div class="col-6 ">
-                            <button class="btn btn-dark" asp-action="AddAccount" asp-controller="Account">Add new</button>
-                        </div>
-                    }
                 </div>
             </div>
 

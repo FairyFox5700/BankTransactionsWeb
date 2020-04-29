@@ -110,7 +110,7 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
                 var person = mapper.Map<PersonDTO>(model);
                 var result = await authService.RegisterPerson(person);
                 if (result.NotFound)
-                    return NotFound(result);
+                    return NotFound(result.Errors);
                 if (result.Locked)
                     return RedirectToAction(nameof(Lockout));
                 if (result.Succeeded)

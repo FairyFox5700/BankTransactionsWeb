@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using BankTransaction.Api.Helpers;
 
 namespace BankTransaction.Api.Controllers
 {
@@ -59,7 +60,6 @@ namespace BankTransaction.Api.Controllers
             var currentPerson = await personService.GetPersonById(id);
             if (currentPerson == null)
             {
-                logger.LogError($"Person with id {id} not find");
                 return NotFound();
             }
             await personService.UpdatePerson(person);
@@ -73,7 +73,6 @@ namespace BankTransaction.Api.Controllers
         {
             if (person == null)
             {
-                logger.LogError("Object of type person send by client was null.");
                 return BadRequest("Object of type person is null");
             }
             else
@@ -90,7 +89,6 @@ namespace BankTransaction.Api.Controllers
             var person = await personService.GetPersonById(id);
             if (person == null)
             {
-                logger.LogError($"Person with id {id} not find");
                 return NotFound();
             }
             await personService.DeletePerson(person);

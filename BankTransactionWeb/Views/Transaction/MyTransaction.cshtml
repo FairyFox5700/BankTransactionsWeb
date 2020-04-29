@@ -1,25 +1,21 @@
-﻿@model PaginatedList<TransactionDTO>
+﻿@model List<TransactionDTO>
 @{
-    ViewData["Title"] = "All transactions";
+    ViewData["Title"] = "My transactions";
       ViewBag.Index = 0;
-    if (User.IsInRole("Admin"))
-    {
-        Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
-    }
 }
-<form asp-controller="Transaction" asp-action="GetAllTransactions" method="get">
+<form asp-controller="Transaction" asp-action="MyTransaction" method="get">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <div class="row">
                 <div class="col-6">
-                    <h6 class="m-0 font-weight-bold text-primary">All transactions</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">My transactions</h6>
                 </div>
             </div>
         </div>
 
         <div class="card-body">
             <div class="table-responsive">
-                @if (Model.Data.Any())
+                @if (Model.Any())
                 {
                     <table class="table table-striped table-light">
                         <thead>
@@ -29,14 +25,10 @@
                                 <th scope="col">Account Destination</th>
                                 <th scope="col">Date of transfering</th>
                                 <th scope="col">Amount</th>
-                                @if (User.IsInRole("Admin"))
-                                {
-                                    <th scope="col">Options</th>
-                                }
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var transaction in Model.Data)
+                            @foreach (var transaction in Model)
                             {
                                 <tr>
                                     <th scope="row">@(ViewBag.Index += 1))</th>
@@ -44,13 +36,6 @@
                                     <td>@transaction?.DestinationAccount?.Number</td>
                                     <td>@transaction?.DateOftransfering</td>
                                     <td>@transaction?.Amount </td>
-                                    @if (User.IsInRole("Admin"))
-                                    {
-                                        <td>
-                                            <button class="btn-primary" asp-action="UpdateTransaction" asp-controller="Transaction" asp-route-id="@transaction?.Id">Update</button>
-                                            <button class="btn-danger" asp-action="DeleteTransaction" asp-controller="Transaction" asp-route-id="@transaction?.Id">Delete</button>
-                                        </td>
-                                    }
                                 </tr>
                             }
                         </tbody>
@@ -66,6 +51,5 @@
                 }
             </div>
         </div>
-        @await Html.PartialAsync("_PaginationTableLayout")
     </div>
     </form>

@@ -1,4 +1,5 @@
-﻿using BankTransaction.Models.Validation;
+﻿using BankTransaction.BAL.Implementation.RestApi;
+using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,7 @@ namespace BankTransaction.BAL.Implementation.Extensions
                 ValidateIssuerSigningKey = true
             };
             services.AddSingleton(tokenValidParam);
+            services.AddTransient<JWTSecurityService>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
              .AddJwtBearer(options =>
              {

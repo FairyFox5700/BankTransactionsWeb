@@ -59,7 +59,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                         ? IdentityUserResult.SUCCESS
                         : IdentityUserResult.GenerateErrorResponce(result);
                 }
-                return  new IdentityUserResult{Errors = new List<string>(){"An error occured while adding user to role"}};;
+                return  null;
         }
 
         public IEnumerable<RoleDTO> GetAllRoles()
@@ -70,30 +70,36 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             unitOfWork.Dispose();
         }
-        //public async Task<IEnumerable<PersonInRoleDTO>> GetAllUsersInCurrentRole(string id)
-        //{
-        //    var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
-        //    if (identityRole == null)
-        //    {
-        //        return null;
-        //    }
-        //    var resultList = new List<PersonInRoleDTO>();
-        //    foreach (var user in await unitOfWork.PersonRepository.GetAllUsersInCurrentRole(identityRole))
-        //    {
-        //        var userInRole = mapper.Map<PersonInRoleDTO>(user);
-        //        if (userInRole == null || user.ApplicationUser == null)
-        //            continue;
-        //        if (await unitOfWork.UserManager.IsInRoleAsync(user.ApplicationUser, identityRole.Name))
-        //        {
-        //            userInRole.IsSelected = true;
-        //        }
-        //        else
-        //            userInRole.IsSelected = false;
-        //        resultList.Add(userInRole);
-        //    }
-        //    return resultList;
-        //}
+        public async Task<IEnumerable<PersonInRoleDTO>>  GetAllUsersInCurrentRole(string id)
+        {
+            var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
+            if (identityRole == null)
+            {
+                return null;
+            }
 
+            var resultList = new List<PersonInRoleDTO>();
+            foreach(var user in  unitOfWork.UserManager.Users)
+
+            {
+               
+                var person = await unitOfWork.PersonRepository.GetPersonByAccount(user.Id);
+                user.Person = person;
+                var userInRole = mapper.Map<PersonInRoleDTO>(user);
+                //if (userInRole == null || user.ApplicationUser == null)
+                //    continue;
+                if (await unitOfWork.UserManager.IsInRoleAsync(user, identityRole.Name))
+                {
+                    userInRole.IsSelected = true;
+                }
+                else
+                    userInRole.IsSelected = false;
+                resultList.Add(userInRole);
+            }
+            return resultList;
+        }
+           
+  
         public async Task<RoleDTO> GetRoleById(string id)
         {
             var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);

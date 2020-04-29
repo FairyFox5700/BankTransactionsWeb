@@ -53,7 +53,7 @@ namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRe
                 }
                 if (shareholderFilter?.DateOfCompanyCreation != null)
                 {
-                    shareholders = shareholders.Where(s => s.Company.DateOfCreation.EqualsUpToSeconds(shareholderFilter.DateOfCompanyCreation??DateTime.Now));
+                    shareholders = shareholders.Where(s => s.Company.DateOfCreation.EqualsUpToSeconds(shareholderFilter.DateOfCompanyCreation));
                 }
             }
             return  shareholders;

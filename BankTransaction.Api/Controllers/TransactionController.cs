@@ -1,4 +1,5 @@
-﻿using BankTransaction.Api.Models.Queries;
+﻿using BankTransaction.Api.Helpers;
+using BankTransaction.Api.Models.Queries;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,7 @@ namespace BankTransaction.Api.Controllers
         }
         // GET /api/Transaction
         [HttpGet]
+        [Cached(2000)]
         public async Task<ActionResult<IEnumerable<TransactionDTO>>> GetAllTransactions([FromQuery]PageQueryParameters pageQueryParameters)
         {
             var transactions = (await transactionService.GetAllTransactions(pageQueryParameters.PageNumber, pageQueryParameters.PageSize)).ToList();
@@ -39,7 +41,6 @@ namespace BankTransaction.Api.Controllers
             var currentTransaction = await transactionService.GetTransactionById(id);
             if (currentTransaction == null)
             {
-                logger.LogError($"Transaction with id {id} not find");
                 return NotFound();
             }
 
@@ -53,7 +54,6 @@ namespace BankTransaction.Api.Controllers
         {
             if (transaction == null)
             {
-                logger.LogError("Object of type transaction send by client was null.");
                 return BadRequest("Object of type transaction is null");
             }
             else
@@ -69,7 +69,6 @@ namespace BankTransaction.Api.Controllers
             var transaction = await transactionService.GetTransactionById(id);
             if (transaction == null)
             {
-                logger.LogError($"Transaction with id {id} not find");
                 return NotFound();
             }
             await transactionService.DeleteTransaction(transaction);

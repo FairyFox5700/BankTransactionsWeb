@@ -30,7 +30,6 @@ namespace BankTransaction.Api.Controllers
         }
         // GET /api/Account
         [HttpGet]
-       // [Authorize(Roles = "Admin")]
         [Cached(2000)]
         public async Task<ActionResult<IEnumerable<AccountDTO>>> GetAllAccounts([FromQuery]PageQueryParameters pageQueryParameters)
         {

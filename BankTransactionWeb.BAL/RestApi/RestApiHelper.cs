@@ -1,9 +1,13 @@
 ﻿using BankTransaction.Api.Models;
+using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
+using RestSharp.Serialization.Json;
+using RestSharp.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 
@@ -20,24 +24,16 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 RequestFormat = DataFormat.Json
             };
-            
-            if(!String.IsNullOrEmpty( token))
+            if (!String.IsNullOrEmpty( token))
             {
-                //request.UseDefaultCredentials = true;
-                //request.AddHeader("Authorization", string.Format("Bearer {0}", token));
                 request.AddHeader("Authorization", "Bearer " + token);
-                request.AddHeader("Accept", "application/json");
                 request.AddHeader("cache-control", "no-cache");
-                //request.AddHeader("content-type", "application/json");
-                //Client.Authenticator = new JwtAuthenticator(token);
-                //Client.Authenticator.Authenticate(Client, request);
-                //Client.AddDefaultHeader("Authorization", string.Format("Bearer {0}", token));
-                //request.AddParameter("token", token ?? "", ParameterType.UrlSegment);
-                // request.ContentType = "application/json";
+                request.AddHeader("content-type", "application/json");
+                request.AddHeader("Accept", "application/json");
 
             }
             if (body != null)
-                request.AddBody(body);
+                request.AddJsonBody(body);
             if (parameters != null)
             {
                 Dictionary<string, object> requestDictionary = CreateRequestDictionary(parameters);
@@ -100,4 +96,6 @@ namespace BankTransaction.BAL.Implementation.RestApi
                 throw new Exception(responce.Content);
         }
     }
+
+
 }

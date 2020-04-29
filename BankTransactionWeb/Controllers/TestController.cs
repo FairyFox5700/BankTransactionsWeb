@@ -29,19 +29,19 @@ namespace BankTransaction.Web.Controllers
 
         static readonly string Test_EMAIL = "tyschenk40@gmail.com";
         static readonly string  Test_PASSWORD = "qWerty1_";
-        public async Task<IActionResult> CheckPolicy(string email, string password, string resource)
+        static readonly string RESOURCE = "Company";
+        [HttpGet("Test/CheckPolicy")]
+        public async Task<IActionResult> CheckPolicy(string email=null, string password = null, string resource = null)
         {
-            var EMAIL = "tyschenk40@gmail.com";
-            var PASSWORD = "qWerty1_";
-            var authResult = await jwtAuthenticationService.LoginPerson(EMAIL,PASSWORD);
+            var authResult = await jwtAuthenticationService.LoginPerson(Test_EMAIL, Test_PASSWORD);
            
-            if (!String.IsNullOrEmpty(authResult.RefreshToken)|| DateTime.Now > authResult.ExpieryDate)
+            if (String.IsNullOrEmpty(authResult.RefreshToken)|| DateTime.Now > authResult.ExpieryDate)
             {
                 var refreshedResult = await RefreshBearerToken(authResult); 
                 if(authResult.Success)
                 {
                     authResult = refreshedResult;
-                    return View(GetSomeResourse(authResult.Token, resource));
+                    return View(GetSomeResourse(authResult.Token, RESOURCE));
                 }
                 else
                     return View("Error", new ErrorViewModel() { Message = authResult.Errors.ToList() });
@@ -49,7 +49,7 @@ namespace BankTransaction.Web.Controllers
             else if (!String.IsNullOrEmpty(authResult.RefreshToken))
             {
                
-                return View(GetSomeResourse(authResult.Token, resource));
+                return View(GetSomeResourse(authResult.Token, RESOURCE));
             }
             else
             {
@@ -67,9 +67,9 @@ namespace BankTransaction.Web.Controllers
 
         private string GetSomeResourse(string token, string resource)
         {
-            var  restRequest = restApiHelper.ExecuteApiRequest<ApiResponse>(resource, null, token, null);
-            var apiResponce = restRequest as ApiResponse;
-            string message = JsonConvert.DeserializeObject<string>(apiResponce.ToString());
+            var  restRequest = restApiHelper.Execute<IRestResponse>(resource, null, token, null);
+            //var apiResponce = restRequest as ApiResponse;
+            string message = JsonConvert.DeserializeObject<string>(restRequest.Content.ToString());
             return message;
         }
 

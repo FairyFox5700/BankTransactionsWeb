@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BankTransaction.Api.Helpers;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract;
@@ -28,6 +29,7 @@ namespace BankTransaction.Api.Controllers
         }
         // GET /api/Shareholder
         [HttpGet]
+        [Cached(2000)]
         public async Task<IActionResult> GetAllShareholders([FromQuery]PageQueryParameters pageQueryParameters,[FromQuery]SearchShareholderQuery searchShareholderQuery)
         {
             var paginatedModel = mapper.Map<PaginatedModel<ShareholderDTO>>(pageQueryParameters);

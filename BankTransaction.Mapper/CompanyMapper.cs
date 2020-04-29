@@ -250,7 +250,7 @@ namespace BankTransaction.Mapper
             return new UpdateTransactionViewModel()
             {
                 Id = source.Id,
-                AccountDestinationId = source.AccountDestinationId,
+                //AccountDestinationId = source.AccountDestinationId,
                 AccountSourceId = source.AccountSourceId,
                 Amount = source.Amount
             };
@@ -261,7 +261,7 @@ namespace BankTransaction.Mapper
             return new TransactionDTO()
             {
                 Id = destination.Id,
-                AccountDestinationId = destination.AccountDestinationId,
+                //AccountDestinationId = destination.AccountDestinationId,
                 AccountSourceId = destination.AccountSourceId,
                 Amount = destination.Amount
 

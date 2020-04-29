@@ -52,7 +52,14 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             return new PaginatedModel<CompanyDTO>(companies.Select(company => mapper.Map<CompanyDTO>(company)), companies.PageNumber, companies.PageSize, companies.TotalCount, companies.TotalPages);
            
         }
-    
+        public async Task<IEnumerable<CompanyDTO>> GetAllCompanies()
+        {
+
+            var companies= await unitOfWork.CompanyRepository.GetAllCompanies();
+            return companies.Select(company => mapper.Map<CompanyDTO>(company));
+
+        }
+
         public async Task<CompanyDTO> GetCompanyById(int id)
         {
                 var companyFinded = await unitOfWork.CompanyRepository.GetById(id);

@@ -1,16 +1,15 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Entities;
 using BankTransaction.DAL.Abstract;
+using BankTransaction.Entities;
+using BankTransaction.Models;
+using BankTransaction.Models.Validation;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BankTransaction.Models.Validation;
-using BankTransaction.Models;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
@@ -28,39 +27,19 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         }
         public async Task AddTransaction(TransactionDTO transaction)
         {
-            try
-            {
-                var transactionMapped = mapper.Map<Transaction>(transaction);
-                transactionMapped.DateOftransfering = DateTime.Now;
-                unitOfWork.TransactionRepository.Add(transactionMapped);
-                await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(AddTransaction)} instance of transaction was successfully added");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddTransaction)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+            var transactionMapped = mapper.Map<Transaction>(transaction);
+            transactionMapped.DateOftransfering = DateTime.Now;
+            unitOfWork.TransactionRepository.Add(transactionMapped);
+            await unitOfWork.Save();
         }
 
         public async Task DeleteTransaction(TransactionDTO transaction)
         {
-            try
-            {
-                var transactionMapped = mapper.Map<Transaction>(transaction);
-                unitOfWork.TransactionRepository.Delete(transactionMapped);
-                await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(DeleteTransaction)} instance of transaction successfully added");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(DeleteTransaction)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
 
-            }
+            var transactionMapped = mapper.Map<Transaction>(transaction);
+            unitOfWork.TransactionRepository.Delete(transactionMapped);
+            await unitOfWork.Save();
+
         }
 
 
@@ -68,7 +47,6 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             try
             {
-
                 var transactions = (await unitOfWork.TransactionRepository.GetAll(pageNumber, pageSize));
                 var listOfTransaction = new List<TransactionDTO>();
                 foreach (var transaction in transactions)
@@ -92,31 +70,36 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             try
             {
-
                 var transactionFinded = await unitOfWork.TransactionRepository.GetById(id);
-                return mapper.Map<TransactionDTO>(transactionFinded);
+                var transaction=mapper.Map<TransactionDTO>(transactionFinded);
+                transaction.SourceAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountSourceId));
+                transaction.DestinationAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountDestinationId));
+                return transaction;
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(GetTransactionById)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
 
             }
         }
 
-        public async Task UpdateTransaction(TransactionDTO transaction)
+        public async Task<ValidateTransactionModel> UpdateTransaction(TransactionDTO transaction)
         {
             try
             {
                 var transactionMapped = mapper.Map<Transaction>(transaction);
+                var source = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.SourceAccount?.Number));
+                var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.DestinationAccount?.Number));
+                if (source == null) return new ValidateTransactionModel("Source account is not founded", true);
+                if (destination == null) return new ValidateTransactionModel("Destination account is not founded", true);
+                transactionMapped.AccountDestinationId = destination.Id;
+                transactionMapped.AccountSourceId = source.Id;
                 unitOfWork.TransactionRepository.Update(transactionMapped);
                 await unitOfWork.Save();
+                return new ValidateTransactionModel("Successfully updated", true);
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(UpdateTransaction)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
 
             }
@@ -137,7 +120,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         //}
 
 
-        public async Task ExecuteTransaction(int accountSourceId, string accountDestinationNumber, decimal amount)
+        public async Task<ValidateTransactionModel> ExecuteTransaction(int accountSourceId, string accountDestinationNumber, decimal amount)
         {
             using (var trans = unitOfWork.BeginTransaction())
             {
@@ -145,8 +128,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 {
                     var source = (await unitOfWork.AccountRepository.GetById(accountSourceId));
                     var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(accountDestinationNumber));
-                    if (source == null) throw new ValidationException("Source account is not founded", "");
-                    if (destination == null) throw new ValidationException("Destination account is not founded", "");
+                    if (source == null) return new ValidateTransactionModel ("Source account is not founded", true);
+                    if (destination == null) return new ValidateTransactionModel("Destination account is not founded", true);
                     if ((source.Balance -= amount) >= 0)
                     {
                         source.Balance -= amount;
@@ -161,18 +144,17 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
                         await AddTransaction(transaction);
                         unitOfWork.CommitTransaction();
+                        return new ValidateTransactionModel($"You have succesfully send {amount} to  {accountDestinationNumber} account.", false);
 
                     }
                     else
                     {
-                        throw new ValidationException("Not enough money on your account", "");
+                        return new ValidateTransactionModel("Not enough money on your account", true);
                     }
 
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError($"Catch an exception in method {nameof(ExecuteTransaction)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                       $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                     unitOfWork.RollbackTransaction();
                     throw ex;
                 }
@@ -213,14 +195,12 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             }
             catch (Exception ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(GetAllUserTransactions)}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
                 throw ex;
 
             }
         }
 
-      
+
     }
 }
 

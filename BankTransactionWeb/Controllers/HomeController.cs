@@ -33,5 +33,11 @@ namespace BankTransactionWeb.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        public IActionResult Error(ErrorViewModel errorViewModel)
+        {
+            errorViewModel.RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
+
+            return View(errorViewModel );
+        }
     }
 }

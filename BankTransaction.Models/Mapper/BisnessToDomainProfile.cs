@@ -32,13 +32,17 @@ namespace BankTransaction.Models.Mapper
             CreateMap<ApplicationUser, RoleDTO>();
 
             CreateMap<ApplicationUser, PersonDTO>()
-             .ForMember(x => x.Id, opt => opt.Ignore()); ;
-            CreateMap<PersonDTO, ApplicationUser>()
-             .ForMember(x => x.Id, opt => opt.Ignore());
-            CreateMap<PersonInRoleDTO, Person>()
-             .ForMember(x => x.ApplicationUserFkId, s => s.MapFrom(e => e.AppUserId)); ;
-            CreateMap<Person, PersonInRoleDTO>()
-            .ForMember(x => x.AppUserId, s => s.MapFrom(e => e.ApplicationUserFkId));
+             .ForMember(x => x.Id, opt => opt.Ignore()).ReverseMap();
+            //CreateMap<PersonDTO, ApplicationUser>()
+            // .ForMember(x => x.Id, opt => opt.Ignore());
+            CreateMap<PersonInRoleDTO, ApplicationUser>()
+             .ForMember(x => x.Id, s => s.MapFrom(e => e.AppUserId));
+            CreateMap<ApplicationUser, PersonInRoleDTO>()
+            .ForMember(x => x.AppUserId, s => s.MapFrom(e => e.Id))
+            .ForMember(x => x.Name, s => s.MapFrom(e => e.Person.Name))
+            .ForMember(x => x.Surname, s => s.MapFrom(e => e.Person.Surname))
+            .ForMember(x => x.LastName, s => s.MapFrom(e => e.Person.LastName));
+
         }
     }
 }

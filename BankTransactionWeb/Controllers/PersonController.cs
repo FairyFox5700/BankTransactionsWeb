@@ -2,6 +2,7 @@
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models;
+using BankTransaction.Web.Helpers;
 using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
 
 namespace BankTransactionWeb.Controllers
@@ -30,6 +30,7 @@ namespace BankTransactionWeb.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
+        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
         public async Task<IActionResult> GetAllPersons([FromQuery]PersonSearchModel personSearch = null, PageQueryParameters pageQueryParameters = null)
         {
 
@@ -44,27 +45,17 @@ namespace BankTransactionWeb.Controllers
         [Authorize]
         public async Task<IActionResult> UpdatePerson(int id)
         {
-            try
-            {
-                var currentPerson = await personService.GetPersonById(id);
-                if (currentPerson == null)
-                {
-                    logger.LogError($"Person with id {id} not find");
-                    return NotFound();
-                }
-                else
-                {
-                    var personModel = mapper.Map<UpdatePersonViewModel>(currentPerson);
-                    return View(personModel);
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdatePerson)}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
 
+            var currentPerson = await personService.GetPersonById(id);
+            if (currentPerson == null)
+            {
+                return NotFound($"Person with id {id} not find");
+            }
+            else
+            {
+                var personModel = mapper.Map<UpdatePersonViewModel>(currentPerson);
+                return View(personModel);
+            }
 
         }
 
@@ -76,54 +67,44 @@ namespace BankTransactionWeb.Controllers
         [Authorize]
         public async Task<IActionResult> UpdatePerson([FromForm]UpdatePersonViewModel personModel)
         {
-            try
+            if (personModel == null)
             {
-                if (personModel == null)
+                return BadRequest("Object of type person is null");
+            }
+            if (ModelState.IsValid)
+            {
+                try
                 {
-                    logger.LogError("Object of type person send by client was null.");
-                    return BadRequest("Object of type person is null");
-                }
-                if (ModelState.IsValid)
-                {
-                    try
+                    var updatedPerson = mapper.Map<PersonDTO>(personModel);
+                    var result = await personService.UpdatePerson(updatedPerson);
+                    if (result == null)
                     {
-                        var updatedPerson = mapper.Map<PersonDTO>(personModel);
-                        var result = await personService.UpdatePerson(updatedPerson);
-                        if (result == null)
-                        {
-                            logger.LogError($"Person with id {personModel.Id} not find");
-                            return NotFound();
-                        }
-                        else if (result.Succeeded)
-                        {
-                            return RedirectToAction(nameof(GetPersonCardCabinet));
-                        }
-
-                        else
-                        {
-                            AddModelErrors(result);
-                        }
-
+                        logger.LogError($"Person with id {personModel.Id} not find");
+                        return NotFound();
                     }
-                    catch (DbUpdateException ex)
+                    else if (result.Succeeded)
                     {
-                        logger.LogError($"Unable to update person becuase of {ex.Message}");
-                        ModelState.AddModelError("", "Unable to save changes. " +
-                        "Try again, and if the problem persists, " +
-                        "see your system administrator.");
-                        return View(personModel);
+                        return RedirectToAction(nameof(GetPersonCardCabinet));
+                    }
+
+                    else
+                    {
+                        AddModelErrors(result);
                     }
 
                 }
-                return View(personModel);
+                catch (DbUpdateException ex)
+                {
+                    logger.LogError($"Unable to update person becuase of {ex.Message}");
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists, " +
+                    "see your system administrator.");
+                    return View(personModel);
+                }
 
             }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdatePerson)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
+            return View(personModel);
+
         }
 
 
@@ -136,29 +117,21 @@ namespace BankTransactionWeb.Controllers
         [HttpGet]
         // [Authorize(Roles = "User")]
         [Authorize]
-        public async Task<IActionResult> GetPersonCardCabinet(int id =0)
+        public async Task<IActionResult> GetPersonCardCabinet(int id = 0)
         {
-            try
-            {
-                var currentPerson = id == 0 ? await personService.GetPersonById(HttpContext.User) : await personService.GetPersonById(id);
 
-                if (currentPerson == null)
-                {
-                    logger.LogError($"Person  not find");
-                    return NotFound();
-                }
-                else
-                {
-                    var personModel = mapper.Map<UpdatePersonViewModel>(currentPerson);
-                    return View(personModel);
-                }
-            }
-            catch (Exception ex)
+            var currentPerson = id == 0 ? await personService.GetPersonById(HttpContext.User) : await personService.GetPersonById(id);
+
+            if (currentPerson == null)
             {
-                logger.LogError($"Catch an exception in method {nameof(GetPersonCardCabinet)}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? "NONE"}");
-                return StatusCode(500, "Internal server error");
+                return NotFound($"Person  not find");
             }
+            else
+            {
+                var personModel = mapper.Map<UpdatePersonViewModel>(currentPerson);
+                return View(personModel);
+            }
+
 
         }
         private void AddModelErrors(IdentityResult result)
@@ -175,42 +148,34 @@ namespace BankTransactionWeb.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePerson(int id)
         {
+            var person = await personService.GetPersonById(id);
+            if (person == null)
+            {
+                logger.LogError($"Person with id {id} not found");
+                return NotFound();
+            }
             try
             {
-                var person = await personService.GetPersonById(id);
-                if (person == null)
+                var result = await personService.DeletePerson(person);
+                if (result == null)
                 {
-                    logger.LogError($"Person with id {id} not found");
                     return NotFound();
                 }
-                try
+                else if (result.Succeeded)
                 {
-                    var result = await personService.DeletePerson(person);
-                    if (result == null)
-                    {
-                        return NotFound();
-                    }
-                    else if (result.Succeeded)
-                    {
-                        return RedirectToAction(nameof(GetAllPersons));
-                    }
-                    else
-                    {
-                        return NotFound();
-                    }
+                    return RedirectToAction(nameof(GetAllPersons));
                 }
-                catch (DbUpdateException ex)
+                else
                 {
-                    logger.LogError($"Unable to delete person becuase of {ex.Message}");
-                    return StatusCode(500, "Internal server error");
+                    return NotFound();
                 }
             }
-            catch (Exception ex)
+            catch (DbUpdateException ex)
             {
-                logger.LogError($"Catch an exception in method {nameof(DeletePerson)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                logger.LogError($"Unable to delete person becuase of {ex.Message}");
                 return StatusCode(500, "Internal server error");
             }
+
 
         }
 

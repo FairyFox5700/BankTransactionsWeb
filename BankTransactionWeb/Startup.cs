@@ -14,6 +14,7 @@ using BankTransaction.Entities;
 using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using BankTransaction.Web.Configuration;
+using BankTransaction.Web.Helpers;
 using BankTransaction.Web.Mapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -48,15 +49,14 @@ namespace BankTransaction.Web
             services.AddCors();
           
             services.AddRazorPages().AddRazorRuntimeCompilation();
-            //services.AddMvc();
-            // IMapper mapper = new AutoMapper.Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
-            //services.AddSingleton(mapper);
             services.AddMapperViewConfiguration();
             services.AddDALServices(Configuration);
             services.AddBalServices(Configuration);
             services.AddJwtAuthentication(Configuration);
+            services.AddDistributedCache(Configuration);
             services.AddIdentiyConfig();
-           
+            services.AddMvc();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,20 +77,18 @@ namespace BankTransaction.Web
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseCors(c=>c.SetIsOriginAllowed(x=>_=true).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+            //app.UseCors(c=>c.SetIsOriginAllowed(x=>_=true).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             app.UseStaticFiles();
-           
+            app.UseStatusCodePages();
 
-
-            //app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org")
-            //                .AllowAnyHeader()
-            //                .AllowAnyMethod());
+            app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org", "http://localhost:64943")
+                            .AllowAnyHeader()
+                            .AllowAnyMethod().AllowCredentials()); 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
             //MyIdentityDataInitializer.SeedData(userManager, roleManager, context);
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
