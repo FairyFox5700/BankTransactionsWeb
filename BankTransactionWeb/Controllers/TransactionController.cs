@@ -36,7 +36,6 @@ namespace BankTransactionWeb.Controllers
         //auth User
         [HttpGet]
         [Authorize]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
         public async Task<IActionResult> MyTransaction()
         {
             var transactions = (await transactionService.GetAllUserTransactions(HttpContext.User));
@@ -45,7 +44,6 @@ namespace BankTransactionWeb.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
         public async Task<IActionResult> GetAllTransactions(PageQueryParameters pageQueryParameters)
         {
 

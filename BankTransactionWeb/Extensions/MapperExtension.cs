@@ -15,8 +15,16 @@ namespace BankTransaction.Configuration.Extension
         {
             var mapperConfiguration = new MapperConfiguration(c =>
             {
-                c.AddProfile(new MapperProfile());
+               // c.AddProfile(new MapperProfile());
                 c.AddProfile(new BisnessToDomainProfile());
+                c.AddProfile(new FilterMapperProfile());
+                c.AddProfile(new PersonMapperProfile());
+                c.AddProfile(new AccountMapperProfile());
+                c.AddProfile(new CompanyMapperProfile());
+                c.AddProfile(new ShareholderMapperProfile());
+                c.AddProfile(new TransactioMapperProfile());
+                c.AddProfile(new IdentityMapperProfile());
+                c.AddProfile(new RoleMapperProfile());
             });
 
             return services.AddSingleton(mapperConfiguration.CreateMapper());

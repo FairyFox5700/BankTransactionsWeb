@@ -28,14 +28,14 @@ namespace BankTransaction.Web.Controllers
             this.mapper = mapper;
         }
         [HttpGet]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
+       
         public async Task<IActionResult> Index(PageQueryParameters pageQueryParameters)
         {
             var companys = (await companyService.GetAllCompanies(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
             return View(companys);
         }
         [HttpGet]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
+       
         public async Task<IActionResult> GetAllCompanies(PageQueryParameters pageQueryParameters)
         {
             var companys = (await companyService.GetAllCompanies(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));

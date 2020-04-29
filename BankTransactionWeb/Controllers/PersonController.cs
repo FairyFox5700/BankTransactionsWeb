@@ -30,7 +30,6 @@ namespace BankTransactionWeb.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
         public async Task<IActionResult> GetAllPersons([FromQuery]PersonSearchModel personSearch = null, PageQueryParameters pageQueryParameters = null)
         {
 

@@ -34,7 +34,7 @@ namespace BankTransaction.Web.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
+      
         public async Task<IActionResult> GetAllAccounts(PageQueryParameters pageQueryParameters = null) 
         {
             var allAccounts = await accountService.GetAllAccounts(pageQueryParameters.PageNumber, pageQueryParameters.PageSize);

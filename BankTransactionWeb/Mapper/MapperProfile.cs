@@ -23,7 +23,6 @@ namespace BankTransaction.Web.Mapper
             CreateMap<PaginatedModel<PersonDTO>, PageQueryParameters>().ReverseMap();
             CreateMap<ShareholderFilterModel, ShareholderSearchModel>().ReverseMap();
             //for person
-
             CreateMap<PersonDTO, AddPersonViewModel>().ReverseMap(); 
             CreateMap<PersonDTO, UpdatePersonViewModel>().ReverseMap(); 
             //for acccount
@@ -36,15 +35,10 @@ namespace BankTransaction.Web.Mapper
             CreateMap<UpdateShareholderViewModel, ShareholderDTO>().ReverseMap();
             CreateMap<AddShareholderViewModel, ShareholderDTO>().ReverseMap();
             //for transaction
-            //CreateMap<TransactionDTO, TransactionListViewModel>()
-            //.ForMember(vm => vm.AccountDestinationeNumber, dto => dto.MapFrom(s => s.DestinationAccount.Number))
-            //.ForMember(vm => vm.AccountSourceNumber, dto => dto.MapFrom(s => s.SourceAccount.Number));
-
-            CreateMap<TransactionDTO, UpdateTransactionViewModel>().ForMember(vm => vm.AccountDestinationNumber, dto => dto.MapFrom(s => s.DestinationAccount.Number))
-            .ForMember(vm => vm.AccountSourceNumber, dto => dto.MapFrom(s => s.SourceAccount.Number)).ReverseMap() ;
+            CreateMap<TransactionDTO, UpdateTransactionViewModel>()
+             .ForMember(vm => vm.AccountDestinationNumber, dto => dto.MapFrom(s => s.DestinationAccount.Number))
+            .ForMember(vm => vm.AccountSourceNumber, dto => dto.MapFrom(s => s.SourceAccount.Number)).ReverseMap();
             CreateMap<AddTransactionViewModel, TransactionDTO>();
-           // CreateMap<UpdateTransactionViewModel, TransactionDTO>();
-  
             //Identity
             CreateMap<LoginViewModel, PersonDTO>().ReverseMap();
             CreateMap<RegisterViewModel, PersonDTO>().ReverseMap();
