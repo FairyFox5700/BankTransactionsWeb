@@ -1,33 +1,68 @@
-﻿@model List<BankTransactionWeb.BAL.Models.CompanyDTO>
+﻿@model PaginatedList<BankTransaction.Models.DTOModels.CompanyDTO>
 @{
-    ViewData["Title"] = "GetAllCompanies";
+    ViewData["Title"] = "All companies";
+    ViewBag.Index = 0;
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
+    }
 }
+    <h1>@ViewBag.NameCompany</h1>
 
 <form asp-controller="Company" asp-action="GetAllCompanies" method="get">
-    <button class="btn-dark" asp-action="AddCompany"  asp-controller="Company">Add new</button>
-    <br />
-    <br />
-    <table class="table table-striped table-light">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">DateOfCreation</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Count(); i++)
-            {
-                <tr>
-                    <th scope="row">@(i + 1)</th>
-                    <td>@Model[i].Name </td>
-                    <td>@Model[i].DateOfCreation </td>
-                    <td>
-                        <button class="btn-primary" asp-action="UpdateCompany" asp-controller="Company" asp-route-id="@Model[i].Id">Update</button>
-                        <button class="btn-danger" asp-action="DeleteCompany" asp-controller="Company" asp-route-id="@Model[i].Id">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="col-6">
+                    <h6 class="m-0 font-weight-bold text-primary">All companies</h6>
+                </div>
+                <div class="col-6 ">
+                    <button class="btn btn-dark" asp-action="AddCompany" asp-controller="Company">Add new</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="table-responsive">
+                @if (Model.Data.Any())
+                {
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col"> <a asp-action="GetAllCompanies" id="aSortCompany" asp-controller="Company" asp-route-sortOrder="@ViewData["NameSortParm"]">Name</a></th>
+                                <th scope="col"><a asp-action="GetAllCompanies" asp-controller="Company" asp-route-sortOrder="@ViewData["DateSortParm"]">DateOfCreation</a></th>
+                                <th scope="col">Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var company in Model.Data)
+                            {
+                                <tr>
+                                    <th scope="row">@(ViewBag.Index += 1)</th>
+                                    <td>@company.Name </td>
+                                    <td>@company.DateOfCreation </td>
+
+                                    <td>
+                                        <button class="btn-primary" asp-action="UpdateCompany" asp-controller="Company" asp-route-id="@company.Id">Update</button>
+                                        <button class="btn-danger" asp-action="DeleteCompany" asp-controller="Company" asp-route-id="@company.Id">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            No company created yet
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @await Html.PartialAsync("_PaginationTableLayout")
+    </div>
 </form>
+

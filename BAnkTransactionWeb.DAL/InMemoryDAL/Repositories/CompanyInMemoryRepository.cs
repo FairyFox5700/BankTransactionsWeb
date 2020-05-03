@@ -1,12 +1,12 @@
-﻿using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.InMemoryDAL;
-using BankTransactionWeb.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.DAL.Implementation.Core.InMemoryCore;
+using BankTransaction.Entities;
+using BankTransaction.Entities.Filter;
 
-namespace BankTransactionWeb.DAL.InMemoryDAL.Repositories
+namespace BankTransaction.DAL.Implementation.Repositories.InMemoryRepositories
 { 
     public class CompanyInMemoryRepository : ICompanyRepository
     {
@@ -45,7 +45,14 @@ namespace BankTransactionWeb.DAL.InMemoryDAL.Repositories
             }
         }
 
-        public async Task<IEnumerable<Company>> GetAll()
+
+        public async Task<PaginatedPlainModel<Company>> GetAll(int startIndex, int pageSize)
+        {
+            var comapnies = await PaginatedPlainModel<Company>.Paginate(container.Companies.AsQueryable(), startIndex, pageSize);
+            return await Task.FromResult(comapnies).ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<Company>> GetAllCompanies()
         {
             var companies = container.Companies;
             return await Task.FromResult<ICollection<Company>>(companies)

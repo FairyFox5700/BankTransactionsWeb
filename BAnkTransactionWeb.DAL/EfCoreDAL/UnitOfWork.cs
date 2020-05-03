@@ -1,19 +1,17 @@
-﻿using BankTransactionWeb.DAL.EfCoreDAL.EfCore;
-using BankTransactionWeb.DAL.EfCoreDAL.Repositories;
-using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Interfaces;
+﻿using System;
+using System.Threading.Tasks;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
+using BankTransaction.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BankTransactionWeb.DAL.EfCoreDAL
+namespace BankTransaction.DAL.Implementation.Core
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly BankTransactionContext context;
+        private IDbContextTransaction transaction;
 
         public UnitOfWork(BankTransactionContext context,UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<IdentityRole> RoleManager)
         {
@@ -92,23 +90,47 @@ namespace BankTransactionWeb.DAL.EfCoreDAL
         public SignInManager<ApplicationUser> SignInManager { get; }
         public RoleManager<IdentityRole>  RoleManager { get; }
 
-        public async Task Save()
+        public ITokenRepository tokenRepository;
+        public ITokenRepository TokenRepository
         {
-            await context.SaveChangesAsync();
+            get
+            {
+                if (tokenRepository == null)
+                {
+                    tokenRepository = new TokenRepository(context);
+                }
+                return tokenRepository;
+            }
         }
 
-        public async Task<IDbContextTransaction> BeginTransaction() 
+        public async Task Save()
         {
-            return await context.Database.BeginTransactionAsync();
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+          
         }
+
+
+        public async Task<IDbContextTransaction> BeginTransaction()
+        {
+            transaction = await context.Database.BeginTransactionAsync();
+            return transaction;
+        }
+
 
         public void  RollbackTransaction()
         {
-            context.Database.RollbackTransaction();
+            transaction.Rollback();
         }
         public void CommitTransaction() 
         {
-            context.Database.CommitTransaction();
+            transaction.Commit();
         }
 
         private bool disposed = false;

@@ -1,12 +1,11 @@
-﻿using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.InMemoryDAL;
-using BankTransactionWeb.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.DAL.Implementation.Core.InMemoryCore;
+using BankTransaction.Entities;
+using BankTransaction.Entities.Filter;
 
-namespace BankTransactionWeb.DAL.InMemoryDAL.Repositories
+namespace BankTransaction.DAL.Implementation.Repositories.InMemoryRepositories
 {
     public class AccountInMemoryRepository : IAccountRepository
     {
@@ -51,11 +50,18 @@ namespace BankTransactionWeb.DAL.InMemoryDAL.Repositories
             }
         }
 
-        public async Task<IEnumerable<Account>> GetAll()
+      
+
+        public async Task<PaginatedPlainModel<Account>> GetAll(int startIndex, int pageSize)
         {
-           var accounts = container.Accounts;
-            return await Task.FromResult<ICollection<Account>>(accounts)
-                .ConfigureAwait(false);
+            var accounts = await PaginatedPlainModel<Account>.Paginate(container.Accounts.AsQueryable(), startIndex, pageSize);
+            return await Task.FromResult(accounts).ConfigureAwait(false);
+        }
+
+        public async Task<Account> GetTransactionByDestinationNumber(string accountDestinationNumber)
+        {
+            var accounts = container.Accounts.Where(e => e.Number == accountDestinationNumber).FirstOrDefault();
+            return await Task.FromResult(accounts).ConfigureAwait(false);
         }
     }
 }

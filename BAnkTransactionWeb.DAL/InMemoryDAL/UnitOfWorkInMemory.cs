@@ -1,14 +1,12 @@
-﻿using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.InMemoryDAL.Repositories;
-using BankTransactionWeb.DAL.Interfaces;
+﻿using System;
+using System.Threading.Tasks;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.DAL.Implementation.Repositories.InMemoryRepositories;
+using BankTransaction.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BankTransactionWeb.DAL.InMemoryDAL
+namespace BankTransaction.DAL.Implementation.Core.InMemoryCore
 {
     public class UnitOfWorkInMemory : IUnitOfWork
     {
@@ -89,6 +87,8 @@ namespace BankTransactionWeb.DAL.InMemoryDAL
         public SignInManager<ApplicationUser> SignInManager => throw new NotImplementedException();
 
         public RoleManager<IdentityRole> RoleManager => throw new NotImplementedException();
+
+        public ITokenRepository TokenRepository => throw new NotImplementedException();
 
         public async Task Save()
         {

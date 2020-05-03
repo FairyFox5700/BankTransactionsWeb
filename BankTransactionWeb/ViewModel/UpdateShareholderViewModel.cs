@@ -1,8 +1,9 @@
-﻿using BankTransactionWeb.BAL.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using BankTransaction.Models.DTOModels;
 
-namespace BankTransactionWeb.ViewModel
+namespace BankTransaction.Web.ViewModel
 {
     public class UpdateShareholderViewModel
     {
@@ -13,7 +14,11 @@ namespace BankTransactionWeb.ViewModel
         public int? CompanyId { get; set; }
         public PersonDTO Person { get; set; }
         public CompanyDTO Company { get; set; }
-        public SelectList People { get; set; }
+        //public SelectList People { get; set; }
         public SelectList Comapnanies { get; set; }
+        public UpdateShareholderViewModel()
+        {
+            this.Comapnanies = new SelectList(new List<CompanyDTO>()) ;
+        }
     }
 }

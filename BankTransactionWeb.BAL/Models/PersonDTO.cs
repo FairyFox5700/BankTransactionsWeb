@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace BankTransactionWeb.BAL.Models
+namespace BankTransaction.Models.DTOModels
 {
     public class PersonDTO:BaseModel
     {
@@ -14,10 +12,10 @@ namespace BankTransactionWeb.BAL.Models
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         public string UserName { get; set; }
-        public bool RememberMe { get; set; }
+        public bool RememberMe { get; set; } = false;
         public string PhoneNumber { get; set; }
         public string ApplicationUserFkId { get; set; }
-        public string Code{ get; set; }
+        public string Token{ get; set; }
         //private List<AccountDTO> accounts;
         //public List<AccountDTO> Accounts 
         //{ get

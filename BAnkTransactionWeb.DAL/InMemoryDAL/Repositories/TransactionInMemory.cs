@@ -1,13 +1,12 @@
-﻿
-using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.InMemoryDAL;
-using BankTransactionWeb.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.DAL.Implementation.Core.InMemoryCore;
+using BankTransaction.Entities;
+using BankTransaction.Entities.Filter;
 
-namespace BankTransactionWeb.DAL.InMemoryDAL.Repositories
+namespace BankTransaction.DAL.Implementation.Repositories.InMemoryRepositories
 {
     public class TransactionInMemoryRepository :ITransactionRepository
     {
@@ -27,12 +26,14 @@ namespace BankTransactionWeb.DAL.InMemoryDAL.Repositories
             container.Transactions.Remove(entity);
         }
 
-        public async Task<IEnumerable<Transaction>> GetAll()
+
+        public async  Task<PaginatedPlainModel<Transaction>> GetAll(int startIndex, int pageSize)
         {
-            var transactions = container.Transactions;
-            return await Task.FromResult<ICollection<Transaction>>(transactions)
-                .ConfigureAwait(false);
+            var transactions = await PaginatedPlainModel<Transaction>.Paginate(container.Transactions.AsQueryable(), startIndex, pageSize);
+            return await Task.FromResult(transactions).ConfigureAwait(false);
         }
+
+     
 
         public async Task<Transaction> GetById(int id)
         {
@@ -54,5 +55,12 @@ namespace BankTransactionWeb.DAL.InMemoryDAL.Repositories
             }
         }
 
+        //
+       public async Task<IEnumerable<Transaction>> GetAllTransactionsByAccountId(int id)
+        {
+           var transactions= container.Transactions.Where(tr => (tr.AccountSourceId == id || tr.AccountDestinationId == id));
+            return await Task.FromResult<IEnumerable<Transaction>>(transactions)
+               .ConfigureAwait(false);
+        }
     }
 }

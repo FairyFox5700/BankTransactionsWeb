@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
-using BankTransactionWeb.Areas.Identity.Models.ViewModels;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.Controllers;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.Web.Areas.Identity.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Validation;
+using BankTransaction.Web.Controllers;
 
-namespace BankTransactionWeb.Areas.Identity.Controllers
+namespace BankTransaction.Web.Areas.Identity.Controllers
 {
     [Authorize]
     [Area("Identity")]
@@ -54,32 +56,27 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
             {
                 var person = mapper.Map<PersonDTO>(model);
                 var result = await authService.LoginPerson(person);
+                if (result.NotFound)
+                    return NotFound(result);
+                if (result.Locked)
+                    return RedirectToAction(nameof(Lockout));
                 if (result.Succeeded)
                 {
-                    logger.LogInformation("User  succesfully logged in.");
                     return RedirectToLocal(model.ReturnUrl);
-                }
-                if (result.IsLockedOut)
-                {
-                    logger.LogWarning("User account locked out.");
-                    return RedirectToAction(nameof(Lockout));
-                }
-                if (result == null)
-                {
-                    ModelState.AddModelError(string.Empty, "You must confirm your email.");
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "The attempt to lo in was unsuccessfull.");
+                    AddModelErrors(result);
                     return View(model);
                 }
             }
+
             return View(model);
         }
 
         [HttpGet]
         [AllowAnonymous]
-        private object Lockout()
+        public IActionResult Lockout()
         {
             return View();
         }
@@ -88,9 +85,18 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await authService.SignOutPerson();
-            logger.LogInformation("User successfully logged out.");
-            return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
+            try
+            {
+                await authService.SignOutPerson();
+                logger.LogInformation("User successfully logged out.");
+                return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(Logout)}. The exception is {ex.Message}. " +
+                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                return StatusCode(500, "Internal server error");
+            }
         }
 
 
@@ -99,26 +105,25 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
         {
-
             if (ModelState.IsValid)
             {
                 var person = mapper.Map<PersonDTO>(model);
                 var result = await authService.RegisterPerson(person);
-                if (result == null)
-                {
-                    ModelState.AddModelError("RegiterFailed", "There is alreasy user with this login");
-                    return View(model);
-                }
+                if (result.NotFound)
+                    return NotFound(result.Errors);
+                if (result.Locked)
+                    return RedirectToAction(nameof(Lockout));
                 if (result.Succeeded)
                 {
-                    logger.LogInformation("Successfully created new user.");
-                    logger.LogInformation("User signed in a new account with password.");
                     return RedirectToLocal(returnUrl);
                 }
-                AddModelErrors(result);
+                else
+                {
+                    AddModelErrors(result); 
+                    return View(model);
+                }
             }
             return View(model);
-
         }
 
 
@@ -131,14 +136,15 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                 return View("Error");
             }
             var result = await authService.ConfirmUserEmailAsync(email, token);
-            if (result == null)
+            if (result.NotFound)
             {
-                return View("Error");
+                return NotFound((result));
             }
-            if (result.Succeeded)
+            else if (result.Succeeded)
                 return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
             else
-                return View("Error");
+            //TODO Error
+                return View("Error",result);
         }
 
         private void AddModelErrors(IdentityResult result)
@@ -148,7 +154,13 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
                 ModelState.AddModelError(string.Empty, error.Description);
             }
         }
-
+        private void AddModelErrors(IdentityUserResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error);
+            }
+        }
 
 
         [HttpGet]
@@ -157,8 +169,8 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
             return View();
         }
         /// <summary>
-        /// Method returns user after succesfull lodin or registration.
-        /// Avoid redirect from malicios website
+        /// Method returns user after succesfull login or registration.
+        /// Avoid redirect from malicious website
         /// </summary>
         /// <param name="returnUrl"></param>
         /// <returns></returns>
@@ -188,20 +200,30 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var person = new PersonDTO { Email = model.Email };
-                var sendEmailSuccesfull = await authService.SendReserPasswordUrl(person);
-                if(sendEmailSuccesfull == false)
+                if (ModelState.IsValid)
                 {
-                    return View(nameof(ForgotPasswordConfirmation));
+                    var person = new PersonDTO { Email = model.Email };
+                    var sendEmailSuccesfull = await authService.SendResetPasswordUrl(person);
+                    if (sendEmailSuccesfull == false)
+                    {
+                        return View(nameof(ForgotPasswordConfirmation));
+                    }
+                    else
+                    {
+                        return View(nameof(ForgotPasswordConfirmation));
+                    }
                 }
-                else
-                {
-                    return View(nameof(ForgotPasswordConfirmation));
-                }
+                return View(model);
             }
-            return View(model);
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(ForgotPassword)}. The exception is {ex.Message}. " +
+                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                return StatusCode(500, "Internal server error");
+            }
+
         }
 
         [HttpGet]
@@ -213,9 +235,15 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string code = null)
+        public IActionResult ResetPassword(string token = null, string email = null)
         {
-            return code == null ? View("Error") : View();
+            var model = new ResetPasswordViewModel()
+            {
+                Email = email,
+                Token = token
+
+            };
+            return token == null ? View("Error") : View(model);
         }
 
         [HttpPost]
@@ -227,12 +255,11 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
             {
                 var person = mapper.Map<PersonDTO>(model);
                 var result = await authService.ResetPasswordForPerson(person);
-                if( result==null)
+                if (result.NotFound)
                 {
-                    logger.LogError("The user was not found");
                     return View(nameof(ResetPasswordConfirmation));
                 }
-                if (result.Succeeded)
+                else if (result.Succeeded)
                 {
                     return View(nameof(ResetPasswordConfirmation));
                 }
@@ -248,39 +275,10 @@ namespace BankTransactionWeb.Areas.Identity.Controllers
         }
         protected override void Dispose(bool disposing)
         {
+            personService.Dispose();
             authService.Dispose();
             base.Dispose(disposing);
         }
     }
 }
 
-//[HttpPost]
-//[AllowAnonymous]
-//[ValidateAntiForgeryToken]
-//public async Task<IActionResult> Login(LoginViewModel model)
-//{
-//    if (ModelState.IsValid)
-//    {
-//        var person = mapper.Map<PersonDTO>(model);
-//        var result = await authService.LoginPerson(person);
-//        if (result.Succeeded)
-//        {
-//            logger.LogInformation("User  succesfully logged in.");
-//            return RedirectToLocal(model.ReturnUrl);
-//        }
-//        if (result.IsLockedOut)
-//        {
-//            logger.LogWarning("User account locked out.");
-//            return RedirectToAction(nameof(Lockout));
-//        }
-//        else
-//        {
-//            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-//            return View(model);
-//        }
-//    }
-//    return View(model);
-
-
-
-//}

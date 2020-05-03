@@ -1,7 +1,7 @@
-﻿using BankTransactionWeb.DAL.Entities;
-using System;
+﻿using System;
+using BankTransaction.Entities;
 
-namespace BankTransactionWeb.BAL.Models
+namespace BankTransaction.Models.DTOModels
 {
     public class TransactionDTO:BaseModel
     {

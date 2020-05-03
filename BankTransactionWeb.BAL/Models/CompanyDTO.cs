@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace BankTransactionWeb.BAL.Models
+namespace BankTransaction.Models.DTOModels
 {
     public class CompanyDTO:BaseModel
     {

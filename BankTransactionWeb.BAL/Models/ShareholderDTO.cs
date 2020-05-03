@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BankTransactionWeb.BAL.Models
+﻿namespace BankTransaction.Models.DTOModels
 {
     public class ShareholderDTO : BaseModel
     {
