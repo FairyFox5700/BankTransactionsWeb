@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 
-namespace BankTransactionWeb.Models
+namespace BankTransaction.Web.Models
 {
     public class ErrorViewModel
     {
