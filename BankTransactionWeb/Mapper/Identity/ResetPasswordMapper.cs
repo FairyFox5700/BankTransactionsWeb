@@ -1,6 +1,6 @@
 ﻿using BankTransaction.Web.Areas.Identity.Models.ViewModels;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Configuration;
-using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.Mapper.Identity
 {

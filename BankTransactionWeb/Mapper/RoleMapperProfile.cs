@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.Areas.Admin.Models.ViewModels;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -6,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.Mapper
 {

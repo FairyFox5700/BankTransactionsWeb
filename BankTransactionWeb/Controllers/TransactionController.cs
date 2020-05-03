@@ -1,23 +1,28 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
-using BankTransaction.Models.DTOModels;
+using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Web.Helpers;
+using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace BankTransaction.Web.Controllers
+namespace BankTransactionWeb.Controllers
 {
+
     public class TransactionController : Controller
     {
+        private readonly ITransactionService transactionService;
         private readonly IAccountService accountService;
         private readonly ILogger<TransactionController> logger;
         private readonly IMapper mapper;
-        private readonly ITransactionService transactionService;
 
         public TransactionController(ITransactionService transactionService, IAccountService accountService,
             ILogger<TransactionController> logger, IMapper mapper)
@@ -33,7 +38,7 @@ namespace BankTransaction.Web.Controllers
         [Authorize]
         public async Task<IActionResult> MyTransaction()
         {
-            var transactions = await transactionService.GetAllUserTransactions(HttpContext.User);
+            var transactions = (await transactionService.GetAllUserTransactions(HttpContext.User));
             return View(transactions);
         }
 
@@ -41,11 +46,12 @@ namespace BankTransaction.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllTransactions(PageQueryParameters pageQueryParameters)
         {
-            var transactions =
-                await transactionService.GetAllTransactions(pageQueryParameters.PageNumber,
-                    pageQueryParameters.PageSize);
+
+            var transactions = (await transactionService.GetAllTransactions(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
             var transactionListVM = new PaginatedList<TransactionDTO>(transactions);
             return View(transactionListVM);
+
+
         }
 
 
@@ -53,52 +59,75 @@ namespace BankTransaction.Web.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateTransaction(int id)
         {
-            var currentTransaction = await transactionService.GetTransactionById(id);
-            if (currentTransaction == null) return NotFound($"Transaction with id {id} not find");
+                var currentTransaction = await transactionService.GetTransactionById(id);
+                if (currentTransaction == null)
+                {
+                    return NotFound($"Transaction with id {id} not find");
+                }
+                else
+                {
+                    var transactionModel = mapper.Map<UpdateTransactionViewModel>(currentTransaction);
+                    return View(transactionModel);
+                }
 
-            var transactionModel = mapper.Map<UpdateTransactionViewModel>(currentTransaction);
-            return View(transactionModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateTransaction([FromForm] UpdateTransactionViewModel transactionModel)
+        public async Task<IActionResult> UpdateTransaction([FromForm]UpdateTransactionViewModel transactionModel)
         {
-            if (transactionModel == null) return BadRequest("Object of type transaction is null");
-            if (!ModelState.IsValid)
-                return View(transactionModel);
-            try
+            if (transactionModel == null)
             {
-                var transaction = await transactionService.GetTransactionById(transactionModel.Id);
-                if (transaction == null) return NotFound($"Transaction with id {transactionModel.Id} not find");
-
-                var updatedTransaction = mapper.Map(transactionModel, transaction);
-                var result = await transactionService.UpdateTransaction(updatedTransaction);
-                if (result.IsError)
+                return BadRequest("Object of type transaction is null");
+            }
+            if (!ModelState.IsValid)
+            {
+                return View(transactionModel);
+            }
+            else
+            {
+                try
                 {
-                    ModelState.AddModelError("", result.Message);
+                    var transaction = await transactionService.GetTransactionById(transactionModel.Id);
+                    if (transaction == null)
+                    {
+                        return NotFound($"Transaction with id {transactionModel.Id} not find");
+                    }
+                    else
+                    {
+                        var updatedTransaction = mapper.Map<UpdateTransactionViewModel, TransactionDTO>(transactionModel, transaction);
+                        var result =await transactionService.UpdateTransaction(updatedTransaction);
+                        if (result.IsError)
+                        {
+                            ModelState.AddModelError("",result.Message);
+                            return View(transactionModel);
+                        }
+                            return RedirectToAction("Error", "Home", result.Message);
+                        return RedirectToAction(nameof(GetAllTransactions));
+                    }
+                }
+                catch (DbUpdateException ex)
+                {
+                    logger.LogError($"Unable to update transaction becuase of {ex.Message}");
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists, " +
+                    "see your system administrator.");
                     return View(transactionModel);
                 }
 
-                return RedirectToAction("Error", "Home", result.Message);
-                return RedirectToAction(nameof(GetAllTransactions));
             }
-            catch (DbUpdateException ex)
-            {
-                logger.LogError($"Unable to update transaction becuase of {ex.Message}");
-                ModelState.AddModelError("", "Unable to save changes. " +
-                                             "Try again, and if the problem persists, " +
-                                             "see your system administrator.");
-                return View(transactionModel);
-            }
+
         }
 
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTransaction(int id)
         {
             var transaction = await transactionService.GetTransactionById(id);
-            if (transaction == null) return NotFound($"Transaction with id {id} not find");
+            if (transaction == null)
+            {
+                return NotFound($"Transaction with id {id} not find");
+            }
             try
             {
                 await transactionService.DeleteTransaction(transaction);
@@ -109,45 +138,44 @@ namespace BankTransaction.Web.Controllers
                 logger.LogError($"Unable to update person becuase of {ex.Message}");
                 return StatusCode(500, "Internal server error");
             }
-        }
 
+        }
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> ExecuteTransaction()
         {
-            var executeTransactionVM = new ExecuteTransactionViewModel
+            var executeTransactionVM = new ExecuteTransactionViewModel()
             {
                 Accounts = new SelectList(await accountService.GetMyAccounts(HttpContext.User), "Id", "Number")
             };
 
             return View(executeTransactionVM);
+
         }
 
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ExecuteTransaction(
-            [FromForm] ExecuteTransactionViewModel executeTransactionViewModel)
+        public async Task<IActionResult> ExecuteTransaction([FromForm]ExecuteTransactionViewModel executeTransactionViewModel)
         {
             try
             {
-                executeTransactionViewModel.Accounts =
-                    new SelectList(await accountService.GetMyAccounts(HttpContext.User), "Id", "Number");
+                executeTransactionViewModel.Accounts = new SelectList(await accountService.GetMyAccounts(HttpContext.User), "Id", "Number");
                 if (ModelState.IsValid)
                 {
-                    var result = await transactionService.ExecuteTransaction(
-                        executeTransactionViewModel.AccountSourceId,
+                    var result =await transactionService.ExecuteTransaction(executeTransactionViewModel.AccountSourceId,
                         executeTransactionViewModel.AccountDestinationNumber, executeTransactionViewModel.Amount);
-                    if (result.IsError)
+                    if(result.IsError)
                     {
                         ModelState.AddModelError("", result.Message);
                         return View(executeTransactionViewModel);
                     }
-
-                    return RedirectToAction(nameof(SuccessfulTransaction), result.Message);
+                    return RedirectToAction(nameof(SuccessfulTransaction),result.Message);
                 }
-
-                return View(executeTransactionViewModel);
+                else
+                {
+                    return View(executeTransactionViewModel);
+                }
             }
             catch (ValidationException vex)
             {
@@ -162,12 +190,17 @@ namespace BankTransaction.Web.Controllers
         }
 
 
+
         protected override void Dispose(bool disposing)
         {
             accountService.Dispose();
             transactionService.Dispose();
             base.Dispose(disposing);
         }
+
+
+
+
     }
 }
 

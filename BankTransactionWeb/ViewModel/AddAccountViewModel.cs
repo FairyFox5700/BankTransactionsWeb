@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using BankTransaction.BAL.Implementation.DTOModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.ViewModel
 {

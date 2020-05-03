@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BankTransaction.Entities\BankTransaction.Entities.csproj" />
+    <ProjectReference Include="..\BankTransaction.Models\BankTransaction.Models.csproj" />
+    <ProjectReference Include="..\BAnkTransactionWeb.DAL\BankTransaction.DAL.Implementation.csproj" />
+    <ProjectReference Include="..\BankTransactionWeb\BankTransaction.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MapperC\" />
+  </ItemGroup>
+
+</Project>

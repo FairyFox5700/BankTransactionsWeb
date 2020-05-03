@@ -1,10 +1,10 @@
 ﻿using BankTransaction.Web.Areas.Admin.Models.ViewModels;
+using BankTransaction.BAL.Implementation.DTOModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using BankTransaction.Configuration;
-using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.Mapper.Admin
 {

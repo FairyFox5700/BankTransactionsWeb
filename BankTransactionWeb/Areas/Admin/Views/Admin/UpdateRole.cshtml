@@ -1,44 +1,39 @@
 ﻿@model UpdateRoleViewModel
 @{
-    ViewData["Title"] = "UpdateRole";
-         Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Update Role";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
 }
 
-<h1>Update Role</h1>
-<form asp-controller="Admin" asp-area="Admin" class="form-horozontal" asp-action="UpdateRole" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-group row ">
-        <div class="col-sm-10">
-            <div class="input-group">
+    <form asp-controller="Admin" asp-area="Admin" class="form-horozontal" asp-action="UpdateRole" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group row ">
+            <div class="form-group">
                 <input asp-for="Id" type="hidden" class="form-contol" />
             </div>
         </div>
-    </div>
-    <div class="form-group row ">
-        <label asp-for="Name" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <div class="input-group">
-                <input asp-for="Name" class="form-contol" />
+        <div class="form-group row ">
+            <label asp-for="Name" class="col-sm-2 col-form-label"></label>
+            <div class="form-group">
+                <input asp-for="Name" class="form-control" placeholder="Account number *" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
         </div>
-    </div>
-    <div class="form-group row">
-        <div class="col-sm-10">
-            <input class="btn-success" type="submit" asp-controller="Admin" asp-area="Admin" asp-action="UpdateRole" asp-route-id="@Model.Id" value="Confirm" />
-            <input class="btn-success" type="submit" asp-controller="Admin" asp-area="Admin" asp-action="GetAllRoles" asp-route-id="@Model.Id" value="Cancel" />
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input class="btn btn-success" type="submit" asp-controller="Admin" asp-area="Admin" asp-action="UpdateRole" asp-route-id="@Model.Id" value="Confirm" />
+                <input class="btn btn-success" type="submit" asp-controller="Admin" asp-area="Admin" asp-action="GetAllRoles" asp-route-id="@Model.Id" value="Cancel" />
+            </div>
         </div>
-    </div>
-</form>
+    </form>
 
 <div class="card">
     <div class="card-header">
         <h5> All users in current role</h5>
     </div>
     <div class="card-body">
-        @if(Model.Users.Any())
+        @if (Model.Users.Any())
         {
-            foreach(var person in Model.Users)
+            foreach (var person in Model.Users)
             {
                 <h5 class="card-title">@person</h5>
             }
@@ -49,7 +44,7 @@
         }
     </div>
     <div class="card-footer">
-        <a class="btn btn-dark "  asp-controller="Admin" asp-area="Admin" asp-action="UpdateUsersInRole" style="width:auto" asp-route-roleId="@Model.Id">Add or remove users</a>
+        <a class="btn btn-dark " asp-controller="Admin" asp-area="Admin" asp-action="UpdateUsersInRole" style="width:auto" asp-route-roleId="@Model.Id">Add or remove users</a>
     </div>
 </div>
 

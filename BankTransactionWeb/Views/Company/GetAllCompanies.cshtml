@@ -1,4 +1,4 @@
-﻿@model PaginatedList<BankTransaction.Models.DTOModels.CompanyDTO>
+﻿@model PaginatedList<CompanyDTO>
 @{
     ViewData["Title"] = "All companies";
     ViewBag.Index = 0;
@@ -7,7 +7,6 @@
         Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
     }
 }
-    <h1>@ViewBag.NameCompany</h1>
 
 <form asp-controller="Company" asp-action="GetAllCompanies" method="get">
     <div class="card shadow mb-4">

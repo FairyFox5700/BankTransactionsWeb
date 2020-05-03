@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models;

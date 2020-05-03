@@ -4,15 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.ViewModel
+namespace BankTransaction.Web.ViewModel
 {
     public class UpdatePersonViewModel
     {
         public int Id { get; set; }
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string Email { get; set; }
+
         [Display(Name = "User name")]
         [MaxLength(20)]//, ErrorMessage = "Your user name must be  max 20  characters long.")
         public string UserName { get; set; }
@@ -28,9 +25,13 @@ namespace BankTransactionWeb.ViewModel
         [DataType(DataType.Date)]
         [Required]
         [Display(Name = "Date of birth")]
+        [Range(typeof(DateTime), "1/1/1870", "1/1/2012",
+    ErrorMessage = "Value for {0} must be between {1} and {2}")]
         public DateTime DataOfBirth { get; set; }
         [Phone]
         [Required]
+        [StringLength( 10 , MinimumLength = 10)]
         public string PhoneNumber { get; set; }
+        public string ApplicationUserFkId { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Entities;
 using BankTransaction.DAL.Abstract;
 using Microsoft.Extensions.Logging;
@@ -9,7 +10,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BankTransaction.Models;
-using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {

@@ -4,6 +4,7 @@ using BankTransaction.DAL.Abstract;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using BankTransaction.BAL.Implementation.DTOModels;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.Areas.Admin.Models.ViewModels
+namespace BankTransaction.Web.Areas.Admin.Models.ViewModels
 {
     public class ListRoleViewModel
     {

@@ -4,12 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.Areas.Identity.Models.ViewModels
+namespace BankTransaction.Web.Areas.Identity.Models.ViewModels
 {
     public class LoginViewModel
     {
         [Required]
-        public string UserName { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

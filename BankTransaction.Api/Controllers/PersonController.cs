@@ -2,6 +2,7 @@
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using BankTransaction.Api.Helpers;
-using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Api.Controllers
 {

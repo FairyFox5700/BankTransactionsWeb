@@ -1,4 +1,5 @@
 ﻿using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,6 @@ using System.Net;
 using BankTransaction.Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using BankTransaction.Api.Models.Queries;
-using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Api.Controllers
 {

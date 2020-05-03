@@ -1,16 +1,11 @@
-﻿using BankTransaction.Configuration;
-using BankTransaction.Models.DTOModels;
+﻿using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.ViewModel;
+using BankTransaction.Configuration;
 
-namespace BankTransaction.Web.Mapper.OldMapper
+namespace BankTransaction.Web.Mapper
 {
     public class AccountMapperAddModel : IMapper<AccountDTO, AddAccountViewModel>
     {
-        private AccountMapperAddModel()
-        {
-        }
-
-        public static AccountMapperAddModel Instance { get; private set; } = new AccountMapperAddModel();
         public AddAccountViewModel Map(AccountDTO source)
         {
             return new AddAccountViewModel()
