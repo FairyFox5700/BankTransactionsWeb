@@ -23,6 +23,10 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
             return transactions;
         }
 
+        public async  override Task<Transaction> GetById(int id)
+        {
+            return await context.Transactions.Include(e=>e.SourceAccount).FirstOrDefaultAsync();
+        }
         public async Task<IEnumerable<Transaction>> GetAllTransactionsByAccountId(int id)
         {
             return await context.Transactions.Where(tr => (tr.AccountSourceId == id || tr.AccountDestinationId == id)).ToListAsync();

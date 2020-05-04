@@ -19,7 +19,7 @@ namespace BankTransaction.Web.ViewModel
         public PersonDTO Person { get; set; }
         [Required]
         [Display(Name ="Current person id")]
-        public int PersonId { get;set;}
+        public int? PersonId { get;set;}
         //public int Name { get; set; }
     }
 }

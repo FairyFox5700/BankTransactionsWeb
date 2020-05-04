@@ -58,19 +58,23 @@
         </nav>
 
     </header>
-    <div class="container body-content" style="margin-top:60px">
-        @RenderBody()
-        <hr>
-        <footer>
-            <div class="row">
-                <div class="col-md-6">
-                    <p>&copy; @System.DateTime.Now.Year - BankTransactionWeb</p>
-                </div>
 
-            </div>
-        </footer>
+
+
+    <div class="container body-content">
+        @RenderBody()
     </div>
-    
+    <hr />
+    <footer class="sticky-footer bg-white">
+        <div class="container ">
+            <div class="copyright text-center my-auto">
+                <span>Copyright &copy; @System.DateTime.Now.Year - BankTransactionWeb</span>
+            </div>
+        </div>
+    </footer>
+ 
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

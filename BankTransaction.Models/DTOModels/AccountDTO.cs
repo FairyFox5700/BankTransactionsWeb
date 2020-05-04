@@ -6,7 +6,7 @@ namespace BankTransaction.BAL.Implementation.DTOModels
     {
         public string Number { get; set; }
         public decimal Balance { get; set; }
-        public int PersonId { get; set; }
+        public int? PersonId { get; set; }
         private List<TransactionDTO> transactions;
         public List<TransactionDTO> Transactions
         {

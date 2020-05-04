@@ -13,8 +13,9 @@ namespace BankTransaction.Web.Mapper
             return new UpdateTransactionViewModel()
             {
                 Id = source.Id,
-                AccountSourceNumber = source.SourceAccount.Number,
-                AccountDestinationNumber = source.DestinationAccount.Number,
+                AccountSourceNumber = source.SourceAccountNumber,
+                AccountDestinationNumber = source.DestinationAccountNumber,
+                AccountSourceId = source.AccountSourceId,
                 Amount = source.Amount
             };
         }
@@ -26,6 +27,8 @@ namespace BankTransaction.Web.Mapper
                 Id = destination.Id,
                 AccountDestinationId = destination.AccountSourceId,
                 AccountSourceId = destination.AccountSourceId,
+                DestinationAccountNumber = destination.AccountSourceNumber,
+                SourceAccountNumber = destination.AccountSourceNumber,
                 Amount = destination.Amount
 
             };

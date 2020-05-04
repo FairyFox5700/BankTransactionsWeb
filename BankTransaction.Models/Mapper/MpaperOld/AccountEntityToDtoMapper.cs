@@ -15,8 +15,9 @@ namespace BankTransaction.Models.Mapper
             {
                 Id = source.Id,
                 Balance = source.Balance,
+                PersonId = source.PersonId,
                 Number = source.Number,
-                Transactions = source.Transactions.Select(tr => TransactionEntityToDtoMapper.Instance.Map(tr)).ToList()
+                Transactions = source.Transactions?.Select(tr => TransactionEntityToDtoMapper.Instance.Map(tr)).ToList()
             };
         }
 
@@ -28,7 +29,7 @@ namespace BankTransaction.Models.Mapper
                 Balance = destination.Balance,
                 Number = destination.Number,
                 PersonId = destination.PersonId,
-                Transactions = destination.Transactions.Select(tr => TransactionEntityToDtoMapper.Instance.MapBack(tr)).ToList(),
+                Transactions = destination.Transactions?.Select(tr => TransactionEntityToDtoMapper.Instance.MapBack(tr)).ToList(),
             };
         }
     }

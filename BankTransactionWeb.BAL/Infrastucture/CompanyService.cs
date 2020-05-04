@@ -49,7 +49,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
             var companies = await unitOfWork.CompanyRepository.GetAll(pageNumber,pageSize);
             //TODO smth better here
-            return new PaginatedModel<CompanyDTO>(companies.Select(company => CompanyDtoToEntityMapper.Instance.Map(company)), companies.PageNumber, companies.PageSize, companies.TotalCount, companies.TotalPages);
+            var mappedCompanies = companies.Select(company => CompanyDtoToEntityMapper.Instance.Map(company));
+            return new PaginatedModel<CompanyDTO>(mappedCompanies, companies.PageNumber, companies.PageSize, companies.TotalCount, companies.TotalPages);
            
         }
         public async Task<IEnumerable<CompanyDTO>> GetAllCompanies()

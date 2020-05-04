@@ -15,8 +15,8 @@ namespace BankTransaction.Web.Mapper
                 Id = source.Id,
                 DateOftransfering = source.DateOftransfering,
                 AccountSourceId = source.AccountSourceId,
-                AccountDestinationeNumber = source.DestinationAccount?.Number,
-                AccountSourceNumber = source.SourceAccount?.Number,
+                AccountDestinationeNumber = source.DestinationAccountNumber,
+                AccountSourceNumber = source.SourceAccountNumber,
                 Amount = source.Amount
 
             };

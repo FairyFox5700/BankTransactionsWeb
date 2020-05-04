@@ -16,7 +16,7 @@ namespace BankTransaction.Models.Mapper
                 Id = source.Id,
                 DateOfCreation = source.DateOfCreation,
                 //TODO smt here look better
-                Shareholders = source.Shareholders.Select(sh => ShareholderEntityToDtoMapper.Instance.Map(sh)).ToList(),
+                Shareholders = source.Shareholders?.Select(sh => ShareholderEntityToDtoMapper.Instance.Map(sh)).ToList(),
                 Name = source.Name
             };
         }
@@ -27,7 +27,7 @@ namespace BankTransaction.Models.Mapper
             {
                 Id = destination.Id,
                 DateOfCreation = destination.DateOfCreation,
-                Shareholders = destination.Shareholders.Select(sh =>ShareholderEntityToDtoMapper.Instance.MapBack(sh)).ToList(),
+                Shareholders = destination.Shareholders?.Select(sh =>ShareholderEntityToDtoMapper.Instance.MapBack(sh)).ToList(),
                 Name = destination.Name
             };
         }

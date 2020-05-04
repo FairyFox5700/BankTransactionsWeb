@@ -13,7 +13,7 @@ namespace BankTransaction.Web.Mapper
             return new ShareholderDTO()
             {
                 Id = source.Id,
-                Company = source.Company,
+                //Company = source.Company,
                 CompanyId = source.CompanyId,
                 Person = source.Person,
                 PersonId = source.PersonId,

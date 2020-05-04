@@ -69,6 +69,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             try
             {
                 var shareholderFinded = await unitOfWork.ShareholderRepository.GetById(id);
+                shareholderFinded.Company = await unitOfWork.CompanyRepository.GetById(shareholderFinded.CompanyId);
                 return ShareholderEntityToDtoMapper.Instance.Map(shareholderFinded);
             }
             catch (Exception ex)

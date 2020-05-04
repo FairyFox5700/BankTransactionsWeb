@@ -96,6 +96,7 @@ namespace BankTransaction.Web.Controllers
                     else
                     {
                         var updatedTransaction = UpdateTransactionToTransactionDTOMapper.Instance.MapBack( transactionModel);
+                        
                         var result =await transactionService.UpdateTransaction(updatedTransaction);
                         if (result.IsError)
                         {

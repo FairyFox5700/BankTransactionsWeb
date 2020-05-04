@@ -15,6 +15,7 @@ namespace BankTransaction.Models.Mapper
                 ApplicationUserFkId = source.Id,
                 Email = source.Email,
                 PhoneNumber = source.PhoneNumber,
+                UserName = source.UserName
                
           
             };
@@ -27,8 +28,9 @@ namespace BankTransaction.Models.Mapper
                 Id = destination.ApplicationUserFkId,
                 Email = destination.Email,
                 PhoneNumber = destination.PhoneNumber,
-               
-              
+                UserName = destination.UserName
+
+
             };
 
         }

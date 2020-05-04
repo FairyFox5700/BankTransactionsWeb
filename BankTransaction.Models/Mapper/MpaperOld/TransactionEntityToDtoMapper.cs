@@ -20,7 +20,9 @@ namespace BankTransaction.Models.Mapper
                 AccountSourceId = source.AccountSourceId,
                 DateOftransfering = source.DateOftransfering,
                 Amount = source.Amount,
-                SourceAccount = source.SourceAccount
+                SourceAccountNumber = source.SourceAccount?.Number,
+
+               
             };
         }
 
@@ -33,7 +35,7 @@ namespace BankTransaction.Models.Mapper
                 AccountSourceId = destination.AccountSourceId,
                 DateOftransfering = destination.DateOftransfering,
                 Amount = destination.Amount,
-                SourceAccount = destination.SourceAccount,
+               //SourceAccount
             };
         }
     }

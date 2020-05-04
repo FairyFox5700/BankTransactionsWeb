@@ -50,8 +50,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 foreach (var transaction in transactions)
                 {
                     var mappedTransaction = TransactionEntityToDtoMapper.Instance.Map(transaction);
-                    mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
-                    mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
+                    mappedTransaction.DestinationAccountNumber = (await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId))?.Number;
+                    //mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
                     listOfTransaction.Add(mappedTransaction);
                 }
 
@@ -70,8 +70,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             {
                 var transactionFinded = await unitOfWork.TransactionRepository.GetById(id);
                 var transaction= TransactionEntityToDtoMapper.Instance.Map(transactionFinded);
-                transaction.SourceAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountSourceId));
-                transaction.DestinationAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountDestinationId));
+                //transaction.SourceAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountSourceId));
+                transaction.DestinationAccountNumber = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountDestinationId))?.Number;
                 return transaction;
             }
             catch (Exception ex)
@@ -86,8 +86,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             try
             {
                 var transactionMapped = TransactionEntityToDtoMapper.Instance.MapBack(transaction);
-                var source = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.SourceAccount?.Number));
-                var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.DestinationAccount?.Number));
+                var source = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.SourceAccountNumber));
+                var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.DestinationAccountNumber));
                 if (source == null) return new ValidateTransactionModel("Source account is not founded", true);
                 if (destination == null) return new ValidateTransactionModel("Destination account is not founded", true);
                 transactionMapped.AccountDestinationId = destination.Id;
@@ -181,8 +181,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                         if (trans != null)
                         {
                             var mappedTransaction = TransactionEntityToDtoMapper.Instance.Map(trans);
-                            mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
-                            mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
+                            mappedTransaction.DestinationAccountNumber =( await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId))?.Number;
+                            //mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
                             listOfTransaction.Add(mappedTransaction);
                         }
 

@@ -36,8 +36,8 @@ namespace BankTransaction.Web.Mapper
             CreateMap<AddShareholderViewModel, ShareholderDTO>().ReverseMap();
             //for transaction
             CreateMap<TransactionDTO, UpdateTransactionViewModel>()
-             .ForMember(vm => vm.AccountDestinationNumber, dto => dto.MapFrom(s => s.DestinationAccount.Number))
-            .ForMember(vm => vm.AccountSourceNumber, dto => dto.MapFrom(s => s.SourceAccount.Number)).ReverseMap();
+             .ForMember(vm => vm.AccountDestinationNumber, dto => dto.MapFrom(s => s.DestinationAccountNumber))
+            .ForMember(vm => vm.AccountSourceNumber, dto => dto.MapFrom(s => s.SourceAccountNumber)).ReverseMap();
             CreateMap<AddTransactionViewModel, TransactionDTO>();
             //Identity
             CreateMap<LoginViewModel, PersonDTO>().ReverseMap();

@@ -103,6 +103,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 personModel.LastName = personFinded.LastName;
                 personModel.Name = personFinded.Name;
                 personModel.Surname = personFinded.Surname;
+                personModel.DataOfBirth = personFinded.DataOfBirth;
                 return personModel;
             }
             catch (Exception ex)
@@ -125,6 +126,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 personModel.LastName = personFinded.LastName;
                 personModel.Name = personFinded.Name;
                 personModel.Surname = personFinded.Surname;
+                personModel.DataOfBirth = personFinded.DataOfBirth;
                 return personModel;
             }
             catch (Exception ex)

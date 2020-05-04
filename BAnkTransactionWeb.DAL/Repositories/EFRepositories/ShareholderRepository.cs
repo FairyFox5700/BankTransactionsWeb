@@ -28,6 +28,7 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
             return shareholders;
 
         }
+
         private IQueryable<Shareholder> SearchByFilters(ShareholderFilter shareholderFilter, IQueryable<Shareholder> shareholders)
         {
             if (shareholderFilter != null)
