@@ -15,21 +15,28 @@ using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using BankTransaction.Web.Configuration;
 using BankTransaction.Web.Helpers;
+using BankTransaction.Web.Localization;
 using BankTransaction.Web.Mapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Globalization;
 using System.Text;
 
 namespace BankTransaction.Web
@@ -56,6 +63,27 @@ namespace BankTransaction.Web
             services.AddDistributedCache(Configuration);
             services.AddIdentiyConfig();
             services.AddMvc();
+            services.TryAddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
+            services.TryAddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
+            services.AddLocalization(options => options.ResourcesPath = "Localization/Languages");
+
+            services.AddMvc().AddViewLocalization();
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[]
+                {
+                new CultureInfo("en-US"),
+                 new CultureInfo("ru-RU"),
+            };
+
+                options.DefaultRequestCulture = new RequestCulture("en-US");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+                options.RequestCultureProviders.Insert(0, new RouteDataRequestCultureProvider());
+            });
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
+            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
 
         }
 
@@ -73,9 +101,11 @@ namespace BankTransaction.Web
 
             else
             {
-
                 app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
+            var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
+            app.UseRequestLocalization(localizationOptions);
 
             //app.UseCors(c=>c.SetIsOriginAllowed(x=>_=true).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             app.UseStaticFiles();
@@ -88,6 +118,7 @@ namespace BankTransaction.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
             //MyIdentityDataInitializer.SeedData(userManager, roleManager, context);
             app.UseEndpoints(endpoints =>
             {

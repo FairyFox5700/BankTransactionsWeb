@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.Controllers
+namespace BankTransaction.Web.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ShareholderController : Controller

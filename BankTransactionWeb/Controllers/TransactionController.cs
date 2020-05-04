@@ -14,7 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.Controllers
+namespace BankTransaction.Web.Controllers
 {
 
     public class TransactionController : Controller

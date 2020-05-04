@@ -6,6 +6,20 @@
     <RootNamespace>BankTransaction.Web</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="Localization\Languages\Controllers.HomeController.en-US.Res.json" />
+    <Content Remove="Localization\Languages\Controllers.HomeController.ru-RU.Res.json" />
+    <Content Remove="Localization\Languages\localization.json" />
+    <Content Remove="Localization\Languages\Views.Shared._SelectLanguagePartial.ru-RU.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Localization\Languages\Controllers.HomeController.en-US.Res.json" />
+    <EmbeddedResource Include="Localization\Languages\Controllers.HomeController.ru-RU.Res.json" />
+    <EmbeddedResource Include="Localization\Languages\localization.json" />
+    <EmbeddedResource Include="Localization\Languages\Views.Shared._SelectLanguagePartial.ru-RU.json" />
+  </ItemGroup>
+
 
 
   <ItemGroup>

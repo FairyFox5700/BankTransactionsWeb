@@ -47,23 +47,30 @@
                         </li>
 
                         @await Html.PartialAsync("_LoginPartialNav")
+
                     </ul>
                 </div>
+
+            </div>
+            <div class="col-md-2 text-right">
+                @await Html.PartialAsync("_SelectLanguagePartial")
             </div>
         </nav>
-        
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2020 - BankTransactionWeb - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    </header>
+    <div class="container body-content" style="margin-top:60px">
+        @RenderBody()
+        <hr>
+        <footer>
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; @System.DateTime.Now.Year - BankTransactionWeb</p>
+                </div>
+
+            </div>
+        </footer>
+    </div>
+    
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

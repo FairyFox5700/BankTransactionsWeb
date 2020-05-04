@@ -49,7 +49,7 @@ namespace BankTransaction.Web.Localization
             }
             else
             {
-               var assemblyName = new AssemblyName(resourceType.Assembly.FullName).Name;
+               var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
                resourceName =  resourcesRelativePath + TrimPrefix(resourceType.FullName, assemblyName + ".");
             }
             resourceName = $"{resourceName}.{cultureInfo.Name}.Res.json";
