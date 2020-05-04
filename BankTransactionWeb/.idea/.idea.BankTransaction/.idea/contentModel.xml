@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Admin\AppData\Local\JetBrains\Rider2020.1\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Admin\AppData\Local\JetBrains\Rider2020.1\resharper-host\Local\Transient\ReSharperHost\v201\SolutionCaches\_BankTransaction.-1610910418.00" t="ExcludeRecursive" />
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransaction.Api" t="IncludeRecursive">
+      <e p="appsettings.Development.json" t="Include" />
+      <e p="appsettings.json" t="Include" />
+      <e p="BankTransaction.Api.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Controllers" t="Include">
+        <e p="AccountController.cs" t="Include" />
+        <e p="AuthController.cs" t="Include" />
+        <e p="CompanyController.cs" t="Include" />
+        <e p="PersonController.cs" t="Include" />
+        <e p="ShareholderController.cs" t="Include" />
+        <e p="TransactionController.cs" t="Include" />
+      </e>
+      <e p="Extensions" t="Include">
+        <e p="ApiResponseMiddlewareExtension.cs" t="Include" />
+        <e p="AutoMapperExtension.cs" t="Include" />
+        <e p="GlobalErrorHandlingMiddleware.cs" t="Include" />
+        <e p="ModelStateExtension.cs" t="Include" />
+      </e>
+      <e p="Helpers" t="Include">
+        <e p="ApiResponseMiddleware.cs" t="Include" />
+        <e p="CachedAttribute.cs" t="Include" />
+      </e>
+      <e p="Mapper" t="Include">
+        <e p="ApiModelToBissnessMap.cs" t="Include" />
+      </e>
+      <e p="Models" t="Include" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.Api.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Program.cs" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="launchSettings.json" t="Include" />
+      </e>
+      <e p="Startup.cs" t="Include" />
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransaction.Api.Models" t="IncludeRecursive">
+      <e p="BankTransaction.Api.Models.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="ErrorDetails.cs" t="Include" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.Api.Models.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Queries" t="Include">
+        <e p="PageQueryParameters.cs" t="Include" />
+        <e p="RequestLoginModel.cs" t="Include" />
+        <e p="RequestRegisterModel.cs" t="Include" />
+        <e p="SearchPersonQuery.cs" t="Include" />
+        <e p="SearchShareholderQuery.cs" t="Include" />
+      </e>
+      <e p="Responces" t="Include">
+        <e p="ApiResponse.cs" t="Include" />
+        <e p="AuthSuccesfullResonce.cs" t="Include" />
+        <e p="PaginatedList.cs" t="Include" />
+      </e>
+      <e p="ValidationError.cs" t="Include" />
+      <e p="ValidationFilter.cs" t="Include" />
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransaction.BAL.Abstract" t="IncludeRecursive">
+      <e p="BankTransaction.BAL.Abstract.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="IAccountService.cs" t="Include" />
+      <e p="IAdminService.cs" t="Include" />
+      <e p="IAuthorisationService.cs" t="Include" />
+      <e p="ICompanyService.cs" t="Include" />
+      <e p="IJwtSecurityService.cs" t="Include" />
+      <e p="Interfaces" t="Include" />
+      <e p="IPersonService.cs" t="Include" />
+      <e p="IRedisCacheService.cs" t="Include" />
+      <e p="ISender.cs" t="Include" />
+      <e p="IShareholderService.cs" t="Include" />
+      <e p="ITransactionService.cs" t="Include" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.BAL.Abstract.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="RestApi" t="Include">
+        <e p="IJwtAuthenticationService.cs" t="Include" />
+      </e>
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransaction.Configuration" t="IncludeRecursive">
+      <e p="BankTransaction.Configuration.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Cofiguration" t="Include" />
+      <e p="EmailConfig.cs" t="Include" />
+      <e p="IMapper.cs" t="Include" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.Configuration.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="RedisCacheCaonfiguration.cs" t="Include" />
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransaction.DAL.Abstract" t="IncludeRecursive">
+      <e p="BankTransaction.DAL.Abstract.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="IAccountRepository.cs" t="Include" />
+      <e p="ICompanyRepository.cs" t="Include" />
+      <e p="Interfaces" t="Include" />
+      <e p="IPersonRepository.cs" t="Include" />
+      <e p="IRepository.cs" t="Include" />
+      <e p="IShareholderRepository.cs" t="Include" />
+      <e p="ITokenRepository.cs" t="Include" />
+      <e p="ITransactionRepository.cs" t="Include" />
+      <e p="IUnitOfWork.cs" t="Include" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.DAL.Abstract.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransaction.Entities" t="IncludeRecursive">
+      <e p="Account.cs" t="Include" />
+      <e p="ApplicationRole.cs" t="Include" />
+      <e p="ApplicationUser.cs" t="Include" />
+      <e p="BankTransaction.Entities.csproj" t="IncludeRecursive" />
+      <e p="BaseEntity.cs" t="Include" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Company.cs" t="Include" />
+      <e p="Entities" t="Include" />
+      <e p="Filter" t="Include">
+        <e p="PaginatedPlainModel.cs" t="Include" />
+        <e p="PersonFilter.cs" t="Include" />
+        <e p="ShareholderFilter.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.Entities.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Person.cs" t="Include" />
+      <e p="RefreshToken.cs" t="Include" />
+      <e p="Shareholder.cs" t="Include" />
+      <e p="Transaction.cs" t="Include" />
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransaction.Mapper" t="IncludeRecursive">
+      <e p="BankTransaction.Mapper.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="CompanyMapper.cs" t="Include" />
+      <e p="MapperC" t="Include" />
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.Mapper.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransaction.Models" t="IncludeRecursive">
+      <e p="BankTransaction.Models.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="CustomMessage.cs" t="Include" />
+      <e p="DTOModels" t="Include">
+        <e p="AccountDTO.cs" t="Include" />
+        <e p="BaseModel.cs" t="Include" />
+        <e p="CompanyDTO.cs" t="Include" />
+        <e p="PersonDTO.cs" t="Include" />
+        <e p="PersonInRoleDTO.cs" t="Include" />
+        <e p="RefreshTokenDTO.cs" t="Include" />
+        <e p="RoleDTO.cs" t="Include" />
+        <e p="ShareholderDTO.cs" t="Include" />
+        <e p="TransactionDTO.cs" t="Include" />
+      </e>
+      <e p="Mapper" t="Include">
+        <e p="BisnessToDomainProfile.cs" t="Include" />
+        <e p="MpaperOld" t="Include">
+          <e p="AccountMapper.cs" t="Include" />
+          <e p="ApplicationUserMapper.cs" t="Include" />
+          <e p="CompanyMapper.cs" t="Include" />
+          <e p="PersonMapper.cs" t="Include" />
+          <e p="PersonRoleMapper.cs" t="Include" />
+          <e p="ShareholderMapper.cs" t="Include" />
+          <e p="TransactionMapper.cs" t="Include" />
+        </e>
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.Models.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="PaginatedModel.cs" t="Include" />
+      <e p="PersonFilterModel.cs" t="Include" />
+      <e p="ShareholderFilterModel.cs" t="Include" />
+      <e p="Validation" t="Include">
+        <e p="AuthResponce.cs" t="Include" />
+        <e p="IdentityUserResult.cs" t="Include" />
+        <e p="JwtSettings.cs" t="Include" />
+        <e p="ValidateTransactionModel.cs" t="Include" />
+        <e p="ValidationException.cs" t="Include" />
+      </e>
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransactionWeb" t="IncludeRecursive">
+      <e p="appsettings.Development.json" t="Include" />
+      <e p="appsettings.json" t="Include" />
+      <e p="Areas" t="Include">
+        <e p="Admin" t="Include">
+          <e p="Models" t="Include">
+            <e p="ViewModels" t="Include">
+              <e p="AddRoleViewModel.cs" t="Include" />
+              <e p="ListRoleViewModel.cs" t="Include" />
+              <e p="UpdateRoleViewModel.cs" t="Include" />
+              <e p="UsersInRoleViewModel.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Views" t="Include">
+            <e p="_ViewImports.cshtml" t="Include" />
+            <e p="Admin" t="Include">
+              <e p="AccessDenied.cshtml" t="Include" />
+              <e p="AddRole.cshtml" t="Include" />
+              <e p="GetAllRoles.cshtml" t="Include" />
+              <e p="UpdateRole.cshtml" t="Include" />
+              <e p="UpdateUsersInRole.cshtml" t="Include" />
+            </e>
+            <e p="Shared" t="Include">
+              <e p="_AdminLayoutDashboard.cshtml" t="Include" />
+            </e>
+          </e>
+          <e p="Çontrollers" t="Include">
+            <e p="AdminController.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Identity" t="Include">
+          <e p="Controllers" t="Include">
+            <e p="AccountController.cs" t="Include" />
+          </e>
+          <e p="Models" t="Include">
+            <e p="ViewModels" t="Include">
+              <e p="ForgotPasswordViewModel.cs" t="Include" />
+              <e p="LoginViewModel.cs" t="Include" />
+              <e p="RegisterViewModel.cs" t="Include" />
+              <e p="ResetPasswordViewModel.cs" t="Include" />
+            </e>
+          </e>
+          <e p="Views" t="Include">
+            <e p="Account" t="Include">
+              <e p="_ViewImports.cshtml" t="Include" />
+              <e p="Error.cshtml" t="Include" />
+              <e p="ForgotPassword.cshtml" t="Include" />
+              <e p="ForgotPasswordConfirmation.cshtml" t="Include" />
+              <e p="Login.cshtml" t="Include" />
+              <e p="Register.cshtml" t="Include" />
+              <e p="ResetPassword.cshtml" t="Include" />
+              <e p="ResetPasswordConfirmation.cshtml" t="Include" />
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="BankTransaction.sln" t="IncludeFlat" />
+      <e p="BankTransaction.Web.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Configuration" t="Include">
+        <e p="AutoMapperConfiguration.cs" t="Include" />
+      </e>
+      <e p="Controllers" t="Include">
+        <e p="AccountController.cs" t="Include" />
+        <e p="CompanyController.cs" t="Include" />
+        <e p="HomeController.cs" t="Include" />
+        <e p="PersonController.cs" t="Include" />
+        <e p="ShareholderController.cs" t="Include" />
+        <e p="TestController.cs" t="Include" />
+        <e p="TransactionController.cs" t="Include" />
+      </e>
+      <e p="Extensions" t="Include">
+        <e p="MapperExtension.cs" t="Include" />
+      </e>
+      <e p="Helpers" t="Include">
+        <e p="CachedAttribute.cs" t="Include" />
+        <e p="CacheMidleware.cs" t="Include" />
+        <e p="HttpActionContext.cs" t="Include" />
+      </e>
+      <e p="libman.json" t="Include" />
+      <e p="Mapper" t="Include">
+        <e p="AccountMapperProfile.cs" t="Include" />
+        <e p="Admin" t="Include">
+          <e p="PersonRoleMapper.cs" t="Include" />
+          <e p="RoleMapperAddModel.cs" t="Include" />
+          <e p="RoleMapperListModel.cs" t="Include" />
+          <e p="RoleMapperUpdateModel.cs" t="Include" />
+          <e p="UserInRoleMapperListModel.cs" t="Include" />
+          <e p="UsersRoleMapper.cs" t="Include" />
+        </e>
+        <e p="CompanyMapperProfile.cs" t="Include" />
+        <e p="FilterMapperProfile.cs" t="Include" />
+        <e p="Identity" t="Include">
+          <e p="IdentityRoleMapper.cs" t="Include" />
+          <e p="LoginMapper.cs" t="Include" />
+          <e p="RegisterMapper.cs" t="Include" />
+          <e p="ResetPasswordMapper.cs" t="Include" />
+        </e>
+        <e p="IdentityMapperProfile.cs" t="Include" />
+        <e p="MapperProfile.cs" t="Include" />
+        <e p="OldMapper" t="Include">
+          <e p="AccountMapperAddModel.cs" t="Include" />
+          <e p="AccountMapperUpdateModel.cs" t="Include" />
+          <e p="CompanyMapperAddModel.cs" t="Include" />
+          <e p="CompanyMapperUpdateModel.cs" t="Include" />
+          <e p="IModelContainer.cs" t="Include" />
+          <e p="ShareholderMapperAddModel.cs" t="Include" />
+          <e p="ShareholderMapperUpdateModel.cs" t="Include" />
+          <e p="TransactionMapperAddModel.cs" t="Include" />
+          <e p="TransactionMapperList.cs" t="Include" />
+          <e p="TransactionMapperUpdateModel.cs" t="Include" />
+        </e>
+        <e p="PersonMapperProfile.cs" t="Include" />
+        <e p="RoleMapperProfile.cs" t="Include" />
+        <e p="ShareholderMapperProfile.cs" t="Include" />
+        <e p="TransactioMapperProfile.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.Web.AssemblyInfo.cs" t="Include" />
+            <e p="BankTransaction.Web.RazorAssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Program.cs" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="launchSettings.json" t="Include" />
+      </e>
+      <e p="Startup.cs" t="Include" />
+      <e p="ViewModel" t="Include">
+        <e p="AddAccountViewModel.cs" t="Include" />
+        <e p="AddCompanyViewModel.cs" t="Include" />
+        <e p="AddPersonViewModel.cs" t="Include" />
+        <e p="AddShareholderViewModel.cs" t="Include" />
+        <e p="AddTransactionViewModel.cs" t="Include" />
+        <e p="ErrorViewModel.cs" t="Include" />
+        <e p="ExecuteTransactionViewModel.cs" t="Include" />
+        <e p="PaginatedList.cs" t="Include" />
+        <e p="PaginatedModel.cs" t="Include" />
+        <e p="PersonListViewModel.cs" t="Include" />
+        <e p="PersonSearchModel.cs" t="Include" />
+        <e p="ShaereholderSearchModel.cs" t="Include" />
+        <e p="ShareholdersListViewModel.cs" t="Include" />
+        <e p="TransactionListViewModel.cs" t="Include" />
+        <e p="UpdateAccountViewModel.cs" t="Include" />
+        <e p="UpdateCompanyViewModel.cs" t="Include" />
+        <e p="UpdatePersonViewModel.cs" t="Include" />
+        <e p="UpdateShareholderViewModel.cs" t="Include" />
+        <e p="UpdateTransactionViewModel.cs" t="Include" />
+      </e>
+      <e p="Views" t="Include">
+        <e p="_ViewImports.cshtml" t="Include" />
+        <e p="_ViewStart.cshtml" t="Include" />
+        <e p="Account" t="Include">
+          <e p="AddAccount.cshtml" t="Include" />
+          <e p="GetAllAccounts.cshtml" t="Include" />
+          <e p="MyAccounts.cshtml" t="Include" />
+          <e p="UpdateAccount.cshtml" t="Include" />
+        </e>
+        <e p="Company" t="Include">
+          <e p="AddCompany.cshtml" t="Include" />
+          <e p="GetAllCompanies.cshtml" t="Include" />
+          <e p="Index.cshtml" t="Include" />
+          <e p="UpdateCompany.cshtml" t="Include" />
+        </e>
+        <e p="Home" t="Include">
+          <e p="Index.cshtml" t="Include" />
+          <e p="Privacy.cshtml" t="Include" />
+        </e>
+        <e p="Person" t="Include">
+          <e p="AddPerson.cshtml" t="Include" />
+          <e p="GetAllPersons.cshtml" t="Include" />
+          <e p="GetPersonCardCabinet.cshtml" t="Include" />
+          <e p="UpdatePerson.cshtml" t="Include" />
+        </e>
+        <e p="Shared" t="Include">
+          <e p="_Layout.cshtml" t="Include" />
+          <e p="_LoginPartialNav.cshtml" t="Include" />
+          <e p="_PaginationTableLayout.cshtml" t="Include" />
+          <e p="_ValidationScriptsPartial.cshtml" t="Include" />
+          <e p="Error.cshtml" t="Include" />
+        </e>
+        <e p="Shareholder" t="Include">
+          <e p="AddShareholder.cshtml" t="Include" />
+          <e p="GetAllShareholders.cshtml" t="Include" />
+          <e p="UpdateShareholder.cshtml" t="Include" />
+        </e>
+        <e p="Test" t="Include">
+          <e p="CheckPolicy.cshtml" t="Include" />
+          <e p="CheckPolicy.cshtml.cs" t="Include" />
+        </e>
+        <e p="Transaction" t="Include">
+          <e p="AddTransaction.cshtml" t="Include" />
+          <e p="ExecuteTransaction.cshtml" t="Include" />
+          <e p="GetAllTransactions.cshtml" t="Include" />
+          <e p="MyTransaction.cshtml" t="Include" />
+          <e p="SuccessfulTransaction.cshtml" t="Include" />
+          <e p="UpdateTransaction.cshtml" t="Include" />
+        </e>
+      </e>
+      <e p="wwwroot" t="Include">
+        <e p="css" t="Include">
+          <e p="accurateFieldStyle.css" t="Include" />
+          <e p="all.css" t="Include" />
+          <e p="all.min.css" t="Include" />
+          <e p="fontawesome.css" t="Include" />
+          <e p="fontawesome.min.css" t="Include" />
+          <e p="NavBar.css" t="Include" />
+          <e p="sb-admin-2.css" t="Include" />
+          <e p="sb-admin-2.min.css" t="Include" />
+          <e p="site.css" t="Include" />
+          <e p="styelForRegister.css" t="Include" />
+          <e p="styleForLogin.css" t="Include" />
+          <e p="StyleSheet.css" t="Include" />
+          <e p="userAcountStyle.css" t="Include" />
+        </e>
+        <e p="favicon.ico" t="Include" />
+        <e p="images" t="Include">
+          <e p="bank.jfif" t="Include" />
+          <e p="money.jfif" t="Include" />
+          <e p="ourBank.jfif" t="Include" />
+          <e p="pig.jfif" t="Include" />
+        </e>
+        <e p="js" t="Include">
+          <e p="site.js" t="Include" />
+        </e>
+        <e p="lib" t="Include">
+          <e p="bootstrap" t="Include">
+            <e p="css" t="Include">
+              <e p="bootstrap-grid.css" t="Include" />
+              <e p="bootstrap-grid.css.map" t="Include" />
+              <e p="bootstrap-grid.min.css" t="Include" />
+              <e p="bootstrap-grid.min.css.map" t="Include" />
+              <e p="bootstrap-reboot.css" t="Include" />
+              <e p="bootstrap-reboot.css.map" t="Include" />
+              <e p="bootstrap-reboot.min.css" t="Include" />
+              <e p="bootstrap-reboot.min.css.map" t="Include" />
+              <e p="bootstrap.css" t="Include" />
+              <e p="bootstrap.css.map" t="Include" />
+              <e p="bootstrap.min.css" t="Include" />
+              <e p="bootstrap.min.css.map" t="Include" />
+            </e>
+            <e p="dist" t="Include">
+              <e p="css" t="Include">
+                <e p="bootstrap-grid.css" t="Include" />
+                <e p="bootstrap-grid.css.map" t="Include" />
+                <e p="bootstrap-grid.min.css" t="Include" />
+                <e p="bootstrap-grid.min.css.map" t="Include" />
+                <e p="bootstrap-reboot.css" t="Include" />
+                <e p="bootstrap-reboot.css.map" t="Include" />
+                <e p="bootstrap-reboot.min.css" t="Include" />
+                <e p="bootstrap-reboot.min.css.map" t="Include" />
+                <e p="bootstrap.css" t="Include" />
+                <e p="bootstrap.css.map" t="Include" />
+                <e p="bootstrap.min.css" t="Include" />
+                <e p="bootstrap.min.css.map" t="Include" />
+              </e>
+              <e p="js" t="Include">
+                <e p="bootstrap.bundle.js" t="Include" />
+                <e p="bootstrap.bundle.js.map" t="Include" />
+                <e p="bootstrap.bundle.min.js" t="Include" />
+                <e p="bootstrap.bundle.min.js.map" t="Include" />
+                <e p="bootstrap.js" t="Include" />
+                <e p="bootstrap.js.map" t="Include" />
+                <e p="bootstrap.min.js" t="Include" />
+                <e p="bootstrap.min.js.map" t="Include" />
+              </e>
+            </e>
+            <e p="js" t="Include">
+              <e p="bootstrap.bundle.js" t="Include" />
+              <e p="bootstrap.bundle.js.map" t="Include" />
+              <e p="bootstrap.bundle.min.js" t="Include" />
+              <e p="bootstrap.bundle.min.js.map" t="Include" />
+              <e p="bootstrap.js" t="Include" />
+              <e p="bootstrap.js.map" t="Include" />
+              <e p="bootstrap.min.js" t="Include" />
+              <e p="bootstrap.min.js.map" t="Include" />
+            </e>
+            <e p="LICENSE" t="Include" />
+          </e>
+          <e p="jquery" t="Include">
+            <e p="core.js" t="Include" />
+            <e p="dist" t="Include">
+              <e p="jquery.js" t="Include" />
+              <e p="jquery.min.js" t="Include" />
+              <e p="jquery.min.map" t="Include" />
+            </e>
+            <e p="jquery.customSelect.js" t="Include" />
+            <e p="jquery.customSelect.min.js" t="Include" />
+            <e p="jquery.js" t="Include" />
+            <e p="jquery.min.js" t="Include" />
+            <e p="jquery.min.map" t="Include" />
+            <e p="jquery.slim.js" t="Include" />
+            <e p="jquery.slim.min.js" t="Include" />
+            <e p="jquery.slim.min.map" t="Include" />
+            <e p="LICENSE.txt" t="Include" />
+          </e>
+          <e p="jquery-validation" t="Include">
+            <e p="dist" t="Include">
+              <e p="additional-methods.js" t="Include" />
+              <e p="additional-methods.min.js" t="Include" />
+              <e p="jquery.validate.js" t="Include" />
+              <e p="jquery.validate.min.js" t="Include" />
+            </e>
+            <e p="LICENSE.md" t="Include" />
+          </e>
+          <e p="jquery-validation-unobtrusive" t="Include">
+            <e p="jquery.validate.unobtrusive.js" t="Include" />
+            <e p="jquery.validate.unobtrusive.min.js" t="Include" />
+            <e p="LICENSE.txt" t="Include" />
+          </e>
+        </e>
+      </e>
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BankTransactionWeb.BAL" t="IncludeRecursive">
+      <e p="BankTransaction.BAL.Implementation.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Extensions" t="Include">
+        <e p="BalServicesExtensions.cs" t="Include" />
+        <e p="CacheResolverExtension.cs" t="Include" />
+        <e p="ContextExtension.cs" t="Include" />
+        <e p="JWTAuthenticationResolver.cs" t="Include" />
+      </e>
+      <e p="Infrastucture" t="Include">
+        <e p="AccountService.cs" t="Include" />
+        <e p="AdminService.cs" t="Include" />
+        <e p="AuthenticationService.cs" t="Include" />
+        <e p="CompanyService.cs" t="Include" />
+        <e p="EmailSender.cs" t="Include" />
+        <e p="PersonService.cs" t="Include" />
+        <e p="RedisCacheService.cs" t="Include" />
+        <e p="ShareholderService.cs" t="Include" />
+        <e p="TransactionService.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.BAL.Implementation.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="RestApi" t="Include">
+        <e p="JwtAuthenticationService.cs" t="Include" />
+        <e p="JWTSecurityService.cs" t="Include" />
+        <e p="RestApiHelper.cs" t="Include" />
+      </e>
+    </e>
+    <e p="D:\Предмети\Web\WebProjectLab\BankTransactionsWeb\BAnkTransactionWeb.DAL" t="IncludeRecursive">
+      <e p="BankTransaction.DAL.Implementation.csproj" t="IncludeRecursive" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="ClassDiagramDALInMemory.cd" t="Include" />
+      <e p="ClassDiagramRepository.cd" t="Include" />
+      <e p="Core" t="Include">
+        <e p="BankTransactionContext.cs" t="Include" />
+        <e p="InitialzeIdentityDb.cs" t="Include" />
+        <e p="InMemoryCore" t="Include">
+          <e p="InMemoryContainer.cs" t="Include" />
+          <e p="UnitOfWorkInMemory.cs" t="Include" />
+        </e>
+        <e p="ModelBuilderExtensions.cs" t="Include" />
+        <e p="UnitOfWork.cs" t="Include" />
+      </e>
+      <e p="EfCoreDAL" t="Include" />
+      <e p="Extensions" t="Include">
+        <e p="AddDALServicesExtension.cs" t="Include" />
+        <e p="DateTimeExtension.cs" t="Include" />
+        <e p="IdentityResolver.cs" t="Include" />
+        <e p="QueryableExtensions.cs" t="Include" />
+        <e p="SortingExtension.cs" t="Include" />
+      </e>
+      <e p="InMemoryDAL" t="Include">
+        <e p="Repositories" t="Include" />
+      </e>
+      <e p="Migrations" t="Include">
+        <e p="20200330192842_InitialDbCreation.cs" t="Include" />
+        <e p="20200330192842_InitialDbCreation.Designer.cs" t="Include" />
+        <e p="20200330201721_SeedDB.cs" t="Include" />
+        <e p="20200330201721_SeedDB.Designer.cs" t="Include" />
+        <e p="20200331085451_DeletedNoUndersatndableRelationship.cs" t="Include" />
+        <e p="20200331085451_DeletedNoUndersatndableRelationship.Designer.cs" t="Include" />
+        <e p="20200402064728_ChangeKeyForBaseModel.cs" t="Include" />
+        <e p="20200402064728_ChangeKeyForBaseModel.Designer.cs" t="Include" />
+        <e p="20200404160811_DeleteConstraintDeleted.cs" t="Include" />
+        <e p="20200404160811_DeleteConstraintDeleted.Designer.cs" t="Include" />
+        <e p="20200409172127_IdentityAdd.cs" t="Include" />
+        <e p="20200409172127_IdentityAdd.Designer.cs" t="Include" />
+        <e p="20200412203059_DeleteBehaviourCascade.cs" t="Include" />
+        <e p="20200412203059_DeleteBehaviourCascade.Designer.cs" t="Include" />
+        <e p="20200419122404_AddedRefreshTokenTable.cs" t="Include" />
+        <e p="20200419122404_AddedRefreshTokenTable.Designer.cs" t="Include" />
+        <e p="20200419165012_RemoveTokeField.cs" t="Include" />
+        <e p="20200419165012_RemoveTokeField.Designer.cs" t="Include" />
+        <e p="20200419171216_AddTokenKey.cs" t="Include" />
+        <e p="20200419171216_AddTokenKey.Designer.cs" t="Include" />
+        <e p="BankTransactionContextModelSnapshot.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netcoreapp3.1" t="Include">
+            <e p="BankTransaction.DAL.Implementation.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Repositories" t="Include">
+        <e p="EFRepositories" t="Include">
+          <e p="AccountRepository.cs" t="Include" />
+          <e p="BaseRepository.cs" t="Include" />
+          <e p="CompanyRepository.cs" t="Include" />
+          <e p="PersonRepository.cs" t="Include" />
+          <e p="ShareholderRepository.cs" t="Include" />
+          <e p="TokenRepository.cs" t="Include" />
+          <e p="TransactionRepository.cs" t="Include" />
+        </e>
+        <e p="InMemoryRepositories" t="Include">
+          <e p="AccountInMemoryRepository.cs" t="Include" />
+          <e p="CompanyInMemoryRepository.cs" t="Include" />
+          <e p="PersonInMemoryRepository.cs" t="Include" />
+          <e p="ShareholderInMemoryRepository.cs" t="Include" />
+          <e p="TransactionInMemory.cs" t="Include" />
+        </e>
+      </e>
+      <e p="RestApi" t="Include" />
+    </e>
+  </component>
+</project>
