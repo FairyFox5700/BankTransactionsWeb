@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.Web.Areas.Admin.Models.ViewModels;
 using BankTransaction.Models.Validation;
-using BankTransactionWeb.Models;
+using BankTransaction.Web.Models;
 
 namespace BankTransaction.Web.Areas.Admin.Controllers
 {

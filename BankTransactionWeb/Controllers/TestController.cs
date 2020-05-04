@@ -3,7 +3,7 @@ using BankTransaction.BAL.Abstract.RestApi;
 using BankTransaction.BAL.Implementation.RestApi;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
-using BankTransactionWeb.Models;
+using BankTransaction.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RestSharp;

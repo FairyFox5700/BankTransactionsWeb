@@ -1,0 +1,104 @@
+﻿@using System.Globalization;
+@using Microsoft.AspNetCore.Builder;
+@using Microsoft.Extensions.Options;
+@using Microsoft.AspNetCore.Localization;
+
+@inject IOptions<RequestLocalizationOptions> LocOps
+
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var cultureItems = LocOps.Value.SupportedUICultures
+        .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName })
+        .ToList();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}";
+}
+
+<div title="Request culture provider:" @requestCulture?.Provider?.GetType().Name>
+    <form id="selectLanguage" asp-controller="Home"
+          asp-action="SetLanguage" asp-route-returnUrl="@returnUrl"
+          method="post" class="form-horizontal" role="form">
+        <label asp-for="@requestCulture.RequestCulture.UICulture.Name">"Language:"</label> 
+        <select name="culture"  onchange="this.form.submit();" asp-for="@requestCulture.RequestCulture.UICulture.Name" asp-items="cultureItems">
+        </select>
+    </form>
+</div>
+
+@*@using Microsoft.AspNetCore.Builder
+    @using Microsoft.AspNetCore.Localization
+    @using Microsoft.AspNetCore.Mvc.Localization
+    @using Microsoft.Extensions.Options
+    @using Microsoft.AspNetCore.Localization.Routing
+
+    @inject IViewLocalizer Localizer
+    @inject IOptions< RouteDataRequestCultureProvider> LocOptions
+
+    @{
+        // получаем сервис IRequestCultureFeature
+        var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+        // получаем список поддерживаемых культур
+        var cultureItems = LocOptions.Value.RouteDataStringKey
+            .Select(c => new SelectListItem { Value = c.Name, Text = c.NativeName })
+            .ToList();
+    }
+
+    <form asp-controller="Home" asp-action="SetLanguage" style="margin-top:20px;"
+          asp-route-returnUrl="@Context.Request.Path"
+          method="post" class="form-horizontal">
+        Language: <select name="culture" onchange="this.form.submit();"
+                          asp-for="@requestCulture.RequestCulture.UICulture.Name"
+                          asp-items="cultureItems"></select>
+    </form>*@
+@*@using Microsoft.AspNetCore.Builder
+    @using Microsoft.Extensions.Options
+    @using System.Globalization
+    @using Microsoft.AspNetCore.Localization
+    @using Microsoft.AspNetCore.Mvc.Localization
+    @inject IViewLocalizer Localizer
+
+    @inject IOptions<RequestLocalizationOptions> LocOps
+    @{
+        var requestCulture = CultureInfo.CurrentCulture;
+
+        var supportedCultures = LocOps.Value.SupportedUICultures
+
+            .Select(c => new SelectListItem
+            {
+                Value = $"{c.Name}",
+                Text = $"{c.DisplayName}"
+            }).ToList();
+
+        var routeData = new Dictionary<string, string>();
+
+        foreach (var r in ViewContext.RouteData.Values)
+        {
+            routeData.Add(r.Key, r.Value.ToString());
+        }
+
+        foreach (var qs in Context.Request.Query)
+        {
+            routeData.Add(qs.Key, qs.Value);
+        }
+    }
+
+        <h5> @Localizer["Use this space to summarize your privacy and cookie use policy."]</h5>
+    <div class="dropdown">
+        <a class="btn-sm btn-default border border-secondary dropdown-toggle" href="#" role="button" id="dropdownLang" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            @($"{requestCulture.DisplayName}")
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownLang">
+            @foreach (var culture in supportedCultures)
+            {
+                if (culture.Value.ToLower() != requestCulture.Name.ToLower())
+                {
+                    // replace {culture} value with the one from the list
+                    routeData["culture"] = culture.Value;
+
+                    <a class="dropdown-item small"
+                       asp-all-route-data="@routeData">
+                        @culture.Text
+                    </a>
+                }
+            }
+        </div>
+    </div>*@
