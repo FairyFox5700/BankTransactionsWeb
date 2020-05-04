@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models;
+using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using Microsoft.Extensions.Logging;
 using System;
@@ -16,18 +16,16 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
     public class TransactionService : ITransactionService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly ILogger<TransactionService> logger;
 
-        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<TransactionService> logger)
+        public TransactionService(IUnitOfWork unitOfWork, ILogger<TransactionService> logger)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             this.logger = logger;
         }
         public async Task AddTransaction(TransactionDTO transaction)
         {
-            var transactionMapped = mapper.Map<Transaction>(transaction);
+            var transactionMapped = TransactionEntityToDtoMapper.Instance.MapBack(transaction);
             transactionMapped.DateOftransfering = DateTime.Now;
             unitOfWork.TransactionRepository.Add(transactionMapped);
             await unitOfWork.Save();
@@ -36,7 +34,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         public async Task DeleteTransaction(TransactionDTO transaction)
         {
 
-            var transactionMapped = mapper.Map<Transaction>(transaction);
+            var transactionMapped = TransactionEntityToDtoMapper.Instance.MapBack(transaction);
             unitOfWork.TransactionRepository.Delete(transactionMapped);
             await unitOfWork.Save();
 
@@ -51,7 +49,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 var listOfTransaction = new List<TransactionDTO>();
                 foreach (var transaction in transactions)
                 {
-                    var mappedTransaction = mapper.Map<TransactionDTO>(transaction);
+                    var mappedTransaction = TransactionEntityToDtoMapper.Instance.Map(transaction);
                     mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
                     mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
                     listOfTransaction.Add(mappedTransaction);
@@ -71,7 +69,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             try
             {
                 var transactionFinded = await unitOfWork.TransactionRepository.GetById(id);
-                var transaction=mapper.Map<TransactionDTO>(transactionFinded);
+                var transaction= TransactionEntityToDtoMapper.Instance.Map(transactionFinded);
                 transaction.SourceAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountSourceId));
                 transaction.DestinationAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountDestinationId));
                 return transaction;
@@ -87,7 +85,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             try
             {
-                var transactionMapped = mapper.Map<Transaction>(transaction);
+                var transactionMapped = TransactionEntityToDtoMapper.Instance.MapBack(transaction);
                 var source = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.SourceAccount?.Number));
                 var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.DestinationAccount?.Number));
                 if (source == null) return new ValidateTransactionModel("Source account is not founded", true);
@@ -182,7 +180,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                     {
                         if (trans != null)
                         {
-                            var mappedTransaction = mapper.Map<TransactionDTO>(trans);
+                            var mappedTransaction = TransactionEntityToDtoMapper.Instance.Map(trans);
                             mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
                             mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
                             listOfTransaction.Add(mappedTransaction);

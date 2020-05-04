@@ -14,7 +14,7 @@ namespace BankTransaction.Web.Mapper
         public FilterMapperProfile()
         {
             CreateMap<PersonSearchModel, PersonFilterModel>().ReverseMap();
-            CreateMap<PageQueryParameters, PersonFilterModel>().ReverseMap();
+           // CreateMap<PageQueryParameters, PersonFilterModel>().ReverseMap();
             CreateMap<PaginatedModel<PersonDTO>, PageQueryParameters>().ReverseMap();
             CreateMap<ShareholderFilterModel, ShareholderSearchModel>().ReverseMap();
         }

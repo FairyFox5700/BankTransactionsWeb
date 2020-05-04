@@ -14,6 +14,7 @@ using BankTransaction.Entities;
 using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using BankTransaction.Web.Configuration;
+using BankTransaction.Web.Extensions;
 using BankTransaction.Web.Helpers;
 using BankTransaction.Web.Localization;
 using BankTransaction.Web.Mapper;
@@ -62,28 +63,7 @@ namespace BankTransaction.Web
             services.AddJwtAuthentication(Configuration);
             services.AddDistributedCache(Configuration);
             services.AddIdentiyConfig();
-            services.AddMvc();
-            services.TryAddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
-            services.TryAddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
-            services.AddLocalization(options => options.ResourcesPath = "Localization/Languages");
-
-            services.AddMvc().AddViewLocalization();
-
-            services.Configure<RequestLocalizationOptions>(options =>
-            {
-                var supportedCultures = new[]
-                {
-                new CultureInfo("en-US"),
-                 new CultureInfo("ru-RU"),
-            };
-
-                options.DefaultRequestCulture = new RequestCulture("en-US");
-                options.SupportedCultures = supportedCultures;
-                options.SupportedUICultures = supportedCultures;
-                options.RequestCultureProviders.Insert(0, new RouteDataRequestCultureProvider());
-            });
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
+            services.AddJsonLocalization();
 
         }
 

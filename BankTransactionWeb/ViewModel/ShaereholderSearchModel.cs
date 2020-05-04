@@ -8,6 +8,6 @@ namespace BankTransaction.Web.Models
     public class ShareholderSearchModel
     {
         public string CompanyName { get; set; }
-        public DateTime? DateOfCompanyCreation { get; set; }
+        public DateTime DateOfCompanyCreation { get; set; }
     }
 }

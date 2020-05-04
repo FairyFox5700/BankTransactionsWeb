@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.Helpers;
+using BankTransaction.Web.Mapper;
 using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
@@ -21,15 +21,13 @@ namespace BankTransaction.Web.Controllers
         private readonly IAccountService accountService;
         private readonly IPersonService personService;
         private readonly ILogger<AccountController> logger;
-        private readonly IMapper mapper;
 
-        public AccountController(IAccountService accountService, IPersonService personService, ILogger<AccountController> logger, IMapper mapper)
+        public AccountController(IAccountService accountService, IPersonService personService, ILogger<AccountController> logger)
         {
 
             this.accountService = accountService;
             this.personService = personService;
             this.logger = logger;
-            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -75,7 +73,7 @@ namespace BankTransaction.Web.Controllers
             }
             else
             {
-                var account = mapper.Map<AccountDTO>(accountModel);
+                var account = AddAccountToAccountDTOMapper.Instance.Map(accountModel);
                 await accountService.AddAccount(account);
                 return RedirectToAction(nameof(GetAllAccounts));
             }
@@ -94,7 +92,7 @@ namespace BankTransaction.Web.Controllers
             }
             else
             {
-                var accountModel = mapper.Map<UpdateAccountViewModel>(currentAccount);
+                var accountModel = UpdateAccountToAccountDTOMapper.Instance.MapBack(currentAccount);
                 return View(accountModel);
             }
 
@@ -126,7 +124,7 @@ namespace BankTransaction.Web.Controllers
                     }
                     else
                     {
-                        var updatedAccount = mapper.Map<UpdateAccountViewModel, AccountDTO>(accountModel, account);
+                        var updatedAccount = UpdateAccountToAccountDTOMapper.Instance.Map(accountModel);
                         await accountService.UpdateAccount(updatedAccount);
                         return RedirectToAction(nameof(GetAllAccounts));
                     }

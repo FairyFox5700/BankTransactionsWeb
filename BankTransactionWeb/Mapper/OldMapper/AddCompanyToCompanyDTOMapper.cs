@@ -4,8 +4,10 @@ using BankTransaction.Configuration;
 
 namespace BankTransaction.Web.Mapper
 {
-    public class CompanyMapperAddModel : IMapper<AddCompanyViewModel, CompanyDTO>
+    public class AddCompanyToCompanyDTOMapper : IMapper<AddCompanyViewModel, CompanyDTO>
     {
+        private AddCompanyToCompanyDTOMapper() { }
+        public static readonly AddCompanyToCompanyDTOMapper Instance = new AddCompanyToCompanyDTOMapper();
         public CompanyDTO Map(AddCompanyViewModel source)
         {
             return new CompanyDTO()

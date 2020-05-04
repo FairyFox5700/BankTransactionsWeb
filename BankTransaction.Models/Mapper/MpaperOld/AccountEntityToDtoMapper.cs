@@ -5,8 +5,10 @@ using System.Linq;
 
 namespace BankTransaction.Models.Mapper
 {
-    public class AccountMapper : IMapper<Account, AccountDTO>
+    public class AccountEntityToDtoMapper : IMapper<Account, AccountDTO>
     {
+        private AccountEntityToDtoMapper() { }
+        public static readonly AccountEntityToDtoMapper Instance = new AccountEntityToDtoMapper();
         public AccountDTO Map(Account source)
         {
             return new AccountDTO()
@@ -14,7 +16,7 @@ namespace BankTransaction.Models.Mapper
                 Id = source.Id,
                 Balance = source.Balance,
                 Number = source.Number,
-                Transactions = source.Transactions.Select(tr => new TransactionMapper().Map(tr)).ToList()
+                Transactions = source.Transactions.Select(tr => TransactionEntityToDtoMapper.Instance.Map(tr)).ToList()
             };
         }
 
@@ -26,7 +28,7 @@ namespace BankTransaction.Models.Mapper
                 Balance = destination.Balance,
                 Number = destination.Number,
                 PersonId = destination.PersonId,
-                Transactions = destination.Transactions.Select(tr => new TransactionMapper().MapBack(tr)).ToList(),
+                Transactions = destination.Transactions.Select(tr => TransactionEntityToDtoMapper.Instance.MapBack(tr)).ToList(),
             };
         }
     }

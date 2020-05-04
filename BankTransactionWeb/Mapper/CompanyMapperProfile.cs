@@ -12,7 +12,7 @@ namespace BankTransaction.Web.Mapper
     {
         public CompanyMapperProfile()
         {
-            CreateMap<UpdateCompanyViewModel, CompanyDTO>().ReverseMap();
+            CreateMap<AddPersonViewModel, CompanyDTO>().ReverseMap();
             CreateMap<AddCompanyViewModel, CompanyDTO>().ReverseMap();
         }
     }

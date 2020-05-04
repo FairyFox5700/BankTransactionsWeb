@@ -4,8 +4,10 @@ using BankTransaction.Configuration;
 
 namespace BankTransaction.Mapper
 {
-    public class TransactionMapperAddModel : IMapper<TransactionDTO, AddTransactionViewModel>
+    public class AddTransactionToTransactionDTOMapper : IMapper<TransactionDTO, AddTransactionViewModel>
     {
+        private AddTransactionToTransactionDTOMapper() { }
+        public static readonly AddTransactionToTransactionDTOMapper Instance = new AddTransactionToTransactionDTOMapper();
         public AddTransactionViewModel Map(TransactionDTO source)
         {
             return new AddTransactionViewModel()

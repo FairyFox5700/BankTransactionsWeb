@@ -4,15 +4,17 @@ using BankTransaction.Entities;
 
 namespace BankTransaction.Models.Mapper
 {
-    public class ShareholderMapper : IMapper<Shareholder, ShareholderDTO>
+    public class ShareholderEntityToDtoMapper : IMapper<Shareholder, ShareholderDTO>
     {
+        private ShareholderEntityToDtoMapper() { }
+        public static readonly ShareholderEntityToDtoMapper Instance = new ShareholderEntityToDtoMapper();
         public ShareholderDTO Map(Shareholder source)
         {
             return new ShareholderDTO()
             {
                 Id = source.Id,
-                Company = new CompanyMapper().Map(source.Company),
-                Person = new PersonMapper().Map(source.Person),
+                Company = CompanyDtoToEntityMapper.Instance.Map(source.Company),
+                Person = PersonEntityToDtoMapper.Instance.Map(source.Person),
                 PersonId = source.PersonId,
                 CompanyId = source.CompanyId
             };
@@ -23,8 +25,8 @@ namespace BankTransaction.Models.Mapper
             return new Shareholder()
             {
                 Id = destination.Id,
-                Company = new CompanyMapper().MapBack(destination.Company),
-                Person = new PersonMapper().MapBack(destination.Person),
+                Company = CompanyDtoToEntityMapper.Instance.MapBack(destination.Company),
+                Person = PersonEntityToDtoMapper.Instance.MapBack(destination.Person),
                 PersonId = destination.PersonId,
                 CompanyId = destination.CompanyId
             };

@@ -4,8 +4,10 @@ using BankTransaction.Configuration;
 
 namespace BankTransaction.Web.Mapper
 {
-    public class ShareholderMapperUpdateModel : IMapper<UpdateShareholderViewModel, ShareholderDTO>
+    public class UpdateShareholderToShareholderDTOMapper : IMapper<UpdateShareholderViewModel, ShareholderDTO>
     {
+        private UpdateShareholderToShareholderDTOMapper() { }
+        public static readonly UpdateShareholderToShareholderDTOMapper Instance = new UpdateShareholderToShareholderDTOMapper();
         public ShareholderDTO Map(UpdateShareholderViewModel source)
         {
             return new ShareholderDTO()

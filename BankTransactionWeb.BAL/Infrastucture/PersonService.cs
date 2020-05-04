@@ -1,10 +1,11 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Entities.Filter;
 using BankTransaction.Models;
+using BankTransaction.Models.Mapper;
+using BankTransaction.Models.Mapper.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -19,33 +20,21 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
     public class PersonService : IPersonService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly ILogger<PersonService> logger;
 
-        public PersonService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<PersonService> logger)
+        public PersonService(IUnitOfWork unitOfWork,  ILogger<PersonService> logger)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             this.logger = logger;
         }
 
         public async Task AddPerson(PersonDTO person)
         {
-            try
-            {
-                var personMapped = mapper.Map<Person>(person);
+           
+                var personMapped = PersonEntityToDtoMapper.Instance.MapBack(person);
                 unitOfWork.PersonRepository.Add(personMapped);
                 await unitOfWork.Save();
                 logger.LogInformation($"In method {nameof(AddPerson)} instance of person successfully added");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddPerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
-
         }
 
         //Unit of work transaction
@@ -59,7 +48,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                     var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
                     if (user != null)
                     {
-                        var personMapped = mapper.Map<Person>(person);
+                        var personMapped = PersonEntityToDtoMapper.Instance.MapBack(person);
                         unitOfWork.PersonRepository.Delete(personMapped);
                         await unitOfWork.Save();
                         var result = await unitOfWork.UserManager.DeleteAsync(user);
@@ -89,14 +78,15 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                    
                 if (personFilter != null)
                 {
-                    var filter = mapper.Map<PersonFilter>(personFilter);
+                    var filter = PersonFilterDtoToPerson.Instance.Map(personFilter);
                     persons = await unitOfWork.PersonRepository.GetAll(pageNumber,pageSize,filter);
                 }
                 else
                 {
                     persons = await unitOfWork.PersonRepository.GetAll(pageNumber, pageSize);
                 }
-                return new PaginatedModel<PersonDTO>(persons.Select(p => mapper.Map<PersonDTO>(p)),persons.PageNumber, persons.PageSize,persons.TotalCount, persons.TotalPages);
+                //TODo smt better here
+                return new PaginatedModel<PersonDTO>(persons.Select(p => PersonEntityToDtoMapper.Instance.Map(p)),persons.PageNumber, persons.PageSize,persons.TotalCount, persons.TotalPages);
           
 
         }
@@ -109,8 +99,11 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             {
                 var personFinded = await unitOfWork.PersonRepository.GetById(id);
                 var appUser = personFinded.ApplicationUser;
-                var personModel = mapper.Map<ApplicationUser, PersonDTO>(appUser);
-                return mapper.Map(personFinded, personModel);
+                var personModel = ApplicationUserEntityToPersonDtoMapper.Instance.Map(appUser);
+                personModel.LastName = personFinded.LastName;
+                personModel.Name = personFinded.Name;
+                personModel.Surname = personFinded.Surname;
+                return personModel;
             }
             catch (Exception ex)
             {
@@ -128,8 +121,11 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 var id = unitOfWork.UserManager.GetUserId(user);
                 var personFinded = await unitOfWork.PersonRepository.GetPersonByAccount(id);
                 var appUser = personFinded.ApplicationUser;
-                var personModel = mapper.Map<ApplicationUser, PersonDTO>(appUser);
-                return mapper.Map(personFinded, personModel);
+                var personModel = ApplicationUserEntityToPersonDtoMapper.Instance.Map(appUser);
+                personModel.LastName = personFinded.LastName;
+                personModel.Name = personFinded.Name;
+                personModel.Surname = personFinded.Surname;
+                return personModel;
             }
             catch (Exception ex)
             {
@@ -176,7 +172,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                         //user.Email = person.Email;
                         user.UserName = person.UserName;
                         user.PhoneNumber = person.PhoneNumber;
-                        var personMapped = mapper.Map<Person>(person);
+                        var personMapped = PersonEntityToDtoMapper.Instance.MapBack(person);
                         var result = await unitOfWork.UserManager.UpdateAsync(user);
                         await unitOfWork.Save();
                         personMapped.ApplicationUserFkId = user.Id;

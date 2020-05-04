@@ -4,9 +4,10 @@ using BankTransaction.Entities;
 
 namespace BankTransaction.Models.Mapper
 {
-    public class PersonMapper : IMapper<Person, PersonDTO>
+    public class PersonEntityToDtoMapper : IMapper<Person, PersonDTO>
     {
-
+        private PersonEntityToDtoMapper() { }
+        public static readonly PersonEntityToDtoMapper Instance = new PersonEntityToDtoMapper();
         public PersonDTO Map(Person source)
         {
             return new PersonDTO()

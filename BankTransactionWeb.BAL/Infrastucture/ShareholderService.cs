@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Entities;
@@ -12,31 +12,32 @@ using System.Threading.Tasks;
 using BankTransaction.BAL.Implementation.Extensions;
 using BankTransaction.Models;
 using BankTransaction.Entities.Filter;
+using BankTransaction.Models.Mapper;
+using BankTransaction.Models.Mapper.Filters;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class ShareholderService : IShareholderService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
+
         private readonly ILogger<ShareholderService> logger;
 
-        public ShareholderService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ShareholderService> logger)
+        public ShareholderService(IUnitOfWork unitOfWork,  ILogger<ShareholderService> logger)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             this.logger = logger;
         }
         public async Task AddShareholder(ShareholderDTO shareholder)
         {
-            var shareholderMapped = mapper.Map<Shareholder>(shareholder);
+            var shareholderMapped = ShareholderEntityToDtoMapper.Instance.MapBack(shareholder);
             unitOfWork.ShareholderRepository.Add(shareholderMapped);
             await unitOfWork.Save();
         }
 
         public async Task DeleteShareholder(ShareholderDTO shareholder)
         {
-            var shareholderMapped = mapper.Map<Shareholder>(shareholder);
+            var shareholderMapped = ShareholderEntityToDtoMapper.Instance.MapBack(shareholder);
             unitOfWork.ShareholderRepository.Delete(shareholderMapped);
             await unitOfWork.Save();
         }
@@ -52,14 +53,15 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
             if (shareholderFilterModel != null)
             {
-                var filter = mapper.Map<ShareholderFilter>(shareholderFilterModel);
+                var filter = ShareholderFilterDtoToShareholder.Instance.Map(shareholderFilterModel);
                 shareholders = await unitOfWork.ShareholderRepository.GetAll(pageNumber, pageSize, filter);
             }
             else
             {
                 shareholders = await unitOfWork.ShareholderRepository.GetAll(pageNumber, pageSize);
             }
-            return new PaginatedModel<ShareholderDTO>(shareholders.Select(shareholder => mapper.Map<ShareholderDTO>(shareholder)), shareholders.PageNumber, shareholders.PageSize, shareholders.TotalCount, shareholders.TotalPages);
+            //TODO smt better
+            return new PaginatedModel<ShareholderDTO>(shareholders.Select(shareholder => ShareholderEntityToDtoMapper.Instance.Map(shareholder)), shareholders.PageNumber, shareholders.PageSize, shareholders.TotalCount, shareholders.TotalPages);
         }
 
         public async Task<ShareholderDTO> GetShareholderById(int id)
@@ -67,7 +69,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             try
             {
                 var shareholderFinded = await unitOfWork.ShareholderRepository.GetById(id);
-                return mapper.Map<ShareholderDTO>(shareholderFinded);
+                return ShareholderEntityToDtoMapper.Instance.Map(shareholderFinded);
             }
             catch (Exception ex)
             {
@@ -82,8 +84,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             try
             {
-
-                var shareholderMapped = mapper.Map<Shareholder>(shareholder);
+                var shareholderMapped = ShareholderEntityToDtoMapper.Instance.MapBack(shareholder);
                 unitOfWork.ShareholderRepository.Update(shareholderMapped);
                 await unitOfWork.Save();
             }

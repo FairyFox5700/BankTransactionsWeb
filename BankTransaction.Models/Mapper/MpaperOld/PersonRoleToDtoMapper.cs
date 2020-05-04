@@ -5,8 +5,10 @@ using System;
 
 namespace BankTransaction.Models.Mapper
 {
-    public class PersonRoleMapper : IMapper<PersonInRoleDTO, Person>
+    public class PersonRoleToDtoMapper : IMapper<PersonInRoleDTO, Person>
     {
+        private PersonRoleToDtoMapper() { }
+        public static readonly PersonRoleToDtoMapper Instance = new PersonRoleToDtoMapper();
         public Person Map(PersonInRoleDTO source)
         {
             return new Person()

@@ -40,7 +40,7 @@
                                 <tr>
                                     <th scope="row">@(ViewBag.Index += 1)</th>
                                     <td>@company.Name </td>
-                                    <td>@company.DateOfCreation </td>
+                                    <td>@company.DateOfCreation.ToString("dd/MM/yyyy") </td>
 
                                     <td>
                                         <button class="btn-primary" asp-action="UpdateCompany" asp-controller="Company" asp-route-id="@company.Id">Update</button>

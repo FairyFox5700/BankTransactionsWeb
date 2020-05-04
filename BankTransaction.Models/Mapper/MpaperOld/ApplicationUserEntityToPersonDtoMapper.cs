@@ -4,15 +4,19 @@ using BankTransaction.Entities;
 
 namespace BankTransaction.Models.Mapper
 {
-    public class ApplicationUserMapper : IMapper<ApplicationUser, PersonDTO>
+    public class ApplicationUserEntityToPersonDtoMapper : IMapper<ApplicationUser, PersonDTO>
     {
+        private ApplicationUserEntityToPersonDtoMapper() { }
+        public static readonly ApplicationUserEntityToPersonDtoMapper Instance = new ApplicationUserEntityToPersonDtoMapper();
         public PersonDTO Map(ApplicationUser source)
         {
             return new PersonDTO()
             {
                 ApplicationUserFkId = source.Id,
                 Email = source.Email,
-                PhoneNumber = source.PhoneNumber
+                PhoneNumber = source.PhoneNumber,
+               
+          
             };
         }
 
@@ -22,7 +26,9 @@ namespace BankTransaction.Models.Mapper
             {
                 Id = destination.ApplicationUserFkId,
                 Email = destination.Email,
-                PhoneNumber = destination.PhoneNumber
+                PhoneNumber = destination.PhoneNumber,
+               
+              
             };
 
         }

@@ -4,8 +4,10 @@ using BankTransaction.Configuration;
 
 namespace BankTransaction.Web.Mapper
 {
-    public class TransactionMapperList : IMapper<TransactionDTO, TransactionListViewModel>
+    public class ListTransactionToTransactionDTOMapper : IMapper<TransactionDTO, TransactionListViewModel>
     {
+        private ListTransactionToTransactionDTOMapper() { }
+        public static readonly ListTransactionToTransactionDTOMapper Instance = new ListTransactionToTransactionDTOMapper();
         public TransactionListViewModel Map(TransactionDTO source)
         {
             return new TransactionListViewModel()
@@ -24,13 +26,10 @@ namespace BankTransaction.Web.Mapper
         {
             return new TransactionDTO()
             {
-                Id = destination.Id,
-                DateOftransfering = destination.DateOftransfering,
                 AccountSourceId = destination.AccountSourceId,
-                //AccountDestinationeNumber = source.DestinationAccount?.Number,
-                //AccountSourceNumber = source.SourceAccount?.Number,
-                Amount = destination.Amount
-
+                DateOftransfering = destination.DateOftransfering,
+                Amount = destination.Amount,
+                Id = destination.Id
             };
         }
     }

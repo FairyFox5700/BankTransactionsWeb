@@ -1,9 +1,10 @@
-﻿using AutoMapper;
+﻿
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models;
+using BankTransaction.Models.Mapper;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -18,18 +19,16 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
     public class AccountService : IAccountService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly Random random;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AccountService(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             random = new Random();
         }
         public async Task AddAccount(AccountDTO account)
         {
-                var accountMapped = mapper.Map<Account>(account);
+                var accountMapped = AccountEntityToDtoMapper.Instance.MapBack(account);
                 unitOfWork.AccountRepository.Add(accountMapped);
                 await unitOfWork.Save();
            
@@ -37,7 +36,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
         public async Task DeleteAccount(AccountDTO account)
         {
-                var accountMapped = mapper.Map<Account>(account);
+                var accountMapped = AccountEntityToDtoMapper.Instance.MapBack(account);
                 unitOfWork.AccountRepository.Delete(accountMapped);
                 await unitOfWork.Save();
         }
@@ -51,14 +50,15 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         public async Task<AccountDTO> GetAccountById(int id)
         {
             var accountFinded = await unitOfWork.AccountRepository.GetById(id);
-            return mapper.Map<AccountDTO>(accountFinded);
+            return AccountEntityToDtoMapper.Instance.Map(accountFinded); 
         }
 
         public async Task<PaginatedModel<AccountDTO>> GetAllAccounts(int pageNumber, int pageSize)
         {
 
                 var accounts = (await unitOfWork.AccountRepository.GetAll(pageNumber, pageSize));
-            return new PaginatedModel<AccountDTO>(accounts.Select(account => mapper.Map<AccountDTO>(account)), accounts.PageNumber, accounts.PageSize, accounts.TotalCount, accounts.TotalPages);
+            //TODO smth better here
+            return new PaginatedModel<AccountDTO>(accounts.Select(account => AccountEntityToDtoMapper.Instance.Map(account)), accounts.PageNumber, accounts.PageSize, accounts.TotalCount, accounts.TotalPages);
         }
 
         public async Task<IEnumerable<AccountDTO>> GetMyAccounts(ClaimsPrincipal user)
@@ -67,12 +67,12 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 var id = unitOfWork.UserManager.GetUserId(user);
                 var personFinded = await unitOfWork.PersonRepository.GetPersonByAccount(id);
                 var accounts = (await unitOfWork.PersonRepository.GetById(personFinded.Id)).Accounts;
-                return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
+                return accounts.Select(account => AccountEntityToDtoMapper.Instance.Map(account)).ToList();
         }
 
         public async Task UpdateAccount(AccountDTO account)
         {
-                var accountMapped = mapper.Map<Account>(account);
+                var accountMapped = AccountEntityToDtoMapper.Instance.MapBack(account);
                 unitOfWork.AccountRepository.Update(accountMapped);
                 await unitOfWork.Save();
         }

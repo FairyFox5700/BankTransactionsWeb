@@ -7,8 +7,10 @@ using System.Text;
 namespace BankTransaction.Models.Mapper
 {
 
-    public class TransactionMapper : IMapper<Transaction, TransactionDTO>
+    public class TransactionEntityToDtoMapper : IMapper<Transaction, TransactionDTO>
     {
+        private TransactionEntityToDtoMapper() { }
+        public static readonly TransactionEntityToDtoMapper Instance = new TransactionEntityToDtoMapper();
         public TransactionDTO Map(Transaction source)
         {
             return new TransactionDTO()

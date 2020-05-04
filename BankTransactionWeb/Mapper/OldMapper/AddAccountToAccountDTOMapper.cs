@@ -4,11 +4,14 @@ using BankTransaction.Configuration;
 
 namespace BankTransaction.Web.Mapper
 {
-    public class AccountMapperAddModel : IMapper<AccountDTO, AddAccountViewModel>
+    public class AddAccountToAccountDTOMapper : IMapper< AddAccountViewModel, AccountDTO>
     {
-        public AddAccountViewModel Map(AccountDTO source)
+        private AddAccountToAccountDTOMapper() { }
+
+        public static readonly AddAccountToAccountDTOMapper Instance = new AddAccountToAccountDTOMapper();
+        public AccountDTO Map(AddAccountViewModel source)
         {
-            return new AddAccountViewModel()
+            return new AccountDTO()
             {
                 Balance = source.Balance,
                 Number = source.Number,
@@ -16,9 +19,9 @@ namespace BankTransaction.Web.Mapper
             };
         }
 
-        public AccountDTO MapBack(AddAccountViewModel destination)
+        public AddAccountViewModel MapBack(AccountDTO destination)
         {
-            return new AccountDTO()
+            return new AddAccountViewModel()
             {
                 Balance = destination.Balance,
                 Number = destination.Number,

@@ -5,15 +5,18 @@ using System.Linq;
 
 namespace BankTransaction.Models.Mapper
 {
-    public class CompanyMapper : IMapper<Company, CompanyDTO>
+    public class CompanyDtoToEntityMapper : IMapper<Company, CompanyDTO>
     {
+        private CompanyDtoToEntityMapper() { }
+        public static readonly CompanyDtoToEntityMapper Instance = new CompanyDtoToEntityMapper();
         public CompanyDTO Map(Company source)
         {
             return new CompanyDTO()
             {
                 Id = source.Id,
                 DateOfCreation = source.DateOfCreation,
-                Shareholders = source.Shareholders.Select(sh => new ShareholderMapper().Map(sh)).ToList(),
+                //TODO smt here look better
+                Shareholders = source.Shareholders.Select(sh => ShareholderEntityToDtoMapper.Instance.Map(sh)).ToList(),
                 Name = source.Name
             };
         }
@@ -24,7 +27,7 @@ namespace BankTransaction.Models.Mapper
             {
                 Id = destination.Id,
                 DateOfCreation = destination.DateOfCreation,
-                Shareholders = destination.Shareholders.Select(sh => new ShareholderMapper().MapBack(sh)).ToList(),
+                Shareholders = destination.Shareholders.Select(sh =>ShareholderEntityToDtoMapper.Instance.MapBack(sh)).ToList(),
                 Name = destination.Name
             };
         }

@@ -4,19 +4,15 @@ using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models;
-using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -25,7 +21,6 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly ILogger<AuthenticationService> logger;
         private readonly ISender emailSender;
         private readonly IUrlHelperFactory urlHelperFactory;
@@ -36,12 +31,11 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
         private IUrlHelper UrlHelper => urlHelper ?? (urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext));
 
-        public AuthenticationService(IUnitOfWork unitOfWork,  IMapper mapper, ILogger<AuthenticationService> logger, ISender emailSender,
-            IUrlHelperFactory urlHelperFactory, 
+        public AuthenticationService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AuthenticationService> logger, ISender emailSender,
+            IUrlHelperFactory urlHelperFactory,
            IActionContextAccessor actionContextAccessor, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             this.logger = logger;
             this.emailSender = emailSender;
             this.urlHelperFactory = urlHelperFactory;
@@ -68,7 +62,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                             var token = await unitOfWork.UserManager.GenerateEmailConfirmationTokenAsync(user);
                             var confirmationLink = UrlHelper.Action("ConfirmEmail", "Account", new { token, email = user.Email }, httpContextAccessor.HttpContext.Request.Scheme);
                             var message = new CustomMessage(new List<string>() { user.Email }, "Confirmation email link", confirmationLink, null);
-                            var personMapped = mapper.Map<Person>(person);
+                            var personMapped = PersonEntityToDtoMapper.Instance.MapBack(person);
                             personMapped.ApplicationUserFkId = user.Id;
                             unitOfWork.PersonRepository.Add(personMapped);
                             await unitOfWork.Save();
@@ -81,7 +75,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                     }
                     else
                     {
-                        return  new IdentityUserResult(){NotFound = true,Errors = new List<string>(){"Current user already registered"}};
+                        return new IdentityUserResult() { NotFound = true, Errors = new List<string>() { "Current user already registered" } };
                     }
                 }
                 catch (Exception e)
@@ -94,7 +88,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         }
 
 
-        
+
 
         public async Task<bool> SendResetPasswordUrl(PersonDTO person)
         {
@@ -117,7 +111,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
             if (user == null)
             {
-                return  new IdentityUserResult(){NotFound = true, Errors = new List<string>(){$"User  {person.Email} not found"}};
+                return new IdentityUserResult() { NotFound = true, Errors = new List<string>() { $"User  {person.Email} not found" } };
             }
             var result = await unitOfWork.UserManager.ResetPasswordAsync(user, person.Token, person.Password);
             return result.Succeeded ? IdentityUserResult.SUCCESS : IdentityUserResult.GenerateErrorResponce(result);
@@ -128,14 +122,14 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             return unitOfWork.SignInManager.IsSignedIn(user);
         }
-       
+
         public async Task<IdentityUserResult> LoginPerson(PersonDTO person)
         {
             var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
             if (user == null)
                 return new IdentityUserResult()
                 {
-                    Errors = new List<string>() {"User with this email does not exists."},
+                    Errors = new List<string>() { "User with this email does not exists." },
                     NotFound = true
                 };
             if (!await unitOfWork.UserManager.IsEmailConfirmedAsync(user))
@@ -154,21 +148,21 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             {
                 return new IdentityUserResult()
                 {
-                    Errors =  new List<string>(){ "Check your email and password. Login attempt is not succesful" }
+                    Errors = new List<string>() { "Check your email and password. Login attempt is not succesful" }
                 };
             }
             if (result.IsLockedOut)
             {
-                return  IdentityUserResult.LOCKED;
+                return IdentityUserResult.LOCKED;
             }
             else
             {
                 return new IdentityUserResult()
                 {
-                    Errors =  new List<string>(){ "Unable to login current user" }
+                    Errors = new List<string>() { "Unable to login current user" }
                 };
             }
- 
+
         }
 
 
@@ -181,17 +175,17 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         public async Task<IdentityUserResult> ConfirmUserEmailAsync(string email, string code)
         {
             var user = await unitOfWork.UserManager.FindByEmailAsync(email);
-            if (user == null) 
-                return  new IdentityUserResult(){Errors = new List<string>() {$"User wit email {email} not found"}, NotFound = true};
+            if (user == null)
+                return new IdentityUserResult() { Errors = new List<string>() { $"User wit email {email} not found" }, NotFound = true };
             var result = await unitOfWork.UserManager.ConfirmEmailAsync(user, code);
             return result.Succeeded ? IdentityUserResult.SUCCESS : IdentityUserResult.GenerateErrorResponce(result);
         }
 
-            public void Dispose()
-            {
-                unitOfWork.Dispose();
-            }
-
-            
+        public void Dispose()
+        {
+            unitOfWork.Dispose();
         }
+
+
     }
+}
