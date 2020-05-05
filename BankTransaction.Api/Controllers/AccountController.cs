@@ -31,57 +31,47 @@ namespace BankTransaction.Api.Controllers
         // GET /api/Account
         [HttpGet]
         [Cached(2000)]
-        public async Task<ActionResult<IEnumerable<AccountDTO>>> GetAllAccounts([FromQuery]PageQueryParameters pageQueryParameters)
+        public async Task<ApiResponse<IEnumerable<AccountDTO>>> GetAllAccounts([FromQuery]PageQueryParameters pageQueryParameters)
         {
             var accounts = (await accountService.GetAllAccounts(pageQueryParameters.PageNumber, pageQueryParameters.PageSize)).ToList();
-            return Ok(accounts);
+            return new ApiResponse<IEnumerable<AccountDTO>>(accounts);
         }
         // PUT /api/Account/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAccount(int id, AccountDTO account)
+        public async Task<ApiResponse<int>> UpdateAccount(int id, AccountDTO account)
         {
             if (id != account.Id)
             {
-                return  BadRequest(new ApiErrorResponse { Message = "Id and request id does not match" });
+                return ApiResponse<int>.BadRequest;
             }
             var currentAccount = await accountService.GetAccountById(id);
             if (currentAccount == null)
             {
-                return NotFound(new ApiErrorResponse { Message = "Current account not found" });
+                return ApiResponse<int>.NotFound;
             }
             await accountService.UpdateAccount(account);
-            return Ok(currentAccount);
+            return new ApiResponse<int>(id);
 
         }
 
         // POST: api/Account
         [HttpPost]
-        public async Task<IActionResult> AddAccount(AccountDTO account)
+        public async Task<ApiResponse<AccountDTO>> AddAccount(AccountDTO account)
         {
-            if (account == null)
-            {
-                return BadRequest(new ApiErrorResponse { Message = "Query object is null" });
-            }
-            else
-            {
                 await accountService.AddAccount(account);
-                return Ok(account);
-            }
+            return new ApiResponse<AccountDTO>(account);
         }
         // DELETE /api/Account/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAccount(int id)
+        public async Task<ApiResponse<AccountDTO>> DeleteAccount(int id)
         {
-
             var account = await accountService.GetAccountById(id);
             if (account == null)
             {
-                return NotFound(new ApiErrorResponse { Message = "Query object is null" ,ValidationErrors=null});
+                return ApiResponse<AccountDTO>.NotFound;
             }
             await accountService.DeleteAccount(account);
-            //return Ok("Deleted succesfully");
-            return NotFound(new ApiErrorResponse { Message = "Query object is nu2ll", ValidationErrors = null });
-
+            return new ApiResponse<AccountDTO>(account);
         }
     }
 }

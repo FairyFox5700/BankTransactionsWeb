@@ -1,4 +1,5 @@
-﻿using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.Api.Models;
+using BankTransaction.BAL.Abstract;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models.DTOModels;
@@ -76,8 +77,6 @@ namespace BankTransaction.BAL.Implementation.RestApi
                 };
                 unitOfWork.TokenRepository.Add(refreshToken);
                 await unitOfWork.Save();
-
-                // await unitOfWork.RefreshTokenAddAync;
                 return new AuthResult
                 {
                     Token = tokenJwtHandler.WriteToken(token),
@@ -106,7 +105,8 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult()
                 {
-                    Errors = new[] { "Token validation failed" }
+                    Errors = new[] { ErrorMessage.TokenValidationFailed.GetDescription() },
+                    MessageType = nameof(ErrorMessage.EmailNotValid)
                 };
 
 
@@ -120,57 +120,77 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult()
                 {
-                    Errors = new[] { "Token has not expired yet" }
+                    Errors = new[] { ErrorMessage.TokenNotExpired.GetDescription() },
+                    MessageType = nameof(ErrorMessage.TokenNotExpired)
                 };
             }
             else
             {
                 var tokenIdentifier = principal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
                 var refreshToken = await unitOfWork.TokenRepository.GetRefreshTokenForCurrentToken(model.RefreshToken);
-                if (refreshToken == null)
+                var rezult = ValidateToken(refreshToken, tokenIdentifier);
+                if (rezult == null)
                 {
-                    return new AuthResult { Errors = new[] { "This refresh token does not exists" } };
+                    refreshToken.IsUsed = true;
+                    unitOfWork.TokenRepository.Update(refreshToken);
+                    await unitOfWork.Save();
+                    var user = await unitOfWork.UserManager
+                       .FindByIdAsync(principal.Claims
+                       .Single(x => x.Type == ClaimTypes.NameIdentifier).Value);
+                    return await GenerateJWTToken(user.Email);
                 }
-                if (DateTime.UtcNow > refreshToken.ExpieryDate)
-                {
-                    return new AuthResult()
-                    { Errors = new[] { "Refresh token has expiered" } };
-
-                }
-                if (refreshToken.IsInvalidated)
-                {
-                    return new AuthResult()
-                    {
-                        Errors = new[] { "Current token is invalidated" }
-                    };
-                }
-                if (refreshToken.IsUsed)
-                {
-                    return new AuthResult()
-                    {
-                        Errors = new[] { "Current tokenhas alreadu used" }
-                    };
-                }
-
-                if (refreshToken.JwtId != tokenIdentifier)
-                {
-                    return new AuthResult()
-                    {
-                        Errors = new[] { "Refresh token jwt identifier is not match with this token id" }
-                    };
-                }
-                refreshToken.IsUsed = true;
-                unitOfWork.TokenRepository.Update(refreshToken);
-                await unitOfWork.Save();
-                var user = await unitOfWork.UserManager
-                   .FindByIdAsync(principal.Claims
-                   .Single(x => x.Type == ClaimTypes.NameIdentifier).Value);
-                return await GenerateJWTToken(user.Email);
-
+                return rezult;
 
             }
         }
 
+        private AuthResult ValidateToken(RefreshToken refreshToken, string tokenIdentifier)
+        {
+            if (refreshToken == null)
+            {
+                return new AuthResult
+                {
+                    Errors = new[] { ErrorMessage.RefreshTokenNotExists.GetDescription() },
+                    MessageType = nameof(ErrorMessage.RefreshTokenNotExists)
+                };
+            }
+
+            if (DateTime.UtcNow > refreshToken.ExpieryDate)
+            {
+                return new AuthResult()
+                {
+                    Errors = new[] { ErrorMessage.TokenNotExpired.GetDescription() },
+                    MessageType = nameof(ErrorMessage.TokenNotExpired)
+                };
+
+            }
+            if (refreshToken.IsInvalidated)
+            {
+                return new AuthResult()
+                {
+                    Errors = new[] { ErrorMessage.TokenIsInvalidated.GetDescription() },
+                    MessageType = nameof(ErrorMessage.TokenIsInvalidated)
+                };
+            }
+            if (refreshToken.IsUsed)
+            {
+                return new AuthResult()
+                {
+                    Errors = new[] { ErrorMessage.TokenIsUsed.GetDescription() },
+                    MessageType = nameof(ErrorMessage.TokenIsUsed)
+                };
+            }
+
+            if (refreshToken.JwtId != tokenIdentifier)
+            {
+                return new AuthResult()
+                {
+                    Errors = new[] { ErrorMessage.TokenIdMismatch.GetDescription() },
+                    MessageType = nameof(ErrorMessage.TokenIdMismatch)
+                };
+            }
+            return null;
+        }
 
 
         private async Task<ClaimsPrincipal> GetCalimpPrincipalFromExpiredToken(string token)

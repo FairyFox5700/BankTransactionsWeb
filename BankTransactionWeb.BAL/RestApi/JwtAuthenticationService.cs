@@ -2,12 +2,14 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using BankTransaction.Api.Models;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Abstract.RestApi;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using Microsoft.Extensions.Logging;
 
@@ -17,21 +19,15 @@ namespace BankTransaction.BAL.Implementation.RestApi
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IJwtSecurityService jwtSecurityService;
-        private readonly IMapper mapper;
         private readonly ILogger<JwtAuthenticationService> logger;
 
-        public  JwtAuthenticationService (IUnitOfWork unitOfWork, IJwtSecurityService jwtSecurityService, IMapper mapper, ILogger<JwtAuthenticationService>logger)
+        public  JwtAuthenticationService (IUnitOfWork unitOfWork, IJwtSecurityService jwtSecurityService, ILogger<JwtAuthenticationService>logger)
         {
             this.unitOfWork = unitOfWork;
             this.jwtSecurityService = jwtSecurityService;
-            this.mapper = mapper;
             this.logger = logger;
         }
          
-        Task RefreshToken(RefreshTokenDTO model)
-        {
-            throw new NotImplementedException();
-        }
         public async Task<AuthResult> LoginPerson(PersonDTO person)
         {
             var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
@@ -42,14 +38,16 @@ namespace BankTransaction.BAL.Implementation.RestApi
                 {
                     return new AuthResult()
                     {
-                        Errors = new[] { " Login attempt is not successful" }
+                        Errors = new[] { ErrorMessage.LoginAttemptNotSuccesfull.GetDescription()},
+                        MessageType = nameof(ErrorMessage.LoginAttemptNotSuccesfull)
                     };
                 }
                 return await jwtSecurityService.GenerateJWTToken(user.Email);
             }
             return new AuthResult()
             {
-                Errors = new[] { "User with this email does not exists." }
+                Errors = new[] { ErrorMessage.EmailNotValid.GetDescription() },
+                MessageType = nameof(ErrorMessage.EmailNotValid)
             };
         }
         
@@ -68,7 +66,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
                         await unitOfWork.Save();
                         if (result.Succeeded)
                         {
-                            var personMapped = mapper.Map<Person>(person);
+                            var personMapped = PersonEntityToDtoMapper.Instance.MapBack(person);
                             personMapped.ApplicationUserFkId = user.Id;
                             unitOfWork.PersonRepository.Add(personMapped);
                             await unitOfWork.Save();
@@ -89,7 +87,8 @@ namespace BankTransaction.BAL.Implementation.RestApi
                     {
                         return new AuthResult
                         {
-                            Errors = new[] {"User with this email is already registered"}
+                            Errors = new[] { ErrorMessage.EmailIsAlreadyInUse.GetDescription() },
+                            MessageType = nameof(ErrorMessage.EmailIsAlreadyInUse)
                         };
                     }
                 }

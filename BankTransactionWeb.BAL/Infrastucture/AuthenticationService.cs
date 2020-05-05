@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
@@ -31,7 +30,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
         private IUrlHelper UrlHelper => urlHelper ?? (urlHelperFactory.GetUrlHelper(actionContextAccessor.ActionContext));
 
-        public AuthenticationService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AuthenticationService> logger, ISender emailSender,
+        public AuthenticationService(IUnitOfWork unitOfWork, ILogger<AuthenticationService> logger, ISender emailSender,
             IUrlHelperFactory urlHelperFactory,
            IActionContextAccessor actionContextAccessor, IHttpContextAccessor httpContextAccessor)
         {

@@ -1,4 +1,5 @@
 ﻿using BankTransaction.Api.Helpers;
+using BankTransaction.Api.Models;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
@@ -26,53 +27,49 @@ namespace BankTransaction.Api.Controllers
         // GET /api/Company
         [HttpGet]
         [Cached(200)]
-        public async Task<ActionResult<IEnumerable<CompanyDTO>>> GetAllCompanys([FromQuery]PageQueryParameters pageQueryParameters)
+        public async Task<ApiResponse<IEnumerable<CompanyDTO>>> GetAllCompanys([FromQuery]PageQueryParameters pageQueryParameters)
         {
             var companys = (await companyService.GetAllCompanies(pageQueryParameters.PageNumber, pageQueryParameters.PageSize)).ToList();
-            return Ok( companys);
+            return new ApiResponse<IEnumerable<CompanyDTO>>(companys);
         }
+
         // PUT /api/Company/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCompany(int id, CompanyDTO company)
+        public async Task<ApiResponse<int>> UpdateCompany(int id, CompanyDTO company)
         {
             if (id != company.Id)
             {
-                return BadRequest();
+                return ApiResponse<int>.BadRequest;
             }
             var currentCompany = await companyService.GetCompanyById(id);
             if (currentCompany == null)
             {
-                return NotFound();
+                return ApiResponse<int>.NotFound;
             }
             await companyService.UpdateCompany(company);
-            return Ok(currentCompany);
+            return new ApiResponse<int>(id);
         }
 
         // POST: api/ACompany
         [HttpPost]
-        public async Task<IActionResult> AddCompany(CompanyDTO company)
+        public async Task<ApiResponse<CompanyDTO>> AddCompany(CompanyDTO company)
         {
-            if (company == null)
-            {
-                return BadRequest("Object of type company is null");
-            }
-            else
-            {
-                await companyService.AddCompany(company);
-                return Ok(company);
-            }
+            await companyService.AddCompany(company);
+            return new ApiResponse<CompanyDTO>(company);
+            //ASK ?????CreatedAtAction(nameof(GetAllCompanys)
+
         }
         // DELETE /api/Company/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCompany(int id)
+        public async Task<ApiResponse<CompanyDTO>> DeleteCompany(int id)
         {
             var company = await companyService.GetCompanyById(id);
             if (company == null)
             {
-                return NotFound();
+                return ApiResponse<CompanyDTO>.NotFound;
             }
             await companyService.DeleteCompany(company);
-            return Ok("Deleted succesfully");
+            return new ApiResponse<CompanyDTO>(company);
 
         }
     }

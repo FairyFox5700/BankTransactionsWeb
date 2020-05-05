@@ -76,7 +76,7 @@ namespace BankTransaction.Api.Helpers
                 apiErrorResponce = new ApiErrorResponse { Message = "Your request cannot be processed. Please contact a support." };
 
 
-            var apiResponce = new ApiResponse(statusCode, apiErrorResponce);
+            var apiResponce = new ApiResponse<ApiErrorResponse>(statusCode, apiErrorResponce);
             context.Response.StatusCode = statusCode;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
@@ -102,7 +102,7 @@ namespace BankTransaction.Api.Helpers
                     apiErrorResponce.ValidationErrors.Add(errorModel);
                 }
             }
-            var apiResponce = new ApiResponse(statusCode, apiErrorResponce);
+            var apiResponce = new ApiResponse<ApiErrorResponse>(statusCode, apiErrorResponce);
             context.Response.StatusCode = statusCode;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
@@ -120,13 +120,14 @@ namespace BankTransaction.Api.Helpers
                 bodyText = body.ToString();
             if (statusCode == StatusCodes.Status401Unauthorized)
             {
-                jsonString = JsonConvert.SerializeObject(ApiResponse.Unauthorized);
+                jsonString = JsonConvert.SerializeObject(ApiResponse<ApiErrorResponse>.Unauthorized);
                 return context.Response.WriteAsync(jsonString);
             }
             else
             {
                 dynamic bodyContent = JsonConvert.DeserializeObject<dynamic>(bodyText);
-                var apiResponse = new ApiResponse(bodyContent, statusCode);
+                //TODO
+                var apiResponse = new ApiResponse<string>(bodyContent, statusCode);
                 jsonString = JsonConvert.SerializeObject(apiResponse);
             }
             return context.Response.WriteAsync(jsonString);
@@ -152,7 +153,7 @@ namespace BankTransaction.Api.Helpers
             }
 
             context.Response.ContentType = "application/json";
-            var apiResponce = new ApiResponse(code, apiErrorResponce);
+            var apiResponce = new ApiResponse<ApiErrorResponse>(code, apiErrorResponce);
             var json = JsonConvert.SerializeObject(apiResponce);
             logger.LogError($"An exception occured {exception.Message}");
             return context.Response.WriteAsync(json);

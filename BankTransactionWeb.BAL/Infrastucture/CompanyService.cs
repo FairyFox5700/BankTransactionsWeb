@@ -1,5 +1,4 @@
-﻿
-using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Entities;
 using BankTransaction.DAL.Abstract;

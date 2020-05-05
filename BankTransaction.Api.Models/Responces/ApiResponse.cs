@@ -1,20 +1,16 @@
-﻿using BankTransaction.Api.Models;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
+﻿using Newtonsoft.Json;
 using System.Runtime.Serialization;
 
 namespace BankTransaction.Api.Models
 {
 
     [DataContract]
-    public class ApiResponse
+    public class ApiResponse<T>
     {
-
-        public static readonly ApiResponse Forbidden = new ApiResponse ( 403, new ApiErrorResponse { Message = "Forbidden", ValidationErrors = null }) ;
-        public static readonly ApiResponse Unauthorized = new ApiResponse(401, new ApiErrorResponse { Message = "Unauthorized", ValidationErrors = null });
+        public static readonly ApiResponse<T> Forbidden = new ApiResponse<T>(403, new ApiErrorResponse { Message = "Forbidden", ValidationErrors = null });
+        public static readonly ApiResponse<T> BadRequest = new ApiResponse<T>(400, new ApiErrorResponse { Message = "Bad request", ValidationErrors = null });
+        public static readonly ApiResponse<T> NotFound = new ApiResponse<T>(404, new ApiErrorResponse { Message = "Object not found", ValidationErrors = null });
+        public static readonly ApiResponse<T> Unauthorized = new ApiResponse<T>(401, new ApiErrorResponse { Message = "Unauthorized", ValidationErrors = null });
         [DataMember]
         public int StatusCode { get; set; }
         [DataMember]
@@ -24,11 +20,12 @@ namespace BankTransaction.Api.Models
         public ApiErrorResponse ResponseException { get; set; }
 
         [DataMember(EmitDefaultValue = false)]
-        public object Result { get; set; }
-        public ApiResponse( object result = null, int statusCode = 200)
+        public T Data { get; }
+
+        public ApiResponse(T result, int statusCode = 200)
         {
             StatusCode = statusCode;
-            Result = result;
+            Data = result;
             this.IsError = false;
         }
         public ApiResponse(int statusCode, ApiErrorResponse apiError)
@@ -38,15 +35,15 @@ namespace BankTransaction.Api.Models
             this.IsError = true;
         }
 
-        public override  string ToString()
+        public override string ToString()
         {
             return JsonConvert.SerializeObject(this).ToString();
         }
-
-        public ApiResponse()
+        public static implicit operator ApiResponse<T>(T data)
         {
-                
+            return new ApiResponse<T>(data);
         }
+
     }
 }
 

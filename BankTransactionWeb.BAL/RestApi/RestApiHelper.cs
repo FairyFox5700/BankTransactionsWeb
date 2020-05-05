@@ -69,13 +69,13 @@ namespace BankTransaction.BAL.Implementation.RestApi
             //ApiResponse 
             var request = ConstructRequest(resource, body, token, parameters);
             //request.AddHeader("Barear", token);
-            var responce = Client.Execute<ApiResponse>(request);
+            var responce = Client.Execute<ApiResponse<T>>(request);
             ValidateApiResponce(responce);
             var result = responce.Data;
-            return result.Result;
+            return result.Data;
         }
 
-        private void ValidateApiResponce(IRestResponse<ApiResponse> responce)
+        private void ValidateApiResponce<T>(IRestResponse<ApiResponse<T>> responce)
         {
             ValidateResponce(responce);
             var result = responce.Data;
