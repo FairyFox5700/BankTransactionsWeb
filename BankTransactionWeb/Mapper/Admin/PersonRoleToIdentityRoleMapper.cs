@@ -4,7 +4,7 @@ using BankTransaction.Configuration;
 
 namespace BankTransaction.Web.Mapper.Admin
 {
-    public class PersonRoleMapper : IMapper<PersonInRoleDTO, IdentityRole>
+    public class PersonRoleToIdentityRoleMapper : IMapper<PersonInRoleDTO, IdentityRole>
     {
         public IdentityRole Map(PersonInRoleDTO source)
         {

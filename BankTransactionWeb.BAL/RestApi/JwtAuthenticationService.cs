@@ -32,12 +32,12 @@ namespace BankTransaction.BAL.Implementation.RestApi
         {
             throw new NotImplementedException();
         }
-        public async Task<AuthResult> LoginPerson(string email, string password)
+        public async Task<AuthResult> LoginPerson(PersonDTO person)
         {
-            var user = await unitOfWork.UserManager.FindByEmailAsync(email);
+            var user = await unitOfWork.UserManager.FindByEmailAsync(person.Email);
             if (user != null)
             {
-                var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, password,false,false);
+                var result = await unitOfWork.SignInManager.PasswordSignInAsync(user.UserName, person.Password,false,false);
                 if (!result.Succeeded)
                 {
                     return new AuthResult()

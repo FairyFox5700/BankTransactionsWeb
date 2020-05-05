@@ -5,27 +5,28 @@ using BankTransaction.Configuration;
 namespace BankTransaction.Web.Mapper.Identity
 {
 
-    public class ResetPasswordMapper : IMapper<ResetPasswordViewModel, PersonDTO>
+    public class LoginToPersonDtoMapper : IMapper<LoginViewModel, PersonDTO>
     {
-        public PersonDTO Map(ResetPasswordViewModel source)
+        private LoginToPersonDtoMapper() { }
+
+        public static readonly LoginToPersonDtoMapper Instance = new LoginToPersonDtoMapper();
+        public PersonDTO Map(LoginViewModel source)
         {
             return new PersonDTO()
             {
-                ConfirmPassword = source.ConfirmPassword,
                 Email = source.Email,
                 Password = source.Password,
-                Token = source.Token
+                RememberMe = source.RememberMe
             };
         }
 
-        public ResetPasswordViewModel MapBack(PersonDTO destination)
+        public LoginViewModel MapBack(PersonDTO destination)
         {
-            return new ResetPasswordViewModel()
+            return new LoginViewModel()
             {
-                ConfirmPassword = destination.ConfirmPassword,
                 Email = destination.Email,
                 Password = destination.Password,
-                Token = destination.Token
+                RememberMe = destination.RememberMe
             };
         }
     }

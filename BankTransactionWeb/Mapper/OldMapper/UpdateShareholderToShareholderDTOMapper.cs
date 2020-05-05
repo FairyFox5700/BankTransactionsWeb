@@ -25,7 +25,7 @@ namespace BankTransaction.Web.Mapper
             return new UpdateShareholderViewModel()
             {
                 Id = destination.Id,
-                Company = destination.Company,
+                CompanyName = destination.CompanyName,
                 CompanyId = destination.CompanyId,
                 Person = destination.Person,
                 PersonId = destination.PersonId,

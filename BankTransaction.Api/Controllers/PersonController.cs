@@ -12,6 +12,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using BankTransaction.Api.Helpers;
+using BankTransaction.Api.Models.Mapper;
 
 namespace BankTransaction.Api.Controllers
 {
@@ -22,13 +23,11 @@ namespace BankTransaction.Api.Controllers
     {
         private readonly IPersonService personService;
         private readonly ILogger<PersonController> logger;
-        private readonly IMapper mapper;
 
         public PersonController(IPersonService personService, ILogger<PersonController> logger, IMapper mapper )
         {
             this.personService = personService;
             this.logger = logger;
-            this.mapper = mapper;
         }
 
         // GET /api/Person
@@ -36,9 +35,9 @@ namespace BankTransaction.Api.Controllers
         public async Task<ActionResult<IEnumerable<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters, [FromQuery]SearchPersonQuery personQuery  )
         {
            
-           var paginatedModel = mapper.Map<PaginatedModel<PersonDTO>>(pageQueryParameters);
+           var paginatedModel = PaginatedModelPersonToQueryList.Instance.MapBack(pageQueryParameters);
 
-            var filter = mapper.Map<PersonFilterModel>(personQuery);
+            var filter = PersonFilterToSearchMapper.Instance.MapBack(personQuery);
             PaginatedModel<PersonDTO> allPersons = null;
             if(filter!=null)
             {

@@ -4,11 +4,11 @@ using System.Text;
 
 namespace BankTransaction.Models.Validation
 {
-    public class ValidateTransactionModel
+    public class ValidationModel
     {
         public bool IsError { get; protected set; }
         public string Message{ get; protected set; }
-        public ValidateTransactionModel(string message, bool isError)
+        public ValidationModel(string message, bool isError)
         {
             Message = message;
             IsError = isError;

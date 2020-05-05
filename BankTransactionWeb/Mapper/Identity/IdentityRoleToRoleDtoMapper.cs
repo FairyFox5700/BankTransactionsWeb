@@ -4,8 +4,11 @@ using BankTransaction.Configuration;
 
 namespace BankTransaction.Web.Mapper.Identity
 {
-    public class IdentityRoleMapper : IMapper<IdentityRole, RoleDTO>
+    public class IdentityRoleToRoleDtoMapper : IMapper<IdentityRole, RoleDTO>
     {
+        private IdentityRoleToRoleDtoMapper() { }
+
+        public static readonly IdentityRoleToRoleDtoMapper Instance = new IdentityRoleToRoleDtoMapper();
         public RoleDTO Map(IdentityRole source)
         {
             return new RoleDTO()

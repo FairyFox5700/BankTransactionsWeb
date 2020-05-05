@@ -5,8 +5,11 @@ using BankTransaction.Configuration;
 namespace BankTransaction.Web.Mapper.Identity
 {
 
-    public class RegisterMapper : IMapper<RegisterViewModel, PersonDTO>
+    public class RegisterToPersonDtoMapper : IMapper<RegisterViewModel, PersonDTO>
     {
+        private RegisterToPersonDtoMapper() { }
+
+        public static readonly RegisterToPersonDtoMapper Instance = new RegisterToPersonDtoMapper();
         public PersonDTO Map(RegisterViewModel source)
         {
             return new PersonDTO()

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
 using BankTransaction.Web.Controllers;
@@ -10,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 using BankTransaction.Models.Validation;
-
+using BankTransaction.Web.Mapper.Identity;
 
 namespace BankTransaction.Web.Areas.Identity.Controllers
 {
@@ -21,14 +20,12 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
 
         private readonly ILogger<AccountController> logger;
         private readonly IPersonService personService;
-        private readonly IMapper mapper;
         private readonly IAuthenticationService authService;
 
-        public AccountController(ILogger<AccountController> logger, IPersonService personService, IMapper mapper, IAuthenticationService authService)
+        public AccountController(ILogger<AccountController> logger, IPersonService personService,  IAuthenticationService authService)
         {
             this.logger = logger;
             this.personService = personService;
-            this.mapper = mapper;
             this.authService = authService;
         }
 
@@ -55,7 +52,7 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         {
             if (ModelState.IsValid)
             {
-                var person = mapper.Map<PersonDTO>(model);
+                var person = LoginToPersonDtoMapper.Instance.Map(model);
                 var result = await authService.LoginPerson(person);
                 if (result.NotFound)
                     return NotFound(result);
@@ -108,7 +105,7 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         {
             if (ModelState.IsValid)
             {
-                var person = mapper.Map<PersonDTO>(model);
+                var person = RegisterToPersonDtoMapper.Instance.Map(model);
                 var result = await authService.RegisterPerson(person);
                 if (result.NotFound)
                     return NotFound(result.Errors);
@@ -254,7 +251,7 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         {
             if (ModelState.IsValid)
             {
-                var person = mapper.Map<PersonDTO>(model);
+                var person = ResetPasswordToPersonDtoMapper.Instance.Map(model);
                 var result = await authService.ResetPasswordForPerson(person);
                 if (result.NotFound)
                 {

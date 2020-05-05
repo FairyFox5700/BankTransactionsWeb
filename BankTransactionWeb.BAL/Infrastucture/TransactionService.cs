@@ -81,20 +81,20 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             }
         }
 
-        public async Task<ValidateTransactionModel> UpdateTransaction(TransactionDTO transaction)
+        public async Task<ValidationModel> UpdateTransaction(TransactionDTO transaction)
         {
             try
             {
                 var transactionMapped = TransactionEntityToDtoMapper.Instance.MapBack(transaction);
                 var source = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.SourceAccountNumber));
                 var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.DestinationAccountNumber));
-                if (source == null) return new ValidateTransactionModel("Source account is not founded", true);
-                if (destination == null) return new ValidateTransactionModel("Destination account is not founded", true);
+                if (source == null) return new ValidationModel("Source account is not founded", true);
+                if (destination == null) return new ValidationModel("Destination account is not founded", true);
                 transactionMapped.AccountDestinationId = destination.Id;
                 transactionMapped.AccountSourceId = source.Id;
                 unitOfWork.TransactionRepository.Update(transactionMapped);
                 await unitOfWork.Save();
-                return new ValidateTransactionModel("Successfully updated", true);
+                return new ValidationModel("Successfully updated", true);
             }
             catch (Exception ex)
             {
@@ -118,7 +118,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         //}
 
 
-        public async Task<ValidateTransactionModel> ExecuteTransaction(int accountSourceId, string accountDestinationNumber, decimal amount)
+        public async Task<ValidationModel> ExecuteTransaction(int accountSourceId, string accountDestinationNumber, decimal amount)
         {
             using (var trans = unitOfWork.BeginTransaction())
             {
@@ -126,8 +126,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 {
                     var source = (await unitOfWork.AccountRepository.GetById(accountSourceId));
                     var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(accountDestinationNumber));
-                    if (source == null) return new ValidateTransactionModel ("Source account is not founded", true);
-                    if (destination == null) return new ValidateTransactionModel("Destination account is not founded", true);
+                    if (source == null) return new ValidationModel ("Source account is not founded", true);
+                    if (destination == null) return new ValidationModel("Destination account is not founded", true);
                     if ((source.Balance -= amount) >= 0)
                     {
                         source.Balance -= amount;
@@ -142,12 +142,12 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
                         await AddTransaction(transaction);
                         unitOfWork.CommitTransaction();
-                        return new ValidateTransactionModel($"You have succesfully send {amount} to  {accountDestinationNumber} account.", false);
+                        return new ValidationModel($"You have succesfully send {amount} to  {accountDestinationNumber} account.", false);
 
                     }
                     else
                     {
-                        return new ValidateTransactionModel("Not enough money on your account", true);
+                        return new ValidationModel("Not enough money on your account", true);
                     }
 
                 }

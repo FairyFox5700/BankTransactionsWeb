@@ -82,5 +82,12 @@ namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRe
             var shareholders = await PaginatedPlainModel<Shareholder>.Paginate(container.Shareholders.AsQueryable(), startIndex, pageSize);
             return await Task.FromResult(shareholders).ConfigureAwait(false);
         }
+
+        public async Task<IEnumerable<Shareholder>> GetShareholderByPersonId(int personId)
+        {
+            var shareholder = container.Shareholders.Where(e => e.PersonId == personId).ToList();
+            return await Task.FromResult<IEnumerable<Shareholder>>(shareholder)
+                .ConfigureAwait(false);
+        }
     }
 }

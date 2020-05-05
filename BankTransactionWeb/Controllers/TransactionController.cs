@@ -170,7 +170,8 @@ namespace BankTransaction.Web.Controllers
                         ModelState.AddModelError("", result.Message);
                         return View(executeTransactionViewModel);
                     }
-                    return RedirectToAction(nameof(SuccessfulTransaction),result.Message);
+                    return View(nameof(SuccessfulTransaction), result.Message);
+                   
                 }
                 else
                 {

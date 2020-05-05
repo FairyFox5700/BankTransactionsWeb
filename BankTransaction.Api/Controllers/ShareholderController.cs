@@ -1,5 +1,5 @@
-﻿using AutoMapper;
-using BankTransaction.Api.Helpers;
+﻿using BankTransaction.Api.Helpers;
+using BankTransaction.Api.Models.Mapper;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract;
@@ -18,13 +18,11 @@ namespace BankTransaction.Api.Controllers
     public class ShareholderController : ControllerBase
     {
         private readonly IShareholderService shareholderService;
-        private readonly IMapper mapper;
         private readonly ILogger<ShareholderController> logger;
 
-        public ShareholderController(IShareholderService shareholderService,IMapper mapper, ILogger<ShareholderController> logger)
+        public ShareholderController(IShareholderService shareholderService, ILogger<ShareholderController> logger)
         {
             this.shareholderService = shareholderService;
-            this.mapper = mapper;
             this.logger = logger;
         }
         // GET /api/Shareholder
@@ -32,8 +30,8 @@ namespace BankTransaction.Api.Controllers
         [Cached(2000)]
         public async Task<IActionResult> GetAllShareholders([FromQuery]PageQueryParameters pageQueryParameters,[FromQuery]SearchShareholderQuery searchShareholderQuery)
         {
-            var paginatedModel = mapper.Map<PaginatedModel<ShareholderDTO>>(pageQueryParameters);
-            var filter = mapper.Map<ShareholderFilterModel>(searchShareholderQuery);
+            var paginatedModel = PaginatedModelShareholderToQueryList.Instance.MapBack(pageQueryParameters);
+            var filter = ShareholderFilterToSearchMapper.Instance.MapBack(searchShareholderQuery);
             PaginatedModel<ShareholderDTO> shareholders = null;
             if (searchShareholderQuery != null)
             {

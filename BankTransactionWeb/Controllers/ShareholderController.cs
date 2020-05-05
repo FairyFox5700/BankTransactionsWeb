@@ -1,8 +1,6 @@
 ﻿
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Models;
-using BankTransaction.Web.Helpers;
 using BankTransaction.Web.Mapper;
 using BankTransaction.Web.Mapper.Filters;
 using BankTransaction.Web.Models;
@@ -12,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
 
 namespace BankTransaction.Web.Controllers
@@ -45,6 +42,7 @@ namespace BankTransaction.Web.Controllers
             return View(listOfShareholdersVM);
         }
 
+        [HttpGet]
         public async Task<IActionResult> AddShareholder(int id)
         {
             var person = await personService.GetPersonById(id);
@@ -65,16 +63,19 @@ namespace BankTransaction.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddShareholder(AddShareholderViewModel shareholderModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(shareholderModel);
-            }
-            else
+            shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+            if (ModelState.IsValid)
             {
                 var shareholder = AddShareholderToShareholderDTOMapper.Instance.Map(shareholderModel);
-                await shareholderService.AddShareholder(shareholder);
+                var result = await shareholderService.AddShareholder(shareholder);
+                if (result.IsError)
+                {
+                    ModelState.AddModelError("", result.Message);
+                    return View(shareholderModel);
+                }
                 return RedirectToAction(nameof(GetAllShareholders));
             }
+            return View(shareholderModel);
 
         }
 
@@ -82,19 +83,19 @@ namespace BankTransaction.Web.Controllers
         public async Task<IActionResult> UpdateShareholder(int id)
         {
             var currentShareholder = await shareholderService.GetShareholderById(id);
-                if (currentShareholder == null)
-                { 
-                    return NotFound($"Shareholder with id {id} not find");
-                }
-                else
-                {
-                    var shareholderModel = UpdateShareholderToShareholderDTOMapper.Instance.MapBack(currentShareholder);
-                    shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
-                shareholderModel.Person = await personService.GetPersonById(id); 
-                    return View(shareholderModel);
-                }
+            if (currentShareholder == null)
+            {
+                return NotFound($"Shareholder with id {id} not find");
+            }
+            else
+            {
+                var shareholderModel = UpdateShareholderToShareholderDTOMapper.Instance.MapBack(currentShareholder);
+                shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+                shareholderModel.Person = await personService.GetPersonById(shareholderModel.PersonId);
+                return View(shareholderModel);
+            }
 
-          
+
 
         }
 
@@ -102,15 +103,8 @@ namespace BankTransaction.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateShareholder([FromForm]UpdateShareholderViewModel shareholderModel)
         {
-            if (shareholderModel == null)
-            {
-                return BadRequest("Object of type shareholder is null");
-            }
-            if (!ModelState.IsValid)
-            {
-                return View(shareholderModel);
-            }
-            else
+            shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -122,7 +116,12 @@ namespace BankTransaction.Web.Controllers
                     else
                     {
                         var updatedShareholder = UpdateShareholderToShareholderDTOMapper.Instance.Map(shareholderModel);
-                        await shareholderService.UpdateShareholder(updatedShareholder);
+                        var result = await shareholderService.UpdateShareholder(updatedShareholder);
+                        if (result.IsError)
+                        {
+                            ModelState.AddModelError("", result.Message);
+                            return View(shareholderModel);
+                        }
                         return RedirectToAction(nameof(GetAllShareholders));
                     }
                 }
@@ -134,7 +133,10 @@ namespace BankTransaction.Web.Controllers
                     "see your system administrator.");
                     return View(shareholderModel);
                 }
-
+            }
+            else
+            {
+                return View(shareholderModel);
             }
 
         }

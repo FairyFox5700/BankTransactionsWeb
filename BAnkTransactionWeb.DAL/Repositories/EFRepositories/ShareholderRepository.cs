@@ -64,5 +64,10 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
                 throw ex;
             }
         }
+
+        public async Task<IEnumerable<Shareholder>> GetShareholderByPersonId(int personId)
+        {
+          return await context.Shareholders.Include(e => e.Person).Include(e => e.Company).Where(e => e.PersonId == personId).ToListAsync();
+        }
     }
 }

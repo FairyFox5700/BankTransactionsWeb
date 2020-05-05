@@ -4,8 +4,11 @@ using BankTransaction.Configuration;
 
 namespace BankTransaction.Web.Mapper.Admin
 {
-    public class RoleMapperUpdateModel : IMapper<RoleDTO, UpdateRoleViewModel>
+    public class RoleDTOToUpdateRoleMapper : IMapper<RoleDTO, UpdateRoleViewModel>
     {
+        private RoleDTOToUpdateRoleMapper() { }
+
+        public static readonly RoleDTOToUpdateRoleMapper Instance = new RoleDTOToUpdateRoleMapper();
         public UpdateRoleViewModel Map(RoleDTO source)
         {
             return new UpdateRoleViewModel()

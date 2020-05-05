@@ -12,7 +12,7 @@ namespace BankTransaction.Web.Mapper
         {
             return new ShareholderDTO()
             {
-                Company = source.Company,
+                CompanyName = source.CompanyName,
                 CompanyId = source.CompanyId,
                 Person = source.Person,
                 PersonId = source.PersonId,
@@ -23,7 +23,7 @@ namespace BankTransaction.Web.Mapper
         {
             return new AddShareholderViewModel()
             {
-                Company = destination.Company,
+               CompanyName = destination.CompanyName,
                 CompanyId = destination.CompanyId,
                 Person = destination.Person,
                 PersonId = destination.PersonId,

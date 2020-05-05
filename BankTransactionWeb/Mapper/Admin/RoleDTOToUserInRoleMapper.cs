@@ -4,23 +4,26 @@ using BankTransaction.Configuration;
 
 namespace BankTransaction.Web.Mapper.Admin
 {
-    public class RoleMapperListModel : IMapper<RoleDTO, ListRoleViewModel>
+    public class RoleDTOToUserInRoleMapper : IMapper< RoleDTO, UsersInRoleViewModel>
     {
-        public ListRoleViewModel Map(RoleDTO source)
+        private RoleDTOToUserInRoleMapper() { }
+
+        public static readonly RoleDTOToUserInRoleMapper Instance = new RoleDTOToUserInRoleMapper();
+        public UsersInRoleViewModel Map(RoleDTO source)
         {
-            return new ListRoleViewModel()
+            return new UsersInRoleViewModel()
             {
                 Id = source.Id,
                 Name = source.Name,
             };
         }
 
-        public RoleDTO MapBack(ListRoleViewModel destination)
+        public RoleDTO MapBack(UsersInRoleViewModel destination)
         {
             return new RoleDTO()
             {
                 Id = destination.Id,
-                Name = destination.Name,
+                Name = destination.Name
             };
         }
     }

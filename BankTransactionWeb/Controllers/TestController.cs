@@ -1,5 +1,6 @@
 ﻿using BankTransaction.Api.Models;
 using BankTransaction.BAL.Abstract.RestApi;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.BAL.Implementation.RestApi;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
@@ -33,7 +34,7 @@ namespace BankTransaction.Web.Controllers
         [HttpGet("Test/CheckPolicy")]
         public async Task<IActionResult> CheckPolicy(string email=null, string password = null, string resource = null)
         {
-            var authResult = await jwtAuthenticationService.LoginPerson(Test_EMAIL, Test_PASSWORD);
+            var authResult = await jwtAuthenticationService.LoginPerson(new PersonDTO(){ Email = Test_EMAIL, Password = Test_PASSWORD });
            
             if (String.IsNullOrEmpty(authResult.RefreshToken)|| DateTime.Now > authResult.ExpieryDate)
             {

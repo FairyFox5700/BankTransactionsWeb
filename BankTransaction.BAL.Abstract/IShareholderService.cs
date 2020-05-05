@@ -1,5 +1,6 @@
 ﻿using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models;
+using BankTransaction.Models.Validation;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,8 +12,8 @@ namespace BankTransaction.BAL.Abstract
     {
         Task<PaginatedModel<ShareholderDTO>> GetAllShareholders(int pageIndex, int pageSize,  ShareholderFilterModel shareholderFilterModel = null);
         Task<ShareholderDTO> GetShareholderById(int id);
-        Task AddShareholder(ShareholderDTO shareholder);
-        Task UpdateShareholder(ShareholderDTO shareholder);
+        Task<ValidationModel> AddShareholder(ShareholderDTO shareholder);
+        Task<ValidationModel> UpdateShareholder(ShareholderDTO shareholder);
         Task DeleteShareholder(ShareholderDTO shareholder);
     }
 }

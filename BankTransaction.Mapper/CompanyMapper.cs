@@ -165,7 +165,7 @@ namespace BankTransaction.Mapper
         {
             return new ShareholderDTO()
             {
-                Company = source.Company,
+                CompanyName = source.CompanyName,
                 CompanyId = source.CompanyId,
                 Person = source.Person,
                 PersonId = source.PersonId,
@@ -176,7 +176,7 @@ namespace BankTransaction.Mapper
         {
             return new AddShareholderViewModel()
             {
-                Company = destination.Company,
+                CompanyName = destination.CompanyName,
                 CompanyId = destination.CompanyId,
                 Person = destination.Person,
                 PersonId = destination.PersonId,
@@ -191,7 +191,7 @@ namespace BankTransaction.Mapper
             return new ShareholderDTO()
             {
                 Id = source.Id,
-                Company = source.Company,
+                CompanyName = source.CompanyName,
                 CompanyId = source.CompanyId,
                 Person = source.Person,
                 PersonId = source.PersonId,
@@ -203,7 +203,7 @@ namespace BankTransaction.Mapper
             return new UpdateShareholderViewModel()
             {
                 Id = destination.Id,
-                Company = destination.Company,
+                CompanyName= destination.CompanyName,
                 CompanyId = destination.CompanyId,
                 Person = destination.Person,
                 PersonId = destination.PersonId,
@@ -220,8 +220,8 @@ namespace BankTransaction.Mapper
                 Id = source.Id,
                 DateOftransfering = source.DateOftransfering,
                 AccountSourceId = source.AccountSourceId,
-                AccountDestinationeNumber = source.DestinationAccount?.Number,
-                AccountSourceNumber = source.SourceAccount?.Number,
+                AccountDestinationeNumber = source.DestinationAccountNumber,
+                AccountSourceNumber = source.SourceAccountNumber,
                 Amount = source.Amount
 
             };
