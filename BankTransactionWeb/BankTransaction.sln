@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.BAL.Impleme
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.DAL.Implementation", "..\BAnkTransactionWeb.DAL\BankTransaction.DAL.Implementation.csproj", "{A1E6EB90-AD0D-48D3-AEFC-1639778A768F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.Mapper", "..\BankTransaction.Mapper\BankTransaction.Mapper.csproj", "{8EA092C9-6F63-435D-976A-17C3F57CE1FA}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.DAL.Abstract", "..\BankTransaction.DAL.Abstract\BankTransaction.DAL.Abstract.csproj", "{72B7D49B-78D2-4931-8A79-08224092EE71}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.Entities", "..\BankTransaction.Entities\BankTransaction.Entities.csproj", "{75BF2EE5-9525-4DC7-9B48-A029392F25BF}"
@@ -39,10 +37,6 @@ Global
 		{A1E6EB90-AD0D-48D3-AEFC-1639778A768F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1E6EB90-AD0D-48D3-AEFC-1639778A768F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1E6EB90-AD0D-48D3-AEFC-1639778A768F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8EA092C9-6F63-435D-976A-17C3F57CE1FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8EA092C9-6F63-435D-976A-17C3F57CE1FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8EA092C9-6F63-435D-976A-17C3F57CE1FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8EA092C9-6F63-435D-976A-17C3F57CE1FA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72B7D49B-78D2-4931-8A79-08224092EE71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{72B7D49B-78D2-4931-8A79-08224092EE71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72B7D49B-78D2-4931-8A79-08224092EE71}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -1,0 +1,11 @@
+{
+  "LoginAttemptNotSuccesfull": "Login attempt is not successful",
+  "EmailNotValid": "User with this email does not exists.",
+  "EmailIsAlreadyInUse": "User with this email is already registered",
+  "TokenValidationFailed": "Token validation failed",
+  "TokenNotExpired": "Token has not expired yet",
+  "RefreshTokenNotExists": "This refresh token does not exists",
+  "TokenIsInvalidated": "Current token is invalidated",
+  "TokenIsUsed": "Current token already used",
+  "TokenIdMismatch": "Refresh token jwt identifier is not match with this token id"
+}

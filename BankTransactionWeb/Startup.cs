@@ -1,44 +1,16 @@
-using AutoMapper;
-using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation;
 using BankTransaction.BAL.Implementation.Extensions;
-using BankTransaction.BAL.Implementation.Infrastucture;
-using BankTransaction.Configuration;
 using BankTransaction.Configuration.Extension;
-using BankTransaction.DAL.Abstract;
 using BankTransaction.DAL.Implementation.Core;
-using BankTransaction.DAL.Implementation.EfCoreDAL;
 using BankTransaction.DAL.Implementation.Extensions;
-using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
 using BankTransaction.Entities;
-using BankTransaction.Models.Mapper;
-using BankTransaction.Models.Validation;
-using BankTransaction.Web.Configuration;
 using BankTransaction.Web.Extensions;
-using BankTransaction.Web.Helpers;
-using BankTransaction.Web.Localization;
-using BankTransaction.Web.Mapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Localization.Routing;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Globalization;
-using System.Text;
 
 namespace BankTransaction.Web
 {
@@ -55,7 +27,6 @@ namespace BankTransaction.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-          
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddMapperViewConfiguration();
             services.AddDALServices(Configuration);
@@ -64,7 +35,6 @@ namespace BankTransaction.Web
             services.AddDistributedCache(Configuration);
             services.AddIdentiyConfig();
             services.AddJsonLocalization();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,7 +63,7 @@ namespace BankTransaction.Web
 
             app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org", "http://localhost:64943")
                             .AllowAnyHeader()
-                            .AllowAnyMethod().AllowCredentials()); 
+                            .AllowAnyMethod().AllowCredentials());
             app.UseRouting();
 
             app.UseAuthentication();

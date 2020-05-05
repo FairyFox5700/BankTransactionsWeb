@@ -21,32 +21,12 @@ namespace BankTransaction.Api.Models
         RefreshTokenNotExists,
         [Description("Current token is invalidated")]
         TokenIsInvalidated,
-        [Description("Current tokenhas already used"]
+        [Description("Current token already used")]
         TokenIsUsed,
-        [Description("Refresh token jwt identifier is not match with this token id"]
+        [Description("Refresh token jwt identifier is not match with this token id")]
         TokenIdMismatch
 
     }
 
-    public static class EnumExtension
-    {
-        public static string GetDescription<T>(this T enumValue) where T : struct
-        {
-            var type = enumValue.GetType();
-            if( type.IsEnum)
-            {
-                throw new ArgumentException("Passed parameter must be of enum type");
-            }
-            var enumInfo = type.GetMember(enumValue.ToString());
-            if(enumInfo!=null && enumInfo.Length>0)
-            {
-                var atrrbts = enumInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
-                if(atrrbts!=null && atrrbts.Length>0)
-                {
-                    return ((DescriptionAttribute)atrrbts[0]).Description;
-                }
-            }
-            return enumValue.ToString();
-        }
-    }
+  
 }

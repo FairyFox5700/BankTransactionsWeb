@@ -1,5 +1,4 @@
-﻿using BankTransaction.Api.Models.Queries;
-using BankTransaction.Configuration;
+﻿using BankTransaction.Configuration;
 using BankTransaction.Models;
 using BankTransaction.Web.Models;
 using System;

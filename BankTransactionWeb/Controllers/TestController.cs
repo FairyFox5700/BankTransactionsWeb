@@ -6,6 +6,7 @@ using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
 using BankTransaction.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using RestSharp;
 using System;
@@ -18,11 +19,13 @@ namespace BankTransaction.Web.Controllers
     public class TestController : Controller
     {
         private readonly RestApiHelper restApiHelper;
+        private readonly IStringLocalizer<ApiResponcesShared> sharedLocalizer;
 
-        public TestController(IJwtAuthenticationService jwtAuthenticationService, JWTSecurityService securityService, RestApiHelper restApiHelper)
+        public TestController(IJwtAuthenticationService jwtAuthenticationService, JWTSecurityService securityService, RestApiHelper restApiHelper,IStringLocalizer<ApiResponcesShared> sharedLocalizer)
         {
             this.jwtAuthenticationService = jwtAuthenticationService;
             this.restApiHelper = restApiHelper;
+            this.sharedLocalizer = sharedLocalizer;
             this.securityService = securityService;
         }
         private readonly IJwtAuthenticationService jwtAuthenticationService;
@@ -32,6 +35,7 @@ namespace BankTransaction.Web.Controllers
         static readonly string  Test_PASSWORD = "qWerty1_";
         static readonly string RESOURCE = "Company";
         [HttpGet("Test/CheckPolicy")]
+        //string message = _sharedLocalizer["Message"];
         public async Task<IActionResult> CheckPolicy(string email=null, string password = null, string resource = null)
         {
             var authResult = await jwtAuthenticationService.LoginPerson(new PersonDTO(){ Email = Test_EMAIL, Password = Test_PASSWORD });

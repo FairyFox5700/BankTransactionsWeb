@@ -58,9 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BankTransaction.Api.Models\BankTransaction.Api.Models.csproj" />
     <ProjectReference Include="..\BankTransaction.DAL.Abstract\BankTransaction.DAL.Abstract.csproj" />
-    <ProjectReference Include="..\BankTransaction.Entities\BankTransaction.Entities.csproj" />
   </ItemGroup>
 
 </Project>

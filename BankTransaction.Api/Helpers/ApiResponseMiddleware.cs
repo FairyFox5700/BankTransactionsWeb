@@ -36,12 +36,10 @@ namespace BankTransaction.Api.Helpers
                     var feature = context.Features.Get<ModelStateFeature>();
                     var ModelState = context.Features.Get<ModelStateFeature>()?.ModelState;
                     var body = await FormatResponse(context.Response);
-
+                    context.Response.ContentType = "application/json";
                     if (context.Response.StatusCode == (int)HttpStatusCode.OK)
                     {
-                        //var body = await FormatResponse(context.Response);
                         await HandleSuccessRequestAsync(context, body, context.Response.StatusCode);
-
                     }
                     else if (ModelState != null && !ModelState.IsValid)
                     {
@@ -49,7 +47,6 @@ namespace BankTransaction.Api.Helpers
                     }
                     else
                     {
-
                         await HandleNotSuccessRequestAsync(context, context.Response.StatusCode, body);
                     }
                 }
@@ -68,15 +65,18 @@ namespace BankTransaction.Api.Helpers
 
         private Task HandleNotSuccessRequestAsync(HttpContext context, int statusCode, string body)
         {
-            context.Response.ContentType = "application/json";
-            var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResponse>(body);
-            if (apiErrorResponce != null && apiErrorResponce is ApiErrorResponse)
-                apiErrorResponce = apiErrorResponce;
-            else
-                apiErrorResponce = new ApiErrorResponse { Message = "Your request cannot be processed. Please contact a support." };
-
-
-            var apiResponce = new ApiResponse<ApiErrorResponse>(statusCode, apiErrorResponce);
+            ////context.Response.ContentType = "application/json";
+            var result = ReturnApiResponce(context, body);
+            if (result != null)
+            {
+                return result;
+            }
+            //var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResponse>(body);
+            //if (apiErrorResponce != null && apiErrorResponce is ApiErrorResponse)
+            //    apiErrorResponce = apiErrorResponce;
+            //else
+            //    apiErrorResponce = new ApiErrorResponse { Message = "Your request cannot be processed. Please contact a support." };
+            var apiResponce = new ApiResponse<ApiErrorResponse>(statusCode, new ApiErrorResponse { Message = "Your request cannot be processed. Please contact a support." });
             context.Response.StatusCode = statusCode;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
@@ -84,7 +84,7 @@ namespace BankTransaction.Api.Helpers
 
         private Task HandleNotSuccessValidationAsync(HttpContext context, int statusCode, ModelStateDictionary modelState)
         {
-            context.Response.ContentType = "application/json";
+            //context.Response.ContentType = "application/json";
             var errorListModel = modelState
                 .Where(x => x.Value.Errors.Count > 0)
                 .ToDictionary(er => er.Key, er => er.Value.Errors.Select(x => x.ErrorMessage))
@@ -111,7 +111,7 @@ namespace BankTransaction.Api.Helpers
 
         private Task HandleSuccessRequestAsync(HttpContext context, object body, int statusCode)
         {
-            context.Response.ContentType = "application/json";
+            //context.Response.ContentType = "application/json";
             string jsonString, bodyText = string.Empty;
 
             if (!IsValidJson(body.ToString(), logger))
@@ -127,15 +127,31 @@ namespace BankTransaction.Api.Helpers
             {
                 dynamic bodyContent = JsonConvert.DeserializeObject<dynamic>(bodyText);
                 //TODO
+                var result = ReturnApiResponce(context, bodyText);
+                if (result!=null)
+                {
+                    return result;
+                }
                 var apiResponse = new ApiResponse<string>(bodyContent, statusCode);
                 jsonString = JsonConvert.SerializeObject(apiResponse);
             }
             return context.Response.WriteAsync(jsonString);
         }
 
+        private Task ReturnApiResponce(HttpContext context,string body)
+        {
+            var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResponse>(body);
+            if (apiErrorResponce!=null)
+            {
+                return context.Response.WriteAsync(body);
+            }
+            return null;
+
+        }
+
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
+            //context.Response.ContentType = "application/json";
             var apiErrorResponce = new ApiErrorResponse();
             int code = (int)HttpStatusCode.InternalServerError;
             if (exception is DbUpdateException)
@@ -152,7 +168,6 @@ namespace BankTransaction.Api.Helpers
                 context.Response.StatusCode = code;
             }
 
-            context.Response.ContentType = "application/json";
             var apiResponce = new ApiResponse<ApiErrorResponse>(code, apiErrorResponce);
             var json = JsonConvert.SerializeObject(apiResponce);
             logger.LogError($"An exception occured {exception.Message}");
