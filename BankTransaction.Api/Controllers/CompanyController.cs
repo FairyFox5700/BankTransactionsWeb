@@ -3,6 +3,8 @@ using BankTransaction.Api.Models;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Implementation.DTOModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -11,9 +13,8 @@ using System.Threading.Tasks;
 
 namespace BankTransaction.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CompanyController : ControllerBase
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class CompanyController : BaseApiController
     {
 
         private readonly ICompanyService companyService;

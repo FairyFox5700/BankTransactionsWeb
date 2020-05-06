@@ -1,4 +1,5 @@
-﻿using BankTransaction.BAL.Abstract;
+﻿using BankTransaction.Api.Models;
+using BankTransaction.BAL.Abstract;
 using BankTransaction.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -46,11 +47,10 @@ namespace BankTransaction.Api.Helpers
                 return;
             }
             var executeNext = await next();
-            //kpsdopfsdf
-            var okObjectResult = executeNext.Result as OkObjectResult;
-            if(executeNext.Result!=null )
+            var statusCode = context.HttpContext.Response.StatusCode;
+            if( statusCode==200)
             {
-                await cacheService.CacheResponce(cacheKey, okObjectResult.Value, TimeSpan.FromSeconds(timeToLiveInSeconds));
+                await cacheService.CacheResponce(cacheKey, executeNext.Result, TimeSpan.FromSeconds(timeToLiveInSeconds));
             }
         }
 

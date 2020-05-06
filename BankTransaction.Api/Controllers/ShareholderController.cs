@@ -11,9 +11,7 @@ using System.Threading.Tasks;
 
 namespace BankTransaction.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ShareholderController : ControllerBase
+    public class ShareholderController : BaseApiController
     {
         private readonly IShareholderService shareholderService;
         private readonly ILogger<ShareholderController> logger;
@@ -25,7 +23,7 @@ namespace BankTransaction.Api.Controllers
         }
         // GET /api/Shareholder
         [HttpGet]
-        [Cached(2000)]
+        //[Cached(2000)]
         public async Task<ApiResponse<PaginatedList<ShareholderDTO>>> GetAllShareholders([FromQuery]PageQueryParameters pageQueryParameters, [FromQuery]SearchShareholderQuery searchShareholderQuery)
         {
             var paginatedModel = PaginatedModelShareholderToQueryList.Instance.MapBack(pageQueryParameters);

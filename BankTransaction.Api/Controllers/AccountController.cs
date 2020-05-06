@@ -16,9 +16,7 @@ namespace BankTransaction.Api.Controllers
 {
     //[Authorize]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : BaseApiController
     {
         private readonly IAccountService accountService;
         private readonly ILogger<AccountController> logger;

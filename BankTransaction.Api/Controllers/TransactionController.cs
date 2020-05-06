@@ -11,9 +11,7 @@ using System.Threading.Tasks;
 
 namespace BankTransaction.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class TransactionController : ControllerBase
+    public class TransactionController : BaseApiController
     {
         private readonly ITransactionService transactionService;
         private readonly ILogger<TransactionController> logger;

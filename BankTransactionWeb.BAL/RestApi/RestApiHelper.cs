@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
+using RestSharp.Deserializers;
 using RestSharp.Serialization.Json;
 using RestSharp.Serializers;
 using System;
@@ -16,8 +17,11 @@ namespace BankTransaction.BAL.Implementation.RestApi
     public class RestApiHelper
     {
         static readonly string apiUrl = ConfigurationManager.AppSettings["api_url"] ?? "http://localhost:64943/api/";
-        public static readonly RestClient Client = new RestClient();
-       
+        private readonly IRestClient Client;
+        public RestApiHelper()
+        {
+            Client = new RestClient(apiUrl);
+        }
         private static RestRequest ConstructRequest(string resource, object body, string token,object parameters)
         {
             var request = new RestRequest(apiUrl+resource, body == null ? Method.GET : Method.POST)
@@ -56,23 +60,25 @@ namespace BankTransaction.BAL.Implementation.RestApi
             return keyValue;
         }
 
-        public T Execute<T>(string resource, object body, string token, object parameters = null)
+        public string Execute<T>(string resource, object body, string token, object parameters = null)
         {
             var request = ConstructRequest(resource, body,token ,parameters);
+            request.JsonSerializer = NewtonsoftJsonSerializer.Default;
             var responce = Client.Execute<T>(request);
             ValidateResponce(responce);
-            var result = responce.Data;
+            var result = responce.Content;
             return result;
         }
-        public object ExecuteApiRequest<T>(string resource, object body, string token, object parameters = null)
+        public string ExecuteApiRequest<T>(string resource, object body, string token, object parameters = null)
         {
             //ApiResponse 
             var request = ConstructRequest(resource, body, token, parameters);
+            request.JsonSerializer = NewtonsoftJsonSerializer.Default;
             //request.AddHeader("Barear", token);
-            var responce = Client.Execute<ApiResponse<T>>(request);
+            IRestResponse<ApiResponse<T>> responce = Client.Execute<ApiResponse<T>>(request);
             ValidateApiResponce(responce);
-            var result = responce.Data;
-            return result.Data;
+            var result = responce.Content;
+            return result;
         }
 
         private void ValidateApiResponce<T>(IRestResponse<ApiResponse<T>> responce)
@@ -97,5 +103,31 @@ namespace BankTransaction.BAL.Implementation.RestApi
         }
     }
 
+    public class NewtonsoftJsonSerializer : IDeserializer, ISerializer
+    {
+        public string DateFormat { get; set; }
+
+        public string Namespace { get; set; }
+
+        public string RootElement { get; set; }
+
+        public string ContentType
+        {
+            get { return "application/json"; }
+            set { }
+        }
+
+        public T Deserialize<T>(IRestResponse response)
+        {
+            return JsonConvert.DeserializeObject<T>(response.Content);
+        }
+
+        public string Serialize(object obj)
+        {
+            return JsonConvert.SerializeObject(obj);
+        }
+
+        public static NewtonsoftJsonSerializer Default => new NewtonsoftJsonSerializer();
+    }
 
 }

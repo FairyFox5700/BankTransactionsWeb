@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using RestSharp;
+using RestSharp.Serialization.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,12 +71,21 @@ namespace BankTransaction.Web.Controllers
             return result;
         }
 
-        private string GetSomeResourse(string token, string resource)
+        private ApiResponse<List<CompanyDTO>> GetSomeResourse(string token, string resource)
         {
-            var  restRequest = restApiHelper.Execute<IRestResponse>(resource, null, token, null);
+            var  restResponce = restApiHelper.Execute<RestResponse>(resource, null, token, null);
+            //var deserial = new JsonDeserializer();
+
+            //var jsonResponse = deserial.Deserialize<ApiResponse<List<CompanyDTO>>>(restResponce);
+            var jsonResponse = JsonConvert.DeserializeObject<ApiResponse<List<CompanyDTO>>>(restResponce,
+                    new JsonSerializerSettings
+                    {
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                    });
+            return jsonResponse;
             //var apiResponce = restRequest as ApiResponse;
-            string message = JsonConvert.DeserializeObject<string>(restRequest.Content.ToString());
-            return message;
+            //string message = JsonConvert.DeserializeObject<ApiResponse<IEnumerable<CompanyDTO>>>(restRequest.Data.ToString());
+            //return message;
         }
 
 

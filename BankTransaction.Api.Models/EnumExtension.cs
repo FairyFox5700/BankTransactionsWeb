@@ -11,7 +11,7 @@ namespace BankTransaction.Api.Models
         public static string GetDescription<T>(this T enumValue) where T : struct
         {
             var type = enumValue.GetType();
-            if (type.IsEnum)
+            if (!type.IsEnum)
             {
                 throw new ArgumentException("Passed parameter must be of enum type");
             }
@@ -21,7 +21,8 @@ namespace BankTransaction.Api.Models
                 var atrrbts = enumInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
                 if (atrrbts != null && atrrbts.Length > 0)
                 {
-                    return ((DescriptionAttribute)atrrbts[0]).Description;
+                    var description = ((DescriptionAttribute)atrrbts[0]).Description.ToString();
+                    return description;
                 }
             }
             return enumValue.ToString();

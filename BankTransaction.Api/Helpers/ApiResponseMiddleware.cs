@@ -31,7 +31,6 @@ namespace BankTransaction.Api.Helpers
                 context.Response.Body = responseBody;
                 try
                 {
-                    //Return result from inner midlleware
                     await next(context);
                     var feature = context.Features.Get<ModelStateFeature>();
                     var ModelState = context.Features.Get<ModelStateFeature>()?.ModelState;
@@ -46,7 +45,7 @@ namespace BankTransaction.Api.Helpers
                         var error = HandleNotSuccessValidationAsync(context, context.Response.StatusCode, ModelState);
                     }
                     else
-                    {
+                    { 
                         await HandleNotSuccessRequestAsync(context, context.Response.StatusCode, body);
                     }
                 }
@@ -65,18 +64,12 @@ namespace BankTransaction.Api.Helpers
 
         private Task HandleNotSuccessRequestAsync(HttpContext context, int statusCode, string body)
         {
-            ////context.Response.ContentType = "application/json";
-            var result = ReturnApiResponce(context, body);
+            var result = ReturnApiErrorResponce(context, body);
             if (result != null)
             {
                 return result;
             }
-            //var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResponse>(body);
-            //if (apiErrorResponce != null && apiErrorResponce is ApiErrorResponse)
-            //    apiErrorResponce = apiErrorResponce;
-            //else
-            //    apiErrorResponce = new ApiErrorResponse { Message = "Your request cannot be processed. Please contact a support." };
-            var apiResponce = new ApiResponse<ApiErrorResponse>(statusCode, new ApiErrorResponse { Message = "Your request cannot be processed. Please contact a support." });
+            var apiResponce = new ApiResponse<ApiErrorResponse>(statusCode, new ApiErrorResponse (message: "Your request cannot be processed. Please contact a support." ));
             context.Response.StatusCode = statusCode;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
@@ -84,7 +77,6 @@ namespace BankTransaction.Api.Helpers
 
         private Task HandleNotSuccessValidationAsync(HttpContext context, int statusCode, ModelStateDictionary modelState)
         {
-            //context.Response.ContentType = "application/json";
             var errorListModel = modelState
                 .Where(x => x.Value.Errors.Count > 0)
                 .ToDictionary(er => er.Key, er => er.Value.Errors.Select(x => x.ErrorMessage))
@@ -125,23 +117,20 @@ namespace BankTransaction.Api.Helpers
             }
             else
             {
-                dynamic bodyContent = JsonConvert.DeserializeObject<dynamic>(bodyText);
-                //TODO
-                var result = ReturnApiResponce(context, bodyText);
-                if (result!=null)
+                var result = ReturnApiErrorResponce(context, bodyText);
+                if (result != null)
                 {
                     return result;
                 }
-                var apiResponse = new ApiResponse<string>(bodyContent, statusCode);
-                jsonString = JsonConvert.SerializeObject(apiResponse);
+                jsonString = bodyText;
             }
             return context.Response.WriteAsync(jsonString);
         }
 
-        private Task ReturnApiResponce(HttpContext context,string body)
+        private Task ReturnApiErrorResponce(HttpContext context,string body)
         {
             var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResponse>(body);
-            if (apiErrorResponce!=null)
+            if (apiErrorResponce!=null && (apiErrorResponce.Message!=null||apiErrorResponce.ValidationErrors.Any()))
             {
                 return context.Response.WriteAsync(body);
             }

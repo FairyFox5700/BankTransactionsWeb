@@ -105,7 +105,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult()
                 {
-                    Errors = new[] { ErrorMessage.TokenValidationFailed.GetDescription() },
+                    Errors = new List<string> { ErrorMessage.TokenValidationFailed.GetDescription() },
                     MessageType = nameof(ErrorMessage.EmailNotValid)
                 };
 
@@ -120,7 +120,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult()
                 {
-                    Errors = new[] { ErrorMessage.TokenNotExpired.GetDescription() },
+                    Errors = new List<string> { ErrorMessage.TokenNotExpired.GetDescription() },
                     MessageType = nameof(ErrorMessage.TokenNotExpired)
                 };
             }
@@ -150,7 +150,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult
                 {
-                    Errors = new[] { ErrorMessage.RefreshTokenNotExists.GetDescription() },
+                    Errors = new List<string> { ErrorMessage.RefreshTokenNotExists.GetDescription() },
                     MessageType = nameof(ErrorMessage.RefreshTokenNotExists)
                 };
             }
@@ -159,7 +159,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult()
                 {
-                    Errors = new[] { ErrorMessage.TokenNotExpired.GetDescription() },
+                    Errors = new List<string> { ErrorMessage.TokenNotExpired.GetDescription() },
                     MessageType = nameof(ErrorMessage.TokenNotExpired)
                 };
 
@@ -168,7 +168,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult()
                 {
-                    Errors = new[] { ErrorMessage.TokenIsInvalidated.GetDescription() },
+                    Errors = new List<string> { ErrorMessage.TokenIsInvalidated.GetDescription() },
                     MessageType = nameof(ErrorMessage.TokenIsInvalidated)
                 };
             }
@@ -176,7 +176,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult()
                 {
-                    Errors = new[] { ErrorMessage.TokenIsUsed.GetDescription() },
+                    Errors = new List<string> { ErrorMessage.TokenIsUsed.GetDescription() },
                     MessageType = nameof(ErrorMessage.TokenIsUsed)
                 };
             }
@@ -185,7 +185,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult()
                 {
-                    Errors = new[] { ErrorMessage.TokenIdMismatch.GetDescription() },
+                    Errors = new List<string> { ErrorMessage.TokenIdMismatch.GetDescription() },
                     MessageType = nameof(ErrorMessage.TokenIdMismatch)
                 };
             }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.Api.Models;
@@ -37,7 +38,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
                 {
                     return new AuthResult()
                     {
-                        Errors = new[] { ErrorMessage.LoginAttemptNotSuccesfull.GetDescription()},
+                        Errors = new List<string> { ErrorMessage.LoginAttemptNotSuccesfull.GetDescription()},
                         MessageType = nameof(ErrorMessage.LoginAttemptNotSuccesfull)
                     };
                 }
@@ -45,7 +46,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             }
             return new AuthResult()
             {
-                Errors = new[] { ErrorMessage.EmailNotValid.GetDescription() },
+                Errors = new List<string> { ErrorMessage.EmailNotValid.GetDescription() },
                 MessageType = nameof(ErrorMessage.EmailNotValid)
             };
         }
@@ -77,7 +78,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
                         {
                             return new AuthResult
                             {
-                                Errors = result.Errors.Select(x => x.Description)
+                                Errors = result.Errors.Select(x => x.Description).ToList()
                             };
                         }
                     }
@@ -86,7 +87,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
                     {
                         return new AuthResult
                         {
-                            Errors = new[] { ErrorMessage.EmailIsAlreadyInUse.GetDescription() },
+                            Errors = new List<string> { ErrorMessage.EmailIsAlreadyInUse.GetDescription() },
                             MessageType = nameof(ErrorMessage.EmailIsAlreadyInUse)
                         };
                     }

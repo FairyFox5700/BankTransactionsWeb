@@ -14,9 +14,7 @@ using System.Threading.Tasks;
 namespace BankTransaction.Api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PersonController : ControllerBase
+    public class PersonController : BaseApiController
     {
         private readonly IPersonService personService;
         private readonly ILogger<PersonController> logger;

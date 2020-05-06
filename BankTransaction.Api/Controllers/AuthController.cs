@@ -17,10 +17,8 @@ using BankTransaction.Models.Validation;
 
 namespace BankTransaction.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
    // [ServiceFilter(typeof(ValidationFilter))]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseApiController
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IJwtAuthenticationService authService;
@@ -74,7 +72,7 @@ namespace BankTransaction.Api.Controllers
             }
             else
             {
-                return new ApiResponse<AuthSuccesfullModel> (400, new ApiErrorResponse() { Message = result.GetErrors});
+                return new ApiResponse<AuthSuccesfullModel> (400, new ApiErrorResponse(message: result.Errors?.FirstOrDefault()));
             }
         }
 
@@ -94,7 +92,7 @@ namespace BankTransaction.Api.Controllers
             }
             else
             {
-                return new ApiResponse<AuthResult>(400, new ApiErrorResponse() { Message = result.GetErrors});
+                return new ApiResponse<AuthResult>(400, new ApiErrorResponse( message: result.GetErrors));
             }
 
         }
