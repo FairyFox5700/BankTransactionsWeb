@@ -32,10 +32,7 @@ namespace BankTransaction.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // IMapper mapper = new AutoMapper.Mapper(AutoMapperConfiguration.ConfigureAutoMapper());
-            // services.AddSingleton(mapper);
             services.AddMapperDomainConfiguration();
-            //services.AddAutoMapper(typeof(Startup));
             services.AddDALServices(Configuration);
             services.AddBalServices(Configuration);
             services.AddJwtAuthentication(Configuration, Environment);
@@ -51,6 +48,7 @@ namespace BankTransaction.Api
             services.AddMvc(opts =>
             {
             opts.Filters.Add(new ValidationFilter());
+            opts.Filters.Add(typeof(StatusCodeFilter));
             });
 
         }
@@ -61,11 +59,6 @@ namespace BankTransaction.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            // app.ConfigureErrorHandler();
-            //app.UseCookiePolicy(new CookiePolicyOptions
-            //{
-            //    MinimumSameSitePolicy = SameSiteMode.None
-            //});
             app.UseAPIResponseWrapperMiddleware();
             app.UseRouting();
             app.UseCookiePolicy();

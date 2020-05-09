@@ -12,19 +12,24 @@ namespace BankTransaction.Api.Models
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string Message { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public string MessageType { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> Errors { get; set; }
         public List<ValidationError> ValidationErrors { get; set; }
         public ApiErrorResponse()
         {
                 
         }
-        public ApiErrorResponse(string message)
+        public ApiErrorResponse(string message, string messageType)
         {
             Message = message;
+            MessageType = messageType;
         }
-        public ApiErrorResponse(string message, List<ValidationError> validationErrors):this(message)
+        public ApiErrorResponse(string message, string messageType, List<ValidationError> validationErrors):this(message,messageType)
         {
             ValidationErrors = new List<ValidationError>();
             ValidationErrors = validationErrors;
+            this.MessageType = messageType;
         }
     }
 

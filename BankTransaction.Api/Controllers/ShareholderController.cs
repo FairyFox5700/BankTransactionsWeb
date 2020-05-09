@@ -24,54 +24,54 @@ namespace BankTransaction.Api.Controllers
         // GET /api/Shareholder
         [HttpGet]
         //[Cached(2000)]
-        public async Task<ApiResponse<PaginatedList<ShareholderDTO>>> GetAllShareholders([FromQuery]PageQueryParameters pageQueryParameters, [FromQuery]SearchShareholderQuery searchShareholderQuery)
+        public async Task<ApiDataResponse<PaginatedList<ShareholderDTO>>> GetAllShareholders([FromQuery]PageQueryParameters pageQueryParameters, [FromQuery]SearchShareholderQuery searchShareholderQuery)
         {
             var paginatedModel = PaginatedModelShareholderToQueryList.Instance.MapBack(pageQueryParameters);
             var filter = ShareholderFilterToSearchMapper.Instance.MapBack(searchShareholderQuery);
             var shareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
             var paginatedShareholders = new PaginatedList<ShareholderDTO>(shareholders, paginatedModel);
-            return new ApiResponse<PaginatedList<ShareholderDTO>>(paginatedShareholders);
+            return new ApiDataResponse<PaginatedList<ShareholderDTO>>(paginatedShareholders);
         }
         // PUT /api/Shareholder/{id}
         [HttpPut("{id}")]
-        public async Task<ApiResponse<int>> UpdateShareholder(int id, ShareholderDTO shareholder)
+        public async Task<ApiDataResponse<int>> UpdateShareholder(int id, ShareholderDTO shareholder)
         {
             if (id != shareholder.Id)
             {
-                return ApiResponse<int>.BadRequest;
+                return ApiDataResponse<int>.BadRequest;
             }
             var currentShareholder = await shareholderService.GetShareholderById(id);
             if (currentShareholder == null)
             {
-                return ApiResponse<int>.NotFound;
+                return ApiDataResponse<int>.NotFound;
             }
             var result = await shareholderService.UpdateShareholder(shareholder);
             if (result.IsError)
-                return new ApiResponse<int>(400, new ApiErrorResponse() { Message = result.Message });
-            return new ApiResponse<int>(id);
+                return new ApiDataResponse<int>(400, new ApiErrorResponse() { Message = result.Message });
+            return new ApiDataResponse<int>(id);
 
         }
 
         // POST: api/Shareholder
         [HttpPost]
-        public async Task<ApiResponse<ShareholderDTO>> AddShareholder(ShareholderDTO shareholder)
+        public async Task<ApiDataResponse<ShareholderDTO>> AddShareholder(ShareholderDTO shareholder)
         {
            var result= await shareholderService.AddShareholder(shareholder);
             if (result.IsError)
-                return new ApiResponse<ShareholderDTO>(400, new ApiErrorResponse() { Message = result.Message });
-            return new ApiResponse<ShareholderDTO>(shareholder);
+                return new ApiDataResponse<ShareholderDTO>(400, new ApiErrorResponse() { Message = result.Message });
+            return new ApiDataResponse<ShareholderDTO>(shareholder);
         }
         // DELETE /api/Shareholder/{id}
         [HttpDelete("{id}")]
-        public async Task<ApiResponse<ShareholderDTO>> DeleteShareholder(int id)
+        public async Task<ApiDataResponse<ShareholderDTO>> DeleteShareholder(int id)
         {
             var shareholder = await shareholderService.GetShareholderById(id);
             if (shareholder == null)
             {
-                return ApiResponse<ShareholderDTO>.NotFound;
+                return ApiDataResponse<ShareholderDTO>.NotFound;
             }
             await shareholderService.DeleteShareholder(shareholder);
-            return new ApiResponse<ShareholderDTO>(shareholder);
+            return new ApiDataResponse<ShareholderDTO>(shareholder);
 
         }
     }

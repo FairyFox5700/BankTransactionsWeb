@@ -35,16 +35,10 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 RequestFormat = DataFormat.Json
             };
-            
-            //if (!String.IsNullOrEmpty( token))
-            //{
             //string token = httpContextAccessor.HttpContext.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
             if (token != null)
                 request.AddHeader("Authorization", "Bearer " + token);
-            //else
-            //    return ApiResponse<ApiErrorResponse>.Unauthorized;
-
-            request.AddHeader("cache-control", "no-cache");
+                request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("Accept", "application/json");
 
@@ -100,24 +94,24 @@ namespace BankTransaction.BAL.Implementation.RestApi
         {
             var request = ConstructRequest(resource, body,  method,parameters);
             request.JsonSerializer = NewtonsoftJsonSerializer.Default;
-            IRestResponse<ApiResponse<T>> responce =await  Client.ExecuteAsync<ApiResponse<T>>(request);
+            IRestResponse<ApiDataResponse<T>> responce =await  Client.ExecuteAsync<ApiDataResponse<T>>(request);
             ValidateApiResponce(responce);
             var result = responce.Content;
-            var jsonResponse = JsonConvert.DeserializeObject<ApiResponse<T>>(result);
+            var jsonResponse = JsonConvert.DeserializeObject<ApiDataResponse<T>>(result);
             return jsonResponse.Data;
         } 
         public T ExecuteApiRequest<T>(string resource, object body,  Method method, object parameters = null)
         {
             var request = ConstructRequest(resource, body,method,parameters);
             request.JsonSerializer = NewtonsoftJsonSerializer.Default;
-            IRestResponse<ApiResponse<T>> responce = Client.Execute<ApiResponse<T>>(request);
+            IRestResponse<ApiDataResponse<T>> responce = Client.Execute<ApiDataResponse<T>>(request);
             ValidateApiResponce(responce);
             var result = responce.Content;
-            var jsonResponse = JsonConvert.DeserializeObject<ApiResponse<T>>(result);
+            var jsonResponse = JsonConvert.DeserializeObject<ApiDataResponse<T>>(result);
             return jsonResponse.Data;
         }
 
-        private void ValidateApiResponce<T>(IRestResponse<ApiResponse<T>> responce)
+        private void ValidateApiResponce<T>(IRestResponse<ApiDataResponse<T>> responce)
         {
             ValidateResponce(responce);
             var result = responce.Data;

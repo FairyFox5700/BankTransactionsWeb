@@ -12,7 +12,11 @@ namespace BankTransaction.Models.Validation
         public bool Success { get; set; }
         public string RefreshToken { get; set; }
         public string MessageType { get; set; }
-        public List<string> Errors { get; set; }
-        public string GetErrors => JsonConvert.SerializeObject(Errors);
+        public  string Message { get; set; }
+        public  void  GetErrors(IEnumerable<string> errors)
+        {
+            Message = JsonConvert.SerializeObject(errors);
+        }
+        //{ ;
     }
 }

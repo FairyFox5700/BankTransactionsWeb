@@ -31,47 +31,47 @@ namespace BankTransaction.Api.Controllers
         [HttpGet]
         [Cached(2000)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ApiResponse<IEnumerable<AccountDTO>>> GetAllAccounts([FromQuery]PageQueryParameters pageQueryParameters)
+        public async Task<ApiDataResponse<IEnumerable<AccountDTO>>> GetAllAccounts([FromQuery]PageQueryParameters pageQueryParameters)
         {
             var accounts = (await accountService.GetAllAccounts(pageQueryParameters.PageNumber, pageQueryParameters.PageSize)).ToList();
-            return new ApiResponse<IEnumerable<AccountDTO>>(accounts);
+            return new ApiDataResponse<IEnumerable<AccountDTO>>(accounts);
         }
         // PUT /api/Account/{id}
         [HttpPut("{id}")]
-        public async Task<ApiResponse<int>> UpdateAccount(int id, AccountDTO account)
+        public async Task<ApiDataResponse<int>> UpdateAccount(int id, AccountDTO account)
         {
             if (id != account.Id)
             {
-                return ApiResponse<int>.BadRequest;
+                return ApiDataResponse<int>.BadRequest;
             }
             var currentAccount = await accountService.GetAccountById(id);
             if (currentAccount == null)
             {
-                return ApiResponse<int>.NotFound;
+                return ApiDataResponse<int>.NotFound;
             }
             await accountService.UpdateAccount(account);
-            return new ApiResponse<int>(id);
+            return new ApiDataResponse<int>(id);
 
         }
 
         // POST: api/Account
         [HttpPost]
-        public async Task<ApiResponse<AccountDTO>> AddAccount(AccountDTO account)
+        public async Task<ApiDataResponse<AccountDTO>> AddAccount(AccountDTO account)
         {
                 await accountService.AddAccount(account);
-            return new ApiResponse<AccountDTO>(account);
+            return new ApiDataResponse<AccountDTO>(account);
         }
         // DELETE /api/Account/{id}
         [HttpDelete("{id}")]
-        public async Task<ApiResponse<AccountDTO>> DeleteAccount(int id)
+        public async Task<ApiDataResponse<AccountDTO>> DeleteAccount(int id)
         {
             var account = await accountService.GetAccountById(id);
             if (account == null)
             {
-                return ApiResponse<AccountDTO>.NotFound;
+                return ApiDataResponse<AccountDTO>.NotFound;
             }
             await accountService.DeleteAccount(account);
-            return new ApiResponse<AccountDTO>(account);
+            return new ApiDataResponse<AccountDTO>(account);
         }
     }
 }

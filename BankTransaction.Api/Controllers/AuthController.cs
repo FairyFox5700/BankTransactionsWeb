@@ -5,6 +5,7 @@ using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Abstract.RestApi;
 using BankTransaction.Entities;
+using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -33,36 +34,71 @@ namespace BankTransaction.Api.Controllers
 
         [HttpPost]
         [Route("login")]
-        public async Task<ApiResponse<AuthSuccesfullModel>> Login([FromBody]RequestLoginModel model)
+        public async Task<ApiDataResponse<AuthSuccesfullModel>> Login([FromBody]RequestLoginModel model)
         {
             //modelState
             var person = PersonDtoToRequestLoginMapper.Instance.MapBack(model);
             var result = await authService.LoginPerson(person);
+           
             if (result.Success)
             {
-                return new ApiResponse<AuthSuccesfullModel>(new AuthSuccesfullModel
+                HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKey", result.Token,
+               new CookieOptions
+               {
+                   MaxAge = TimeSpan.FromMinutes(60)
+               });
+                HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKeyFree", result.RefreshToken,
+               new CookieOptions
+               {
+                   MaxAge = TimeSpan.FromMinutes(60)
+               });
+
+                return new ApiDataResponse<AuthSuccesfullModel>(new AuthSuccesfullModel
                 {
                     Token = result.Token,
 
                     RefreshToken = result.RefreshToken
                 });
             }
+
             else
             {
-                return ApiResponse<AuthSuccesfullModel>.BadRequest;
+                var apiErrorResult = AuthResultToApiErrorResponceMapper.Instance.Map(result);
+                return new ApiDataResponse<AuthSuccesfullModel>(200, apiErrorResult);
             }
         }
 
         [HttpPost]
+        [Route("logout")]
+        public async Task<ApiDataResponse<AuthSuccesfullModel>> Logout()
+        {
+            return ApiDataResponse<AuthSuccesfullModel>.NotFound;
+        }
+
+        [HttpPost]
         [Route("refreshToken")]
-        public async Task<ApiResponse<AuthSuccesfullModel>> RefreshToken([FromBody]AuthSuccesfullModel model)
+        public async Task<ApiDataResponse<AuthSuccesfullModel>> RefreshToken([FromBody]AuthSuccesfullModel model)
         {
 
             var tokenDto = RefreshTokenDtoToAuthSuccesMapper.Instance.MapBack(model);
             var result = await jwtService.RefreshToken(tokenDto);
             if (result.Success)
             {
-                return new ApiResponse<AuthSuccesfullModel>(new AuthSuccesfullModel
+                //remove
+                HttpContext.Response.Cookies.Delete("BankWeb.AspNetCore.ProductKey");
+                HttpContext.Response.Cookies.Delete("BankWeb.AspNetCore.ProductKeyFree");
+                HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKey", result.Token,
+              new CookieOptions
+              {
+                  MaxAge = TimeSpan.FromMinutes(60)
+              });
+                HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKeyFree", result.RefreshToken,
+               new CookieOptions
+               {
+                   MaxAge = TimeSpan.FromMinutes(60)
+               });
+
+                return new ApiDataResponse<AuthSuccesfullModel>(new AuthSuccesfullModel
                 {
                     Token = result.Token,
                     RefreshToken = result.RefreshToken
@@ -70,7 +106,7 @@ namespace BankTransaction.Api.Controllers
             }
             else
             {
-                return new ApiResponse<AuthSuccesfullModel>(400, new ApiErrorResponse(message: result.Errors?.FirstOrDefault()));
+                return new ApiDataResponse<AuthSuccesfullModel>(400, new ApiErrorResponse(message: result.Message,messageType:result.MessageType));
             }
         }
 
@@ -78,7 +114,7 @@ namespace BankTransaction.Api.Controllers
         [HttpPost]
         [Route("register")]
         //[ServiceFilter(typeof(ValidationFilter))]
-        public async Task<ApiResponse<AuthResult>> Register([FromBody] RequestRegisterModel model)
+        public async Task<ApiDataResponse<AuthResult>> Register([FromBody] RequestRegisterModel model)
         {
             //if (!ModelState.IsValid)
             //    return  BadRequest(  new ApiErrorResonse() { ValidationErrors = ModelState.GetErrors().ToList() });
@@ -86,11 +122,11 @@ namespace BankTransaction.Api.Controllers
             var result = await authService.RegisterPersonWithJwtToken(person);
             if (result.Success)
             {
-                return new ApiResponse<AuthResult>(result);
+                return new ApiDataResponse<AuthResult>(result);
             }
             else
             {
-                return new ApiResponse<AuthResult>(400, new ApiErrorResponse(message: result.GetErrors));
+                return new ApiDataResponse<AuthResult>(400, new ApiErrorResponse(message: result.Message, messageType: result.MessageType));
             }
 
         }

@@ -41,38 +41,9 @@ namespace BankTransaction.BAL.Implementation.Extensions
             services.AddScoped<RedirectToLoginCookieAuthentication>();
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.Configure<CookiePolicyOptions>(options =>
-            {
-                options.MinimumSameSitePolicy = SameSiteMode.None;
-                options.HttpOnly = HttpOnlyPolicy.Always;
-                options.Secure = CookieSecurePolicy.Always;
-
-                //options.CheckConsentNeeded = context => true;
-                ////options.MinimumSameSitePolicy = SameSiteMode.None;
-                ////options.HttpOnly = HttpOnlyPolicy.Always;
-                ////options.Secure = CookieSecurePolicy.Always;
-                //options.MinimumSameSitePolicy = SameSiteMode.Strict;
-                //options.HttpOnly = HttpOnlyPolicy.None;
-                //options.Secure = environment.IsDevelopment()
-                //  ? CookieSecurePolicy.None : CookieSecurePolicy.Always;
-            });
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-              //.AddCookie(options =>
-              //{
-
-              //    options.EventsType = typeof(RevokeCookieAuthentication);
-              //    options.LoginPath = "/ApiAuthentication/SignIn";
-              //    options.LogoutPath = "/ApiAuthentication/Signout";
-              //    //options.Cookie.Name = "BankWeb.AspNetCore.ProductKey";
-              //    //options.Cookie.ExpireTimeSpan = TimeSpan.FromMinutes(3);//only for test
-              //    options.Cookie.HttpOnly = true;
-              //    options.Cookie.SecurePolicy = environment.IsDevelopment() ? CookieSecurePolicy.None : CookieSecurePolicy.Always;
-              //    options.Cookie.SameSite = SameSiteMode.None;
-              //})
-
               .AddJwtBearer(options =>
              {
-                 //options.RequireHttpsMetadata = false;
                  options.TokenValidationParameters = tokenValidParam;
                  options.RequireHttpsMetadata = false;
                  options.SaveToken = true;
@@ -102,19 +73,47 @@ namespace BankTransaction.BAL.Implementation.Extensions
                  };
 
              });
-            
-            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //   .AddJwtBearer(options => {
-            //       options.TokenValidationParameters = new TokenValidationParameters
-            //       {
-            //           ValidateIssuerSigningKey = true,
-            //           IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
-            //               .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
-            //           ValidateIssuer = false,
-            //           ValidateAudience = false
-            //       };
-            //   });
             return services;
         }
     }
 }
+//.AddCookie(options =>
+//{
+
+//    options.EventsType = typeof(RevokeCookieAuthentication);
+//    options.LoginPath = "/ApiAuthentication/SignIn";
+//    options.LogoutPath = "/ApiAuthentication/Signout";
+//    //options.Cookie.Name = "BankWeb.AspNetCore.ProductKey";
+//    //options.Cookie.ExpireTimeSpan = TimeSpan.FromMinutes(3);//only for test
+//    options.Cookie.HttpOnly = true;
+//    options.Cookie.SecurePolicy = environment.IsDevelopment() ? CookieSecurePolicy.None : CookieSecurePolicy.Always;
+//    options.Cookie.SameSite = SameSiteMode.None;
+//})
+
+//services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//   .AddJwtBearer(options => {
+//       options.TokenValidationParameters = new TokenValidationParameters
+//       {
+//           ValidateIssuerSigningKey = true,
+//           IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII
+//               .GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
+//           ValidateIssuer = false,
+//           ValidateAudience = false
+//       };
+//   });
+
+//services.Configure<CookiePolicyOptions>(options =>
+//{
+//    options.MinimumSameSitePolicy = SameSiteMode.None;
+//    options.HttpOnly = HttpOnlyPolicy.Always;
+//    options.Secure = CookieSecurePolicy.Always;
+
+//    //options.CheckConsentNeeded = context => true;
+//    ////options.MinimumSameSitePolicy = SameSiteMode.None;
+//    ////options.HttpOnly = HttpOnlyPolicy.Always;
+//    ////options.Secure = CookieSecurePolicy.Always;
+//    //options.MinimumSameSitePolicy = SameSiteMode.Strict;
+//    //options.HttpOnly = HttpOnlyPolicy.None;
+//    //options.Secure = environment.IsDevelopment()
+//    //  ? CookieSecurePolicy.None : CookieSecurePolicy.Always;
+//});

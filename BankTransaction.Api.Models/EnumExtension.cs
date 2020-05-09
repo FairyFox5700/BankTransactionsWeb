@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace BankTransaction.Api.Models
@@ -26,6 +27,12 @@ namespace BankTransaction.Api.Models
                 }
             }
             return enumValue.ToString();
+        }
+        public static int GetHttpStatusCode(this Enum value)
+        {
+            var fieldInfo = value.GetType().GetField(value.ToString());
+            HttpStatusCodeAttribute[] attributes = (HttpStatusCodeAttribute[])fieldInfo.GetCustomAttributes(typeof(HttpStatusCodeAttribute), false);
+            return (attributes.Length > 0) ? attributes[0].StatusCode : (int)HttpStatusCode.OK;
         }
     }
 }

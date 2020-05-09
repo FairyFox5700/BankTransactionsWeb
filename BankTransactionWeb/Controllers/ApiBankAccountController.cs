@@ -5,6 +5,7 @@ using BankTransaction.BAL.Abstract.RestApi;
 using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Configuration;
 using BankTransaction.Web.Mapper;
+using BankTransaction.Web.Services;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,16 +19,17 @@ namespace BankTransaction.Web.Controllers
     public class ApiBankAccountController : Controller
     {
         private readonly IRestApiHelper restApiHelper;
-        private readonly UrlsConfiguration urlsConfiguration;
+        
         private readonly IPersonService personService;
+        private readonly IApiBankAccountService apiBankAccountService;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IAccountService accountService;
 
-        public ApiBankAccountController(IRestApiHelper restApiHelper, UrlsConfiguration urlsConfiguration, IPersonService personService, IHttpContextAccessor  httpContextAccessor, IAccountService accountService)
+        public ApiBankAccountController(IRestApiHelper restApiHelper, IHttpContextAccessor httpContextAccessor, IPersonService personService, IApiBankAccountService apiBankAccountService, IAccountService accountService)
         {
             this.restApiHelper = restApiHelper;
-            this.urlsConfiguration = urlsConfiguration;
             this.personService = personService;
+            this.apiBankAccountService = apiBankAccountService;
             this.httpContextAccessor = httpContextAccessor;
             this.accountService = accountService;
         }
@@ -36,10 +38,9 @@ namespace BankTransaction.Web.Controllers
         public async Task<IActionResult> GetAllAccounts(PageQueryParameters pageQueryParameters = null)
         {
             string token = httpContextAccessor.HttpContext.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
-            // if (token != null)
-            //var allAccounts = await accountService.GetAllAccounts(pageQueryParameters.PageNumber, pageQueryParameters.PageSize);
-            var allAccount = await restApiHelper.ExecuteAsync<ApiResponse<List<AccountDTO>>>(urlsConfiguration.Account, null, Method.GET, parameters: new { pageQueryParameters.PageSize, pageQueryParameters.PageNumber }, token);
-
+            var token2 = httpContextAccessor.HttpContext.Response.Cookies;
+            var boh = Request.Cookies["Emailoption"];
+            var allAccount = await apiBankAccountService.GetAllAccounts(pageQueryParameters);
             var validateReult = ValidateApiResult(allAccount);
             if (validateReult != null)
             {
@@ -76,7 +77,7 @@ namespace BankTransaction.Web.Controllers
             else
             {
                 var account = AddAccountToAccountDTOMapper.Instance.Map(accountModel);
-                var result = await restApiHelper.ExecuteAsync<ApiResponse<AccountDTO>>(urlsConfiguration.Account, body: account,  Method.POST);
+                var result = await apiBankAccountService.AddAccount(account);
                 var validateReult = ValidateApiResult(result);
                 if (validateReult != null)
                 {
@@ -111,8 +112,8 @@ namespace BankTransaction.Web.Controllers
             }
             else
             {
-                var updatedAccount = UpdateAccountToAccountDTOMapper.Instance.Map(accountModel);
-                var result = await restApiHelper.ExecuteAsync<ApiResponse<AccountDTO>>(urlsConfiguration.Account, body: updatedAccount, Method.PUT, parameters:new { accountModel.Id });
+                var account = UpdateAccountToAccountDTOMapper.Instance.Map(accountModel);
+                var result = await apiBankAccountService.UpdateAccount(account);
                 var validateReult = ValidateApiResult(result);
                 if (validateReult != null)
                 {
@@ -125,7 +126,7 @@ namespace BankTransaction.Web.Controllers
 
         public async Task<IActionResult> DeleteAccount(int id)
         {
-            var result = await restApiHelper.ExecuteAsync<ApiResponse<AccountDTO>>(urlsConfiguration.Account, null, Method.DELETE, parameters: new { id });
+            var result = await apiBankAccountService.DeleteAccount(id);
             var validateReult = ValidateApiResult(result);
             if (validateReult != null)
             {
@@ -137,7 +138,7 @@ namespace BankTransaction.Web.Controllers
 
         }
 
-        private ActionResult ValidateApiResult<T>(ApiResponse<T> result)
+        private ActionResult ValidateApiResult<T>(ApiDataResponse<T> result)
         {
             if (result.IsError)
             {

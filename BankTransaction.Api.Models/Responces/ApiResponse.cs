@@ -1,16 +1,10 @@
-﻿using Newtonsoft.Json;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 
 namespace BankTransaction.Api.Models
 {
-
     [DataContract]
-    public class ApiResponse<T>
+    public class ApiResponse
     {
-        public static readonly ApiResponse<T> Forbidden = new ApiResponse<T>(403, new ApiErrorResponse ( "Forbidden"));
-        public static readonly ApiResponse<T> BadRequest = new ApiResponse<T>(400, new ApiErrorResponse ( "Bad request") );
-        public static readonly ApiResponse<T> NotFound = new ApiResponse<T>(404, new ApiErrorResponse ("Object not found"));
-        public static readonly ApiResponse<T> Unauthorized = new ApiResponse<T>(401, new ApiErrorResponse ("Unauthorized"));
         [DataMember]
         public int StatusCode { get; set; }
         [DataMember]
@@ -18,19 +12,13 @@ namespace BankTransaction.Api.Models
 
         [DataMember(EmitDefaultValue = false)]
         public ApiErrorResponse ResponseException { get; set; }
-
-        [DataMember(EmitDefaultValue = false)]
-        public T Data { get; set; }
-
+   
         public ApiResponse()
         {
-
         }
-        public ApiResponse(T result, int statusCode = 200)
+        public ApiResponse(int statusCode)
         {
-            StatusCode = statusCode;
-            Data = result;
-            this.IsError = false;
+            this.StatusCode = statusCode;
         }
         public ApiResponse(int statusCode, ApiErrorResponse apiError)
         {
@@ -38,13 +26,6 @@ namespace BankTransaction.Api.Models
             this.ResponseException = apiError;
             this.IsError = true;
         }
-
-        public override string ToString()
-        {
-            return JsonConvert.SerializeObject(this).ToString();
-        }
-       
-
     }
 }
 

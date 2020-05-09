@@ -50,7 +50,7 @@ namespace BankTransaction.Web.Controllers
                     return View(GetSomeResourse(authResult.Token, RESOURCE));
                 }
                 else
-                    return View("Error", new ErrorViewModel() { Message = authResult.Errors.ToList() });
+                    return View("Error", new ErrorViewModel() { Message =JsonConvert.DeserializeObject<List<string>>( authResult.Message) });
             }
             else if (!String.IsNullOrEmpty(authResult.RefreshToken))
             {
@@ -59,8 +59,7 @@ namespace BankTransaction.Web.Controllers
             }
             else
             {
-                return View("Error", new ErrorViewModel() { Message = authResult.Errors.ToList() });
-
+                return View("Error", new ErrorViewModel() { Message = JsonConvert.DeserializeObject<List<string>>(authResult.Message) });
             }
         }
 
@@ -71,10 +70,10 @@ namespace BankTransaction.Web.Controllers
             return result;
         }
 
-        private ApiResponse<List<CompanyDTO>> GetSomeResourse(string token, string resource)
+        private ApiDataResponse<List<CompanyDTO>> GetSomeResourse(string token, string resource)
         {
-            var  restResponce = restApiHelper.Execute<ApiResponse<List<CompanyDTO>>>(resource, null,  Method.GET,null);
-            //var jsonResponse = JsonConvert.DeserializeObject<ApiResponse<List<CompanyDTO>>>(restResponce);
+            var  restResponce = restApiHelper.Execute<ApiDataResponse<List<CompanyDTO>>>(resource, null,  Method.GET,null);
+            //var jsonResponse = JsonConvert.DeserializeObject<ApiDataResponse<List<CompanyDTO>>>(restResponce);
             return restResponce;
         }
         //                    new JsonSerializerSettings

@@ -7,16 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="AngularConfig\**" />
+    <Content Remove="AngularConfig\**" />
+    <EmbeddedResource Remove="AngularConfig\**" />
+    <None Remove="AngularConfig\**" />
+    <TypeScriptCompile Remove="AngularConfig\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="Localization\Languages\ApiResponcesShared.en-Us.Res.json" />
     <Content Remove="Localization\Languages\ApiResponcesShared.ru-RU.Res.json" />
     <Content Remove="Localization\Languages\Controllers.HomeController.en-US.Res.json" />
     <Content Remove="Localization\Languages\Controllers.HomeController.ru-RU.Res.json" />
     <Content Remove="Localization\Languages\Views.Shared._SelectLanguagePartial.ru-RU.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="AngularConfig\src\app\AuthService.ts" />
-    <None Remove="AngularConfig\src\auth\AuthGuard.ts" />
   </ItemGroup>
 
   <ItemGroup>

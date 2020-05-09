@@ -27,7 +27,7 @@ namespace BankTransaction.Api.Controllers
 
         // GET /api/Person
         [HttpGet]
-        public async Task<ApiResponse<PaginatedList<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters = null, [FromQuery]SearchPersonQuery personQuery = null)
+        public async Task<ApiDataResponse<PaginatedList<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters = null, [FromQuery]SearchPersonQuery personQuery = null)
         {
 
             var paginatedModel = PaginatedModelPersonToQueryList.Instance.MapBack(pageQueryParameters);
@@ -35,44 +35,44 @@ namespace BankTransaction.Api.Controllers
             var filter = PersonFilterToSearchMapper.Instance.MapBack(personQuery);
             var allPersons = await personService.GetAllPersons(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
             var persons = new PaginatedList<PersonDTO>(allPersons, paginatedModel);
-            return new ApiResponse<PaginatedList<PersonDTO>>(persons);
+            return new ApiDataResponse<PaginatedList<PersonDTO>>(persons);
         }
         // PUT /api/Person/{id}
         [HttpPut("{id}")]
-        public async Task<ApiResponse<int>> UpdatePerson(int id, PersonDTO person)
+        public async Task<ApiDataResponse<int>> UpdatePerson(int id, PersonDTO person)
         {
             if (id != person.Id)
             {
-                return ApiResponse<int>.BadRequest;
+                return ApiDataResponse<int>.BadRequest;
             }
             var currentPerson = await personService.GetPersonById(id);
             if (currentPerson == null)
             {
-                return ApiResponse<int>.NotFound;
+                return ApiDataResponse<int>.NotFound;
             }
             await personService.UpdatePerson(person);
-            return new ApiResponse<int>(id);
+            return new ApiDataResponse<int>(id);
 
         }
 
         // POST: api/APerson
         [HttpPost]
-        public async Task<ApiResponse<PersonDTO>> AddPerson(PersonDTO person)
+        public async Task<ApiDataResponse<PersonDTO>> AddPerson(PersonDTO person)
         {
             await personService.AddPerson(person);
-            return new ApiResponse<PersonDTO>(person);
+            return new ApiDataResponse<PersonDTO>(person);
         }
         // DELETE /api/Person/{id}
         [HttpDelete("{id}")]
-        public async Task<ApiResponse<PersonDTO>> DeletePerson(int id)
+        public async Task<ApiDataResponse<PersonDTO>> DeletePerson(int id)
         {
             var person = await personService.GetPersonById(id);
             if (person == null)
             {
-                return ApiResponse<PersonDTO>.NotFound;
+                return ApiDataResponse<PersonDTO>.NotFound;
             }
             await personService.DeletePerson(person);
-            return new ApiResponse<PersonDTO>(person);
+            return new ApiDataResponse<PersonDTO>(person);
         }
 
     }

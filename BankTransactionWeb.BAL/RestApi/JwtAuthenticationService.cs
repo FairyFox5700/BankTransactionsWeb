@@ -38,7 +38,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
                 {
                     return new AuthResult()
                     {
-                        Errors = new List<string> { ErrorMessage.LoginAttemptNotSuccesfull.GetDescription()},
+                        Message=  ErrorMessage.LoginAttemptNotSuccesfull.GetDescription(),
                         MessageType = nameof(ErrorMessage.LoginAttemptNotSuccesfull)
                     };
                 }
@@ -46,7 +46,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             }
             return new AuthResult()
             {
-                Errors = new List<string> { ErrorMessage.EmailNotValid.GetDescription() },
+                Message=ErrorMessage.EmailNotValid.GetDescription(),
                 MessageType = nameof(ErrorMessage.EmailNotValid)
             };
         }
@@ -76,10 +76,10 @@ namespace BankTransaction.BAL.Implementation.RestApi
                         }
                         else
                         {
-                            return new AuthResult
-                            {
-                                Errors = result.Errors.Select(x => x.Description).ToList()
-                            };
+                            //Як буть з не своїми помилками??
+                            var apiResult = new AuthResult();
+                            apiResult.GetErrors(result.Errors.Select(x => x.Description).ToList());
+                            return apiResult;
                         }
                     }
 
@@ -87,7 +87,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
                     {
                         return new AuthResult
                         {
-                            Errors = new List<string> { ErrorMessage.EmailIsAlreadyInUse.GetDescription() },
+                            Message =  ErrorMessage.EmailIsAlreadyInUse.GetDescription(),
                             MessageType = nameof(ErrorMessage.EmailIsAlreadyInUse)
                         };
                     }

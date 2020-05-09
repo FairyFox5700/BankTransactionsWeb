@@ -69,10 +69,10 @@ namespace BankTransaction.Api.Helpers
             {
                 return result;
             }
-            var apiResponce = new ApiResponse<ApiErrorResponse>(statusCode, new ApiErrorResponse (message: "Your request cannot be processed. Please contact a support." ));
+            var apiResponce = ApiDataResponse < ApiErrorResponse >.ServerError;
             context.Response.StatusCode = statusCode;
             if (statusCode == (int)HttpStatusCode.Unauthorized)
-                apiResponce = ApiResponse<ApiErrorResponse>.Unauthorized;
+                apiResponce = ApiDataResponse<ApiErrorResponse>.Unauthorized;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
         }
@@ -96,7 +96,7 @@ namespace BankTransaction.Api.Helpers
                     apiErrorResponce.ValidationErrors.Add(errorModel);
                 }
             }
-            var apiResponce = new ApiResponse<ApiErrorResponse>(statusCode, apiErrorResponce);
+            var apiResponce = new ApiDataResponse<ApiErrorResponse>(statusCode, apiErrorResponce);
             context.Response.StatusCode = statusCode;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
@@ -114,7 +114,7 @@ namespace BankTransaction.Api.Helpers
                 bodyText = body.ToString();
             if (statusCode == StatusCodes.Status401Unauthorized)
             {
-                jsonString = JsonConvert.SerializeObject(ApiResponse<ApiErrorResponse>.Unauthorized);
+                jsonString = JsonConvert.SerializeObject(ApiDataResponse<ApiErrorResponse>.Unauthorized);
                 return context.Response.WriteAsync(jsonString);
             }
             else
@@ -159,7 +159,7 @@ namespace BankTransaction.Api.Helpers
                 context.Response.StatusCode = code;
             }
 
-            var apiResponce = new ApiResponse<ApiErrorResponse>(code, apiErrorResponce);
+            var apiResponce = new ApiDataResponse<ApiErrorResponse>(code, apiErrorResponce);
             var json = JsonConvert.SerializeObject(apiResponce);
             logger.LogError($"An exception occured {exception.Message}");
             return context.Response.WriteAsync(json);

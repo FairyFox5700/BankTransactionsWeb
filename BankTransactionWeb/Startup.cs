@@ -5,6 +5,7 @@ using BankTransaction.DAL.Implementation.Extensions;
 using BankTransaction.Entities;
 using BankTransaction.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -40,10 +41,7 @@ namespace BankTransaction.Web
             services.AddDistributedCache(Configuration);
             services.AddIdentiyConfig();
             services.AddJsonLocalization();
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "AngularConfig/dist";
-            });
+            services.AddViewServices();
             services.AddMvc();
         }
 
@@ -70,15 +68,6 @@ namespace BankTransaction.Web
             app.UseRequestLocalization(localizationOptions);
            
             app.UseStaticFiles();
-            //app.UseSpa(spa =>
-            //{
-            //    spa.Options.SourcePath = "AngularConfig";
-
-            //    if (env.IsDevelopment())
-            //    {
-            //        spa.UseAngularCliServer(npmScript: "start");
-            //    }
-            //});
             app.UseStatusCodePages();
 
             app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org", "http://localhost:64943")
@@ -86,23 +75,15 @@ namespace BankTransaction.Web
                             .AllowAnyMethod().AllowCredentials());
             app.UseRouting();
 
-            app.UseCookiePolicy();
-            app.Use(async (context, next) =>
+            app.UseCookiePolicy(new CookiePolicyOptions
             {
-                var token = context.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
-                if (!string.IsNullOrEmpty(token))
-                    context.Request.Headers.Add("Authorization", "Bearer " + token);
-                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-                context.Response.Headers.Add("X-Xss-Protection", "1");
-                context.Response.Headers.Add("X-Frame-Options", "DENY");
-                //https://habr.com/ru/post/468401/
-
-                await next();
+                MinimumSameSitePolicy = SameSiteMode.Strict,
+                HttpOnly = HttpOnlyPolicy.Always,
+                Secure = CookieSecurePolicy.Always
             });
+            app.UseSecurityJwt();
             app.UseAuthentication();
             app.UseAuthorization();
-
-            //MyIdentityDataInitializer.SeedData(userManager, roleManager, context);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

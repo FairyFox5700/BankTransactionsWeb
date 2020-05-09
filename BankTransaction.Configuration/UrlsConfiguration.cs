@@ -10,16 +10,15 @@ using System.Threading.Tasks;
 
 namespace BankTransaction.Configuration
 {
-    public class UrlsConfiguration
+    public static class API
     {
-        public class AccountOperations
+        public static class Account
         {
-            public static string GetItemsById(IEnumerable<int> ids) => $"/api/v1/catalog/items?ids={string.Join(',', ids)}";
-            public static string GetOrderDraft() => "/api/v1/orders/draft";
-            public static string GetAllAcoounts() => "account";
+           
+            public static string Acounts => "account";
+            //public static string DeleteAccount => "account/delete";
         }
-        public string Account  { get; set; } = "account";
-        public  string DeleteAccount { get; set; } = "account/delete";
+       
     }
 
     public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler

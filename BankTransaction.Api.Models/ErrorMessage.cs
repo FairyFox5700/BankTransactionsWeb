@@ -1,14 +1,34 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net;
+using System.Reflection;
 using System.Text;
 
 namespace BankTransaction.Api.Models
 {
     public enum ErrorMessage
     {
+        [Description("Non authorized attemзt to get resource")]
+        [HttpStatusCode(401)]
+        Unauthorized,
+        [Description("Forbidden")]
+        [HttpStatusCode(403)]
+        Forbidden,
+        [Description("Your request can not be proceeded")]
+        [HttpStatusCode(400)]
+        BadRequest,
+        [Description("The object you are trying to find was not found")]
+        [HttpStatusCode(404)]
+        NotFound,
+        [Description("Your request cannot be processed. Please contact a support.")]
+        [HttpStatusCode(500)]
+        ServerError,
         [Description("Login attempt is not successful")]
-        LoginAttemptNotSuccesfull ,
+        LoginAttemptNotSuccesfull,
         [Description("User with this email does not exists.")]
         EmailNotValid,
         [Description("User with this email is already registered")]
@@ -27,6 +47,37 @@ namespace BankTransaction.Api.Models
         TokenIdMismatch
 
     }
+    public class HttpStatusCodeAttribute : Attribute
+    {
+        public int StatusCode { get; private set; }
 
-  
+        public HttpStatusCodeAttribute(int statusCode)
+        {
+            StatusCode = statusCode;
+        }
+    }
+        //public class StatusCodeAtribute : Attribute, IResultFilter
+        //{
+        //    public void OnResultExecuted(ResultExecutedContext context)
+        //    {
+
+        //    }
+        //}
+       
+
+    //    public void OnResultExecuting(ResultExecutingContext context)
+    //    {
+    //        var objectResult = context.Result as ObjectResult;
+    //        var result = objectResult?.Value as ApiDataResponse<int>;
+    //        if( result==null)
+    //        {
+    //            return;
+    //        }
+    //        var statusConverter = context.HttpContext.RequestServices.GetRequiredService<IConverterService<int , ResponceMessage>>
+    //    }
+    //}
+
+    //HttpStatus
+
+
 }
