@@ -19,10 +19,10 @@ namespace BankTransaction.Web.Controllers
 {
     public class TestController : Controller
     {
-        private readonly RestApiHelper restApiHelper;
+        private readonly IRestApiHelper restApiHelper;
         private readonly IStringLocalizer<ApiResponcesShared> sharedLocalizer;
 
-        public TestController(IJwtAuthenticationService jwtAuthenticationService, JWTSecurityService securityService, RestApiHelper restApiHelper,IStringLocalizer<ApiResponcesShared> sharedLocalizer)
+        public TestController(IJwtAuthenticationService jwtAuthenticationService, JWTSecurityService securityService, IRestApiHelper restApiHelper,IStringLocalizer<ApiResponcesShared> sharedLocalizer)
         {
             this.jwtAuthenticationService = jwtAuthenticationService;
             this.restApiHelper = restApiHelper;
@@ -73,21 +73,15 @@ namespace BankTransaction.Web.Controllers
 
         private ApiResponse<List<CompanyDTO>> GetSomeResourse(string token, string resource)
         {
-            var  restResponce = restApiHelper.Execute<RestResponse>(resource, null, token, null);
-            //var deserial = new JsonDeserializer();
-
-            //var jsonResponse = deserial.Deserialize<ApiResponse<List<CompanyDTO>>>(restResponce);
-            var jsonResponse = JsonConvert.DeserializeObject<ApiResponse<List<CompanyDTO>>>(restResponce,
-                    new JsonSerializerSettings
-                    {
-                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
-                    });
-            return jsonResponse;
-            //var apiResponce = restRequest as ApiResponse;
-            //string message = JsonConvert.DeserializeObject<ApiResponse<IEnumerable<CompanyDTO>>>(restRequest.Data.ToString());
-            //return message;
+            var  restResponce = restApiHelper.Execute<ApiResponse<List<CompanyDTO>>>(resource, null,  Method.GET,null);
+            //var jsonResponse = JsonConvert.DeserializeObject<ApiResponse<List<CompanyDTO>>>(restResponce);
+            return restResponce;
         }
+        //                    new JsonSerializerSettings
+    //                {
+    //                    PreserveReferencesHandling = PreserveReferencesHandling.Objects
+    //}
 
 
-    }
+}
 }

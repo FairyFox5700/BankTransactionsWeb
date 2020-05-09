@@ -1,30 +1,28 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Entities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using BankTransaction.Api.Models;
-using System.Threading.Tasks;
-using System.Linq;
-
-using BankTransaction.Models.DTOModels;
+﻿using BankTransaction.Api.Models;
+using BankTransaction.Api.Models.Mapper;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
+using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Abstract.RestApi;
-using BankTransaction.Api.Models.Mapper;
+using BankTransaction.Entities;
 using BankTransaction.Models.Validation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BankTransaction.Api.Controllers
 {
-   // [ServiceFilter(typeof(ValidationFilter))]
+    // [ServiceFilter(typeof(ValidationFilter))]
     public class AuthController : BaseApiController
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly IJwtAuthenticationService authService;
         private readonly IJwtSecurityService jwtService;
 
-        public AuthController(UserManager<ApplicationUser> userManager,  IJwtAuthenticationService service, IJwtSecurityService jwtService)
+        public AuthController(UserManager<ApplicationUser> userManager, IJwtAuthenticationService service, IJwtSecurityService jwtService)
         {
             this.userManager = userManager;
             this.authService = service;
@@ -57,7 +55,7 @@ namespace BankTransaction.Api.Controllers
 
         [HttpPost]
         [Route("refreshToken")]
-        public async Task<ApiResponse<AuthSuccesfullModel>> RefreshToken([FromBody]AuthSuccesfullModel model )
+        public async Task<ApiResponse<AuthSuccesfullModel>> RefreshToken([FromBody]AuthSuccesfullModel model)
         {
 
             var tokenDto = RefreshTokenDtoToAuthSuccesMapper.Instance.MapBack(model);
@@ -72,7 +70,7 @@ namespace BankTransaction.Api.Controllers
             }
             else
             {
-                return new ApiResponse<AuthSuccesfullModel> (400, new ApiErrorResponse(message: result.Errors?.FirstOrDefault()));
+                return new ApiResponse<AuthSuccesfullModel>(400, new ApiErrorResponse(message: result.Errors?.FirstOrDefault()));
             }
         }
 
@@ -92,7 +90,7 @@ namespace BankTransaction.Api.Controllers
             }
             else
             {
-                return new ApiResponse<AuthResult>(400, new ApiErrorResponse( message: result.GetErrors));
+                return new ApiResponse<AuthResult>(400, new ApiErrorResponse(message: result.GetErrors));
             }
 
         }

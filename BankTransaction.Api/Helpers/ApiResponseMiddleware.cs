@@ -71,6 +71,8 @@ namespace BankTransaction.Api.Helpers
             }
             var apiResponce = new ApiResponse<ApiErrorResponse>(statusCode, new ApiErrorResponse (message: "Your request cannot be processed. Please contact a support." ));
             context.Response.StatusCode = statusCode;
+            if (statusCode == (int)HttpStatusCode.Unauthorized)
+                apiResponce = ApiResponse<ApiErrorResponse>.Unauthorized;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
         }
@@ -130,7 +132,7 @@ namespace BankTransaction.Api.Helpers
         private Task ReturnApiErrorResponce(HttpContext context,string body)
         {
             var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResponse>(body);
-            if (apiErrorResponce!=null && (apiErrorResponce.Message!=null||apiErrorResponce.ValidationErrors.Any()))
+            if (apiErrorResponce!=null && (apiErrorResponce.Message!=null))
             {
                 return context.Response.WriteAsync(body);
             }

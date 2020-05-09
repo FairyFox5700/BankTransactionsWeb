@@ -6,7 +6,10 @@ using BankTransaction.Entities;
 using BankTransaction.Web.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,12 +19,14 @@ namespace BankTransaction.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -31,10 +36,15 @@ namespace BankTransaction.Web
             services.AddMapperViewConfiguration();
             services.AddDALServices(Configuration);
             services.AddBalServices(Configuration);
-            services.AddJwtAuthentication(Configuration);
+            services.AddJwtAuthentication(Configuration,Environment);
             services.AddDistributedCache(Configuration);
             services.AddIdentiyConfig();
             services.AddJsonLocalization();
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "AngularConfig/dist";
+            });
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,13 +62,23 @@ namespace BankTransaction.Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                app.UseSpaStaticFiles();
                 app.UseHsts();
             }
+
             var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
             app.UseRequestLocalization(localizationOptions);
-
-            //app.UseCors(c=>c.SetIsOriginAllowed(x=>_=true).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+           
             app.UseStaticFiles();
+            //app.UseSpa(spa =>
+            //{
+            //    spa.Options.SourcePath = "AngularConfig";
+
+            //    if (env.IsDevelopment())
+            //    {
+            //        spa.UseAngularCliServer(npmScript: "start");
+            //    }
+            //});
             app.UseStatusCodePages();
 
             app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org", "http://localhost:64943")
@@ -66,6 +86,19 @@ namespace BankTransaction.Web
                             .AllowAnyMethod().AllowCredentials());
             app.UseRouting();
 
+            app.UseCookiePolicy();
+            app.Use(async (context, next) =>
+            {
+                var token = context.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
+                if (!string.IsNullOrEmpty(token))
+                    context.Request.Headers.Add("Authorization", "Bearer " + token);
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("X-Xss-Protection", "1");
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                //https://habr.com/ru/post/468401/
+
+                await next();
+            });
             app.UseAuthentication();
             app.UseAuthorization();
 

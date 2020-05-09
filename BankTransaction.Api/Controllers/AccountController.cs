@@ -11,11 +11,12 @@ using System.Net;
 using BankTransaction.Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using BankTransaction.Api.Models.Queries;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace BankTransaction.Api.Controllers
 {
     //[Authorize]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AccountController : BaseApiController
     {
         private readonly IAccountService accountService;
@@ -29,6 +30,7 @@ namespace BankTransaction.Api.Controllers
         // GET /api/Account
         [HttpGet]
         [Cached(2000)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ApiResponse<IEnumerable<AccountDTO>>> GetAllAccounts([FromQuery]PageQueryParameters pageQueryParameters)
         {
             var accounts = (await accountService.GetAllAccounts(pageQueryParameters.PageNumber, pageQueryParameters.PageSize)).ToList();

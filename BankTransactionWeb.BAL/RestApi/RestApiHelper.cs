@@ -1,4 +1,6 @@
 ﻿using BankTransaction.Api.Models;
+using BankTransaction.BAL.Abstract.RestApi;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
@@ -11,31 +13,42 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace BankTransaction.BAL.Implementation.RestApi
 {
-    public class RestApiHelper
+    public class RestApiHelper: IRestApiHelper
     {
         static readonly string apiUrl = ConfigurationManager.AppSettings["api_url"] ?? "http://localhost:64943/api/";
         private readonly IRestClient Client;
-        public RestApiHelper()
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public RestApiHelper(IHttpContextAccessor httpContextAccessor)
         {
             Client = new RestClient(apiUrl);
+            Client.CookieContainer = new System.Net.CookieContainer();
+            this.httpContextAccessor = httpContextAccessor;
         }
-        private static RestRequest ConstructRequest(string resource, object body, string token,object parameters)
+        private RestRequest ConstructRequest(string resource, object body,  Method method, object parameters, string token = null)//string token,
         {
-            var request = new RestRequest(apiUrl+resource, body == null ? Method.GET : Method.POST)
+            var request = new RestRequest(apiUrl+resource, method)
             {
                 RequestFormat = DataFormat.Json
             };
-            if (!String.IsNullOrEmpty( token))
-            {
+            
+            //if (!String.IsNullOrEmpty( token))
+            //{
+            //string token = httpContextAccessor.HttpContext.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
+            if (token != null)
                 request.AddHeader("Authorization", "Bearer " + token);
-                request.AddHeader("cache-control", "no-cache");
+            //else
+            //    return ApiResponse<ApiErrorResponse>.Unauthorized;
+
+            request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("Accept", "application/json");
 
-            }
+            //}
             if (body != null)
                 request.AddJsonBody(body);
             if (parameters != null)
@@ -60,25 +73,48 @@ namespace BankTransaction.BAL.Implementation.RestApi
             return keyValue;
         }
 
-        public string Execute<T>(string resource, object body, string token, object parameters = null)
+        public T Execute<T>(string resource, object body, Method method, object parameters = null)
         {
-            var request = ConstructRequest(resource, body,token ,parameters);
+            var request = ConstructRequest(resource, body, method,parameters);
             request.JsonSerializer = NewtonsoftJsonSerializer.Default;
             var responce = Client.Execute<T>(request);
             ValidateResponce(responce);
             var result = responce.Content;
-            return result;
+            var jsonResponse = JsonConvert.DeserializeObject<T>(result);
+            return jsonResponse;
         }
-        public string ExecuteApiRequest<T>(string resource, object body, string token, object parameters = null)
+
+        public async Task<T> ExecuteAsync<T>(string resource, object body,  Method method, object parameters = null, string token = null)
         {
-            //ApiResponse 
-            var request = ConstructRequest(resource, body, token, parameters);
+            var request = ConstructRequest(resource, body, method, parameters,token);
             request.JsonSerializer = NewtonsoftJsonSerializer.Default;
-            //request.AddHeader("Barear", token);
+            var responce =  await Client.ExecuteAsync<T>(request);
+            ValidateResponce(responce);
+            var result = responce.Content;
+            var jsonResponse = JsonConvert.DeserializeObject<T>(result);
+            return jsonResponse;
+        }
+        
+        //https://stackoverflow.com/questions/37329354/how-to-use-ihttpcontextaccessor-in-static-class-to-set-cookies
+        public async Task<T> ExecuteApiRequestAsync<T>(string resource,  object body,  Method method, object parameters = null)
+        {
+            var request = ConstructRequest(resource, body,  method,parameters);
+            request.JsonSerializer = NewtonsoftJsonSerializer.Default;
+            IRestResponse<ApiResponse<T>> responce =await  Client.ExecuteAsync<ApiResponse<T>>(request);
+            ValidateApiResponce(responce);
+            var result = responce.Content;
+            var jsonResponse = JsonConvert.DeserializeObject<ApiResponse<T>>(result);
+            return jsonResponse.Data;
+        } 
+        public T ExecuteApiRequest<T>(string resource, object body,  Method method, object parameters = null)
+        {
+            var request = ConstructRequest(resource, body,method,parameters);
+            request.JsonSerializer = NewtonsoftJsonSerializer.Default;
             IRestResponse<ApiResponse<T>> responce = Client.Execute<ApiResponse<T>>(request);
             ValidateApiResponce(responce);
             var result = responce.Content;
-            return result;
+            var jsonResponse = JsonConvert.DeserializeObject<ApiResponse<T>>(result);
+            return jsonResponse.Data;
         }
 
         private void ValidateApiResponce<T>(IRestResponse<ApiResponse<T>> responce)
