@@ -1,8 +1,8 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
+﻿using BankTransaction.Configuration;
+using BankTransaction.Models.DTOModels;
 using Microsoft.AspNetCore.Identity;
-using BankTransaction.Configuration;
 
-namespace BankTransaction.Models.Mapper
+namespace BankTransaction.Models.Mapper.MpaperOld
 {
     public class RoleDTOToIdentityRoleMapper : IMapper<RoleDTO, IdentityRole>
     {
@@ -12,12 +12,12 @@ namespace BankTransaction.Models.Mapper
         {
             return new IdentityRole()
             {
-                Id = source.Id,
+                //Id = source.Id,
                 Name = source.Name
             };
         }
 
-        public RoleDTO MapBack(IdentityRole destination)
+        public  RoleDTO MapBack(IdentityRole destination)
         {
             return new RoleDTO()
             {

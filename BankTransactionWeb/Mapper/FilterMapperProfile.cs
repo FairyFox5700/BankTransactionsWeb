@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models;
-using BankTransaction.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Web.ViewModel;
 
 namespace BankTransaction.Web.Mapper
 {

@@ -1,9 +1,7 @@
 ﻿
 using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.Mapper;
 using BankTransaction.Web.Mapper.Filters;
-using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +9,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Web.Mapper.OldMapper;
 
 namespace BankTransaction.Web.Controllers
 {
@@ -50,7 +50,10 @@ namespace BankTransaction.Web.Controllers
             {
                 var shareholderVM = new AddShareholderViewModel()
                 {
-                    Person = person,
+                    //Person = person,
+                    PersonSurName = person.Surname,
+                    PersonName = person.Name,
+                    PersonLastName = person.LastName,
                     PersonId = id,
                     Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name")
                 };
@@ -91,7 +94,7 @@ namespace BankTransaction.Web.Controllers
             {
                 var shareholderModel = UpdateShareholderToShareholderDTOMapper.Instance.MapBack(currentShareholder);
                 shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
-                shareholderModel.Person = await personService.GetPersonById(shareholderModel.PersonId);
+               // shareholderModel.PersonId = (await personService.GetPersonById(shareholderModel.PersonId)).Id;
                 return View(shareholderModel);
             }
 

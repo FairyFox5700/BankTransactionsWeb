@@ -2,13 +2,13 @@
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract.RestApi;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using RestSharp;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.Services
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace BankTransaction.BAL.Implementation.DTOModels
+namespace BankTransaction.Models.DTOModels
 {
     public class AccountDTO:BaseModel
     {

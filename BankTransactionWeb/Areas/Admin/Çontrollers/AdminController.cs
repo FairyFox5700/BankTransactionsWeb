@@ -1,19 +1,16 @@
-﻿using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BankTransaction.Web.Areas.Admin.Models.ViewModels;
+using BankTransaction.BAL.Abstract;
 using BankTransaction.Models.Validation;
-using BankTransaction.Web.Models;
+using BankTransaction.Web.Areas.Admin.Models.ViewModels;
 using BankTransaction.Web.Mapper.Admin;
+using BankTransaction.Web.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace BankTransaction.Web.Areas.Admin.Controllers
+namespace BankTransaction.Web.Areas.Admin.Çontrollers
 {
     [Authorize(Roles = "Admin")]
     [Area("Admin")]
@@ -56,7 +53,7 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAllRoles()
         {
-            var roles = adminService.GetAllRoles().Select(e => RoleDTOToListRoleMapper.Instance.Map(e)).ToList();
+            var roles = adminService.GetAllRoles().ToList();//Select(e => RoleDTOToListRoleMapper.Instance.Map(e)).REMOVE
             return View(roles);
         }
 
@@ -112,10 +109,11 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateUsersInRole(List<UsersInRoleViewModel> model, string roleId)
         {
             ViewBag.roleId = roleId;
-            if (!ModelState.IsValid)
-            {
-                return View(roleId);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(model);
+            //    //return RedirectToAction(nameof(UpdateUsersInRole)), "Admin", new { roleId = roleId }); 
+            //}
             var currentRole = await adminService.GetRoleById(roleId);
             if (currentRole == null)
             {

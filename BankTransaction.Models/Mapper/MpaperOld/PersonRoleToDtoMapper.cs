@@ -1,9 +1,9 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
+﻿using System;
 using BankTransaction.Configuration;
 using BankTransaction.Entities;
-using System;
+using BankTransaction.Models.DTOModels;
 
-namespace BankTransaction.Models.Mapper
+namespace BankTransaction.Models.Mapper.MpaperOld
 {
     public class PersonRoleToDtoMapper : IMapper<PersonInRoleDTO, Person>
     {

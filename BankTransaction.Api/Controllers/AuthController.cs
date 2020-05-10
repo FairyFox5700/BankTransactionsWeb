@@ -86,17 +86,11 @@ namespace BankTransaction.Api.Controllers
             {
                 //remove
                 HttpContext.Response.Cookies.Delete("BankWeb.AspNetCore.ProductKey");
-                HttpContext.Response.Cookies.Delete("BankWeb.AspNetCore.ProductKeyFree");
                 HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKey", result.Token,
               new CookieOptions
               {
                   MaxAge = TimeSpan.FromMinutes(60)
               });
-                HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKeyFree", result.RefreshToken,
-               new CookieOptions
-               {
-                   MaxAge = TimeSpan.FromMinutes(60)
-               });
 
                 return new ApiDataResponse<AuthSuccesfullModel>(new AuthSuccesfullModel
                 {
@@ -110,6 +104,21 @@ namespace BankTransaction.Api.Controllers
             }
         }
 
+        //[HttpPost]
+        //[Route("revokeToken")]
+        //public void RevokeRefreshToken(string token)
+        //{
+        //    var refreshToken = GetRefreshToken(token);
+        //    if (refreshToken == null)
+        //    {
+        //        throw new Exception("Refresh token was not found.");
+        //    }
+        //    if (refreshToken.Revoked)
+        //    {
+        //        throw new Exception("Refresh token was already revoked.");
+        //    }
+        //    refreshToken.Revoked = true;
+        //}
 
         [HttpPost]
         [Route("register")]

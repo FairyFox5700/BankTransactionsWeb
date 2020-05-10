@@ -1,9 +1,9 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Models.Validation;
+﻿using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.BAL.Abstract
 {

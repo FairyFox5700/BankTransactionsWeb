@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models;
 using BankTransaction.Models.DTOModels;
 
-namespace BankTransaction.Api.Models.Mapper
+namespace BankTransaction.Api.Mapper
 {
     public class ApiModelToBissnessMap : Profile
     {

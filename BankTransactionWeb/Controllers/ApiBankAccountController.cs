@@ -2,7 +2,6 @@
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Abstract.RestApi;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Configuration;
 using BankTransaction.Web.Mapper;
 using BankTransaction.Web.Services;
@@ -13,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using RestSharp;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BankTransaction.Api.Models.Responces;
+using BankTransaction.Web.Mapper.OldMapper;
 
 namespace BankTransaction.Web.Controllers
 {
@@ -35,7 +36,7 @@ namespace BankTransaction.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAccounts(PageQueryParameters pageQueryParameters = null)
+        public async Task<IActionResult> GetAllAccounts(Api.Models.Queries.PageQueryParameters pageQueryParameters = null)
         {
             string token = httpContextAccessor.HttpContext.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
             var token2 = httpContextAccessor.HttpContext.Response.Cookies;
@@ -44,8 +45,7 @@ namespace BankTransaction.Web.Controllers
             var validateReult = ValidateApiResult(allAccount);
             if (validateReult != null)
             {
-                return View(allAccount.Data);
-
+              return View( allAccount.Data);
             }
             return validateReult;
         }
@@ -61,7 +61,7 @@ namespace BankTransaction.Web.Controllers
                     Person = person,
                     PersonId = id
                 };
-                return View(accountVM);
+              return View( accountVM); 
             };
             return NotFound("Sorry. Current user not found");
         }

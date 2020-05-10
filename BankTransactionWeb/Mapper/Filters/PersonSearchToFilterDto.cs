@@ -1,10 +1,10 @@
 ﻿using BankTransaction.Configuration;
 using BankTransaction.Models;
-using BankTransaction.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Web.ViewModel;
 
 namespace BankTransaction.Web.Mapper.Filters
 {

@@ -1,10 +1,11 @@
 ﻿using BankTransaction.Api.Models;
 using BankTransaction.Api.Models.Queries;
-using BankTransaction.BAL.Implementation.DTOModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Api.Models.Responces;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.Services
 {

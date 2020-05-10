@@ -1,7 +1,7 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Configuration;
+﻿using BankTransaction.Configuration;
 using BankTransaction.Models;
-using PageQueryParameters = BankTransaction.Web.Models.PageQueryParameters;
+using BankTransaction.Models.DTOModels;
+using PageQueryParameters = BankTransaction.Web.ViewModel.PageQueryParameters;
 
 namespace BankTransaction.Web.Mapper.Filters
 {

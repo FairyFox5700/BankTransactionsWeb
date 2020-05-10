@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using BankTransaction.Api.Models;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Abstract.RestApi;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Mapper;
+using BankTransaction.Models.Mapper.MpaperOld;
 using BankTransaction.Models.Validation;
 using Microsoft.Extensions.Logging;
 

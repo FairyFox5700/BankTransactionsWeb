@@ -1,9 +1,9 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.ViewModel
 {

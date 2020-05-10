@@ -1,10 +1,10 @@
 ﻿using BankTransaction.Api.Models.Queries;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Configuration;
 using BankTransaction.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Api.Models.Mapper
 {

@@ -1,4 +1,4 @@
-﻿@model PaginatedList<ShareholderDTO>
+﻿@model PaginatedList<BankTransaction.Models.DTOModels.ShareholderDTO>
 @{
 
     ViewData["Title"] = "All shareholders";
@@ -53,9 +53,9 @@
                             {
                                 <tr>
                                     <th scope="row">@(ViewBag.Index += 1)</th>
-                                    <td>@shareholder.Person?.Name </td>
-                                    <td>@shareholder.Person?.Surname </td>
-                                    <td>@shareholder.Person?.LastName</td>
+                                    <td>@shareholder.PersonName </td>
+                                    <td>@shareholder.PersonSurName </td>
+                                    <td>@shareholder.PersonLastName</td>
                                     <td>@shareholder.CompanyName </td>
                                     <td>
                                         <button class="btn-primary" asp-action="UpdateShareholder" asp-controller="Shareholder" asp-route-id="@shareholder.Id">Update</button>

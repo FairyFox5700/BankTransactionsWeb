@@ -1,11 +1,7 @@
-﻿using BankTransaction.Api.Models;
-using BankTransaction.Configuration;
+﻿using BankTransaction.Configuration;
 using BankTransaction.Models.Validation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace BankTransaction.Models.Mapper
+namespace BankTransaction.Api.Models.Mapper
 {
     public class AuthResultToApiErrorResponceMapper : IMapper<AuthResult, ApiErrorResponse>
     {

@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
-namespace BankTransaction.Api.Models
+namespace BankTransaction.Api.Models.Responces
 {
 
 

@@ -1,10 +1,8 @@
 ﻿using BankTransaction.Api.Models;
 using BankTransaction.BAL.Abstract.RestApi;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.BAL.Implementation.RestApi;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
-using BankTransaction.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
@@ -14,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Api.Models.Responces;
+using BankTransaction.Web.Localization;
+using BankTransaction.Web.ViewModel;
 
 namespace BankTransaction.Web.Controllers
 {

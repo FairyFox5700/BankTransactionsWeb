@@ -1,9 +1,9 @@
 using BankTransaction.BAL.Implementation.Extensions;
-using BankTransaction.Configuration.Extension;
 using BankTransaction.DAL.Implementation.Core;
 using BankTransaction.DAL.Implementation.Extensions;
 using BankTransaction.Entities;
 using BankTransaction.Web.Extensions;
+using BankTransaction.Web.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
@@ -42,7 +42,7 @@ namespace BankTransaction.Web
             services.AddIdentiyConfig();
             services.AddJsonLocalization();
             services.AddViewServices();
-            services.AddMvc();
+            services.AddMvc(options => options.Filters.Add(typeof(ExceptionHandlerFilter)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,7 +59,7 @@ namespace BankTransaction.Web
 
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("Home/Error");
                 app.UseSpaStaticFiles();
                 app.UseHsts();
             }
@@ -69,18 +69,19 @@ namespace BankTransaction.Web
            
             app.UseStaticFiles();
             app.UseStatusCodePages();
+            //app.UseStatusCodePagesWithReExecute("/Error/{statusCode}");
 
             app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org", "http://localhost:64943")
                             .AllowAnyHeader()
                             .AllowAnyMethod().AllowCredentials());
             app.UseRouting();
 
-            app.UseCookiePolicy(new CookiePolicyOptions
-            {
-                MinimumSameSitePolicy = SameSiteMode.Strict,
-                HttpOnly = HttpOnlyPolicy.Always,
-                Secure = CookieSecurePolicy.Always
-            });
+            //app.UseCookiePolicy(new CookiePolicyOptions
+            //{
+            //    MinimumSameSitePolicy = SameSiteMode.Strict,
+            //    HttpOnly = HttpOnlyPolicy.None,//only for devepoment
+            //    Secure = CookieSecurePolicy.Always
+            //});
             app.UseSecurityJwt();
             app.UseAuthentication();
             app.UseAuthorization();

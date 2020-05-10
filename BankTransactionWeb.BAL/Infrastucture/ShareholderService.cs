@@ -1,6 +1,5 @@
 ﻿
 using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Entities.Filter;
@@ -10,6 +9,8 @@ using BankTransaction.Models.Mapper.Filters;
 using BankTransaction.Models.Validation;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Mapper.MpaperOld;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
@@ -41,7 +42,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         {
             var companyFinded = await unitOfWork.CompanyRepository.GetById(shareholderMapped.CompanyId);
             var shareholdersOfPerson = await unitOfWork.ShareholderRepository.GetShareholderByPersonId(shareholderMapped.PersonId);
-            if (shareholdersOfPerson.Any() && shareholdersOfPerson.Where(e => e.Company == companyFinded).Any())
+            if (shareholdersOfPerson.Any() && shareholdersOfPerson.Where(e => e.Company?.Name == companyFinded?.Name).Any())
             {
                 return new ValidationModel("Current person is already shareholder of current company", true);
             }

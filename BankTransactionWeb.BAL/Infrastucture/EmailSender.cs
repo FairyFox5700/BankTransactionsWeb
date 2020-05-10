@@ -1,18 +1,16 @@
-﻿using BankTransaction.BAL.Abstract;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using BankTransaction.BAL.Abstract;
 using BankTransaction.Configuration;
 using BankTransaction.Models;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using MimeKit;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BankTransaction.BAL.Implementation
+namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class EmailSender : ISender
     {

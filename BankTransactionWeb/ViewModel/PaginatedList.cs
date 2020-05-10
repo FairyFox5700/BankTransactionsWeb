@@ -1,10 +1,7 @@
-﻿using BankTransaction.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using BankTransaction.Models;
 
-namespace BankTransaction.Web.Models
+namespace BankTransaction.Web.ViewModel
 {
     public class PaginatedList<T>
     {

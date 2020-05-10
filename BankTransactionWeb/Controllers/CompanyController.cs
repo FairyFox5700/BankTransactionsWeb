@@ -1,8 +1,6 @@
 ﻿using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.Helpers;
 using BankTransaction.Web.Mapper;
-using BankTransaction.Web.Models;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Web.Mapper.OldMapper;
 
 namespace BankTransaction.Web.Controllers
 {

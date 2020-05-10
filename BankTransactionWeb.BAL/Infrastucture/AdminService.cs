@@ -1,5 +1,4 @@
 ﻿using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
@@ -9,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Mapper.MpaperOld;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
@@ -61,7 +62,11 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
         public IEnumerable<RoleDTO> GetAllRoles()
         {
-            return unitOfWork.RoleManager.Roles.Select(e => RoleDTOToIdentityRoleMapper.Instance.MapBack(e));
+            return unitOfWork.RoleManager.Roles.Select(e => new RoleDTO()
+            {
+                Id = e.Id,
+                Name = e.Name
+            });//RoleDTOToIdentityRoleMapper.Instance.MapBack(e) REMOVE
         }
         public void Dispose()
         {
@@ -81,8 +86,11 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             {
                
                 var person = await unitOfWork.PersonRepository.GetPersonByAccount(user.Id);
+                if (person == null) continue;
                 user.Person = person;
-                var userInRole = PersonRoleToApplicationUser.Instance.MapBack(user);
+                var userInRole = PersonRoleToDtoMapper.Instance.MapBack(person);
+                userInRole.AppUserId = user.Id;
+                userInRole.UserName = user.UserName;
                 //if (userInRole == null || user.ApplicationUser == null)
                 //    continue;
                 if (await unitOfWork.UserManager.IsInRoleAsync(user, identityRole.Name))

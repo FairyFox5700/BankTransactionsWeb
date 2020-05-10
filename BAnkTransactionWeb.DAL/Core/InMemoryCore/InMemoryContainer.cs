@@ -1,10 +1,8 @@
-﻿using BankTransaction.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using BankTransaction.Entities;
 
-namespace BankTransaction.DAL.Implementation.InMemoryCore
+namespace BankTransaction.DAL.Implementation.Core.InMemoryCore
 {
     public class InMemoryContainer
     {

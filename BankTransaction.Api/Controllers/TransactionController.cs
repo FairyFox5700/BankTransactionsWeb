@@ -2,12 +2,13 @@
 using BankTransaction.Api.Models;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Api.Models.Responces;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Api.Controllers
 {

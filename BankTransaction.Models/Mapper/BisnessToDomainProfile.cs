@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using BankTransaction.Entities.Filter;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Models.Mapper
 {

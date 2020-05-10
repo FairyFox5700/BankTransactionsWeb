@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace BankTransaction.Api.Models
+namespace BankTransaction.Api.Models.Responces
 {
     [DataContract]
     public class ApiResponse

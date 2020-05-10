@@ -1,6 +1,6 @@
 ﻿using BankTransaction.Configuration;
 using BankTransaction.Models;
-using BankTransaction.Web.Models;
+using BankTransaction.Web.ViewModel;
 
 namespace BankTransaction.Web.Mapper.Filters
 {

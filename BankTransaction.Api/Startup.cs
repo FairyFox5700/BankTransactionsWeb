@@ -23,8 +23,6 @@ namespace BankTransaction.Api
             Configuration = configuration;
             Environment = environment;
         }
-
-
         private IConfiguration Configuration { get; }
 
         public IWebHostEnvironment Environment { get; }

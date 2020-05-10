@@ -1,9 +1,9 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
+﻿using System.Linq;
 using BankTransaction.Configuration;
 using BankTransaction.Entities;
-using System.Linq;
+using BankTransaction.Models.DTOModels;
 
-namespace BankTransaction.Models.Mapper
+namespace BankTransaction.Models.Mapper.MpaperOld
 {
     public class AccountEntityToDtoMapper : IMapper<Account, AccountDTO>
     {

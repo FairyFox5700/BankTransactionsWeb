@@ -1,8 +1,8 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
+﻿using BankTransaction.Configuration;
+using BankTransaction.Models.DTOModels;
 using BankTransaction.Web.ViewModel;
-using BankTransaction.Configuration;
 
-namespace BankTransaction.Web.Mapper
+namespace BankTransaction.Web.Mapper.OldMapper
 {
     public class AddShareholderToShareholderDTOMapper : IMapper<AddShareholderViewModel, ShareholderDTO>
     {
@@ -12,10 +12,12 @@ namespace BankTransaction.Web.Mapper
         {
             return new ShareholderDTO()
             {
+                PersonName = source.PersonName,
+                PersonLastName = source.PersonLastName,
+                PersonSurName = source.PersonSurName,
                 CompanyName = source.CompanyName,
-                CompanyId = source.CompanyId,
-                Person = source.Person,
                 PersonId = source.PersonId,
+                CompanyId = source.CompanyId
             };
         }
 
@@ -23,10 +25,12 @@ namespace BankTransaction.Web.Mapper
         {
             return new AddShareholderViewModel()
             {
-               CompanyName = destination.CompanyName,
-                CompanyId = destination.CompanyId,
-                Person = destination.Person,
                 PersonId = destination.PersonId,
+                CompanyId = destination.CompanyId,
+                PersonName = destination.PersonName,
+                PersonLastName = destination.PersonLastName,
+                PersonSurName = destination.PersonSurName,
+                CompanyName = destination.CompanyName
             };
         }
     }

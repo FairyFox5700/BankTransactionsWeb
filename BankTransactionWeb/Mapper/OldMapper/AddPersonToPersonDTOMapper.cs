@@ -1,12 +1,8 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Configuration;
+﻿using BankTransaction.Configuration;
+using BankTransaction.Models.DTOModels;
 using BankTransaction.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace BankTransaction.Web.Mapper
+namespace BankTransaction.Web.Mapper.OldMapper
 {
     public class AddPersonToPersonDTOMapper:IMapper< AddPersonViewModel, PersonDTO>
     {

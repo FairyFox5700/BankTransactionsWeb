@@ -34,8 +34,8 @@ namespace BankTransaction.Web.Helpers
             context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
             context.Response.Headers.Add("X-Xss-Protection", "1");
             context.Response.Headers.Add("X-Frame-Options", "DENY");
-            await this.ProcessRequestAsync(token, refreshtoken, context).ConfigureAwait(false);
-            // await next(context);
+            //await this.ProcessRequestAsync(token, refreshtoken, context).ConfigureAwait(false);
+            await next(context);
         }
         private async Task ProcessRequestAsync(string token, string refreshtoken, HttpContext context)
         {

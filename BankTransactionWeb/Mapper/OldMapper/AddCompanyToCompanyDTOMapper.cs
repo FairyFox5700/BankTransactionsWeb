@@ -1,8 +1,8 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
+﻿using BankTransaction.Configuration;
+using BankTransaction.Models.DTOModels;
 using BankTransaction.Web.ViewModel;
-using BankTransaction.Configuration;
 
-namespace BankTransaction.Web.Mapper
+namespace BankTransaction.Web.Mapper.OldMapper
 {
     public class AddCompanyToCompanyDTOMapper : IMapper<AddCompanyViewModel, CompanyDTO>
     {

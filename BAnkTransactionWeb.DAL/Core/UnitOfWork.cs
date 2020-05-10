@@ -1,15 +1,12 @@
-﻿using BankTransaction.DAL.Abstract;
-using BankTransaction.DAL.Implementation.Core;
+﻿using System;
+using System.Threading.Tasks;
+using BankTransaction.DAL.Abstract;
 using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
 using BankTransaction.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BankTransaction.DAL.Implementation.EfCoreDAL
+namespace BankTransaction.DAL.Implementation.Core
 {
     public class UnitOfWork : IUnitOfWork
     {

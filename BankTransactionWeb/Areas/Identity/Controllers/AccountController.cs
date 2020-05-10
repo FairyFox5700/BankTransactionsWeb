@@ -1,5 +1,4 @@
 ﻿using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
 using BankTransaction.Web.Controllers;
 using Microsoft.AspNetCore.Authorization;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
 using BankTransaction.Web.Mapper.Identity;
 
@@ -39,7 +39,7 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         [HttpGet]
         [AllowAnonymous]
 
-        public ActionResult Login(string returnUrl = null)
+        public async Task<IActionResult> Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
@@ -47,8 +47,8 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login([FromForm]LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -83,18 +83,10 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            try
-            {
+
                 await authService.SignOutPerson();
                 logger.LogInformation("User successfully logged out.");
                 return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(Logout)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
         }
 
 

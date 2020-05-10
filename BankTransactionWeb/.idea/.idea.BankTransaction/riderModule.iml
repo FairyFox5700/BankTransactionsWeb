@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="RIDER_MODULE" version="4">
   <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$/../../../BAnkTransactionWeb.DAL" />
+    <content url="file://$MODULE_DIR$/../../../BankTransaction.Api" />
+    <content url="file://$MODULE_DIR$/../../../BankTransaction.Api.Models" />
+    <content url="file://$MODULE_DIR$/../../../BankTransaction.BAL.Abstract" />
+    <content url="file://$MODULE_DIR$/../../../BankTransaction.Configuration" />
+    <content url="file://$MODULE_DIR$/../../../BankTransaction.DAL.Abstract" />
+    <content url="file://$MODULE_DIR$/../../../BankTransaction.Entities" />
+    <content url="file://$MODULE_DIR$/../../../BankTransaction.Models" />
     <content url="file://$MODULE_DIR$/../.." />
+    <content url="file://$MODULE_DIR$/../../../BankTransactionWeb.BAL" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

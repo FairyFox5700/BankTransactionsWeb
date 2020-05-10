@@ -1,8 +1,8 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Configuration;
+﻿using BankTransaction.Configuration;
 using BankTransaction.Entities;
+using BankTransaction.Models.DTOModels;
 
-namespace BankTransaction.Models.Mapper
+namespace BankTransaction.Models.Mapper.MpaperOld
 {
     public class ShareholderEntityToDtoMapper : IMapper<Shareholder, ShareholderDTO>
     {
@@ -14,7 +14,10 @@ namespace BankTransaction.Models.Mapper
             {
                 Id = source.Id,
                 CompanyName = source.Company.Name,
-               Person = PersonEntityToDtoMapper.Instance.Map(source?.Person),
+                PersonLastName = source.Person?.LastName,
+                PersonName = source.Person?.Name,
+                PersonSurName = source.Person?.Surname,
+                //Person = PersonEntityToDtoMapper.Instance.Map(source?.Person),
                 PersonId = source.PersonId,
                 CompanyId = source.CompanyId
             };
