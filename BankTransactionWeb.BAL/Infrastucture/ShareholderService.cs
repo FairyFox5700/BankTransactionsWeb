@@ -10,7 +10,7 @@ using BankTransaction.Models.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.Models.DTOModels;
-using BankTransaction.Models.Mapper.MpaperOld;
+using BankTransaction.Models.Mapper;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {

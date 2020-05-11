@@ -2,7 +2,7 @@
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Web.ViewModel;
 
-namespace BankTransaction.Web.Mapper.OldMapper
+namespace BankTransaction.Web.Mapper
 {
     public class AddPersonToPersonDTOMapper:IMapper< AddPersonViewModel, PersonDTO>
     {

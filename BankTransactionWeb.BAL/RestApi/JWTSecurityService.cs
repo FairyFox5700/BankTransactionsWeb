@@ -1,4 +1,5 @@
 ﻿using BankTransaction.Api.Models;
+using BankTransaction.Api.Models.Extensions;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;

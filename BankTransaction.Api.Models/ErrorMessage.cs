@@ -56,28 +56,5 @@ namespace BankTransaction.Api.Models
             StatusCode = statusCode;
         }
     }
-        //public class StatusCodeAtribute : Attribute, IResultFilter
-        //{
-        //    public void OnResultExecuted(ResultExecutedContext context)
-        //    {
-
-        //    }
-        //}
-       
-
-    //    public void OnResultExecuting(ResultExecutingContext context)
-    //    {
-    //        var objectResult = context.Result as ObjectResult;
-    //        var result = objectResult?.Value as ApiDataResponse<int>;
-    //        if( result==null)
-    //        {
-    //            return;
-    //        }
-    //        var statusConverter = context.HttpContext.RequestServices.GetRequiredService<IConverterService<int , ResponceMessage>>
-    //    }
-    //}
-
-    //HttpStatus
-
 
 }

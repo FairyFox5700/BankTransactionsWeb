@@ -2,7 +2,7 @@
 using BankTransaction.Models.DTOModels;
 using Microsoft.AspNetCore.Identity;
 
-namespace BankTransaction.Models.Mapper.MpaperOld
+namespace BankTransaction.Models.Mapper
 {
     public class RoleDTOToIdentityRoleMapper : IMapper<RoleDTO, IdentityRole>
     {

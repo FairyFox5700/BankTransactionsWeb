@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransaction.Web.Mapper.OldMapper
+namespace BankTransaction.Web.Mapper
 {
     public interface IMapperContainer
     {

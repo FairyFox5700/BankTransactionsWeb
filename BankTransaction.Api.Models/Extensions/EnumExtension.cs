@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace BankTransaction.Api.Models
+namespace BankTransaction.Api.Models.Extensions
 {
     public static class EnumExtension
     {

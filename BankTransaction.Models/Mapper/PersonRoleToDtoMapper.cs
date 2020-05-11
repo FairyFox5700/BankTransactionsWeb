@@ -3,7 +3,7 @@ using BankTransaction.Configuration;
 using BankTransaction.Entities;
 using BankTransaction.Models.DTOModels;
 
-namespace BankTransaction.Models.Mapper.MpaperOld
+namespace BankTransaction.Models.Mapper
 {
     public class PersonRoleToDtoMapper : IMapper<PersonInRoleDTO, Person>
     {

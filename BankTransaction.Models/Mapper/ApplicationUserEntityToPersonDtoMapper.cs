@@ -2,7 +2,7 @@
 using BankTransaction.Entities;
 using BankTransaction.Models.DTOModels;
 
-namespace BankTransaction.Models.Mapper.MpaperOld
+namespace BankTransaction.Models.Mapper
 {
     public class ApplicationUserEntityToPersonDtoMapper : IMapper<ApplicationUser, PersonDTO>
     {

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using BankTransaction.Models.DTOModels;
-using BankTransaction.Web.Mapper.OldMapper;
+using BankTransaction.Web.Mapper;
 
 namespace BankTransaction.Web.Controllers
 {

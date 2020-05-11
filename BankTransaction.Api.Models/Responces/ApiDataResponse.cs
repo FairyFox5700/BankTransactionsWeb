@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using BankTransaction.Api.Models.Extensions;
 using Newtonsoft.Json;
 
 namespace BankTransaction.Api.Models.Responces

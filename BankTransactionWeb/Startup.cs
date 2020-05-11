@@ -34,7 +34,6 @@ namespace BankTransaction.Web
         {
             services.AddCors();
             services.AddRazorPages().AddRazorRuntimeCompilation();
-            services.AddMapperViewConfiguration();
             services.AddDALServices(Configuration);
             services.AddBalServices(Configuration);
             services.AddJwtAuthentication(Configuration,Environment);

@@ -13,7 +13,7 @@ using RestSharp;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using BankTransaction.Api.Models.Responces;
-using BankTransaction.Web.Mapper.OldMapper;
+using BankTransaction.Web.Mapper;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Web.Helpers;
 using System.Net;

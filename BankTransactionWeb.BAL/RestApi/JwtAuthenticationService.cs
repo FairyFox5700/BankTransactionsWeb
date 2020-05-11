@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.Api.Models;
+using BankTransaction.Api.Models.Extensions;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Abstract.RestApi;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Mapper;
-using BankTransaction.Models.Mapper.MpaperOld;
+using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using Microsoft.Extensions.Logging;
 

@@ -10,7 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.Models.DTOModels;
-using BankTransaction.Web.Mapper.OldMapper;
+using BankTransaction.Web.Mapper;
 
 namespace BankTransaction.Web.Controllers
 {

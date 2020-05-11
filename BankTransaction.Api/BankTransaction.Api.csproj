@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\**" />
+    <Content Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+    <TypeScriptCompile Remove="Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.3" />
@@ -35,10 +43,6 @@
     <ProjectReference Include="..\BankTransaction.Api.Models\BankTransaction.Api.Models.csproj" />
     <ProjectReference Include="..\BankTransaction.BAL.Abstract\BankTransaction.BAL.Abstract.csproj" />
     <ProjectReference Include="..\BankTransactionWeb.BAL\BankTransaction.BAL.Implementation.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
 
