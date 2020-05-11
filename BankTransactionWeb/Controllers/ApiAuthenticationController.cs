@@ -53,7 +53,19 @@ namespace BankTransaction.Web.Controllers
             //???????????????
             //add login service
             var authResultw = await restApiHelper.ExecuteAsync<ApiDataResponse<AuthSuccesfullModel>>("Auth/login",  body: person, Method.POST);
-          
+            Response.Cookies.Append("wwwwww", "2312213");
+            HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKey", authResultw.Data.Token,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    MaxAge = TimeSpan.FromMinutes(60)
+                });
+            HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKeyFree", authResultw.Data.RefreshToken,
+           new CookieOptions
+           {
+               HttpOnly = true,
+               MaxAge = TimeSpan.FromMinutes(60)
+           });
             return RedirectToAction("Index", "Home");
         }
 

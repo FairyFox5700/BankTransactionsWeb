@@ -42,16 +42,7 @@ namespace BankTransaction.Api.Controllers
            
             if (result.Success)
             {
-                HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKey", result.Token,
-               new CookieOptions
-               {
-                   MaxAge = TimeSpan.FromMinutes(60)
-               });
-                HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKeyFree", result.RefreshToken,
-               new CookieOptions
-               {
-                   MaxAge = TimeSpan.FromMinutes(60)
-               });
+               
 
                 return new ApiDataResponse<AuthSuccesfullModel>(new AuthSuccesfullModel
                 {

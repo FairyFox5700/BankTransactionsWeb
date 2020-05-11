@@ -33,8 +33,8 @@ namespace BankTransaction.Web.Services
         public async Task<ApiDataResponse<PaginatedList<AccountDTO>>> GetAllAccounts(PageQueryParameters pageQueryParameters = null)
         {
             ///FOR TEST ONLY 
-            var tokenData = await restApiHelper.ExecuteAsync<ApiDataResponse<AuthSuccesfullModel>>("Auth/login", body: model, Method.POST);
-            var allAccount = (await restApiHelper.ExecuteAsync<ApiDataResponse<PaginatedList<AccountDTO>>>(API.Account.Acounts, null, Method.GET, parameters: new { pageQueryParameters.PageSize, pageQueryParameters.PageNumber }, tokenData.Data.Token));
+            //var tokenData = await restApiHelper.ExecuteAsync<ApiDataResponse<AuthSuccesfullModel>>("Auth/login", body: model, Method.POST);
+            var allAccount = (await restApiHelper.ExecuteAsync<ApiDataResponse<PaginatedList<AccountDTO>>>(API.Account.Acounts, null, Method.GET, parameters: new { pageQueryParameters.PageSize, pageQueryParameters.PageNumber }));//, tokenData.Data.Token
             return allAccount;
 
         }

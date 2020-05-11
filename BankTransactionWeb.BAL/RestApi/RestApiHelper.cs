@@ -37,7 +37,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 RequestFormat = DataFormat.Json
             };
-            //string token = httpContextAccessor.HttpContext.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
+            string token2 = httpContextAccessor.HttpContext.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
             if (token != null)
                 request.AddHeader("Authorization", "Bearer " + token);
                 request.AddHeader("cache-control", "no-cache");
