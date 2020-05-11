@@ -14,10 +14,18 @@ namespace BankTransaction.Configuration
     {
         public static class Account
         {
-           
             public static string Acounts => "account";
+            public static string UpdateAccount(int id) => $"account/{id}";
+            public static string DeleteAccount(int id) => $"account/{id}";
             //public static string DeleteAccount => "account/delete";
         }
+        public static class Authorization
+        {
+            public static string Login => "Auth/login";
+            public static string Logout => "Auth/token/cancel";
+            public static string Refresh => "Auth/refreshToken";
+        }
+
        
     }
 

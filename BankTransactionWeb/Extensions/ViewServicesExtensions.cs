@@ -12,6 +12,7 @@ namespace BankTransaction.Web.Extensions
         public static IServiceCollection AddViewServices(this IServiceCollection services)
         {
             services.AddTransient<IApiBankAccountService, ApiAccountService>();
+            services.AddTransient<IApiLoginService, ApiLoginService>();
             return services;
         }
     }

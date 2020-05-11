@@ -39,10 +39,8 @@ namespace BankTransaction.BAL.Implementation.RestApi
             var options = new CookieOptions
             {
                 MaxAge = TimeSpan.FromMinutes(60),
-                IsEssential = true,
                 HttpOnly = true
             };
-           
             HttpContext.Response.Cookies.Append(cookieName, cookieValue, options);
 
         }

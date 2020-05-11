@@ -10,6 +10,7 @@ namespace BankTransaction.BAL.Abstract
     public interface IJwtSecurityService
     {
         Task<AuthResult> RefreshToken(RefreshTokenDTO model);
+        Task<AuthResult> RevokeRefreshToken(RefreshTokenDTO model);
         Task<AuthResult> GenerateJWTToken(string email);
     }
 }

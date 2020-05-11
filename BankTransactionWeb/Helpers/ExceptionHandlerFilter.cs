@@ -14,56 +14,73 @@ using BankTransaction.Web.Localization;
 
 namespace BankTransaction.Web.Helpers
 {
-    //public class ExceptionHandlerMiddleware
+    public class ExceptionHandlerMiddleware
+    {
+        private readonly RequestDelegate next;
+
+        public ExceptionHandlerMiddleware(RequestDelegate next)
+        {
+            this.next = next;
+        }
+        public async Task Invoke(HttpContext context)
+        {
+            try
+            {
+
+                await next(context);
+                //if (context.Response.StatusCode == 401)  //page not found
+                //{
+                //    await HandleFor404Async(context);
+                //}
+            }
+            catch (Exception ex)
+            {
+                await HandleExceptionAsync(context, ex);
+            }
+        }
+        private static bool IsRequestApi(HttpContext context)
+        {
+            return context.Request.Path.Value.ToLower().StartsWith("/api");
+        }
+
+        private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        {
+            context.Response.StatusCode = 500;
+            if (IsRequestApi(context))
+            {
+                //when request api 
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync(JsonConvert.SerializeObject(new
+                {
+                    State = 500,
+                    message = exception.Message
+                }));
+            }
+            else
+            {
+                //when request page 
+                context.Response.Redirect("/Home/Errorpage");
+            }
+
+        }
+
+
+    }
+
+    //public class WebApiExceptionFilterAttribute : ExceptionFilterAttribute
     //{
-    //    private readonly RequestDelegate next;
-
-    //    public ExceptionHandlerMiddleware(RequestDelegate next)
+    //    public override void OnException(ExceptionContext context)
     //    {
-    //        this.next = next;
-    //    }
-    //    public async Task Invoke(HttpContext context)
-    //    {
-    //        try
+    //        if (context.Exception is ValidationException validationException)
     //        {
-    //            await next(context);
-    //            //if (context.Response.StatusCode == 401)  //page not found
-    //            //{
-    //            //    await HandleFor404Async(context);
-    //            //}
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            await HandleExceptionAsync(context, ex);
-    //        }
-    //    }
-    //    private static bool IsRequestApi(HttpContext context)
-    //    {
-    //        return context.Request.Path.Value.ToLower().StartsWith("/api");
-    //    }
-
-    //    private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
-    //    {
-    //        context.Response.StatusCode = 500;
-    //        if (IsRequestApi(context))
-    //        {
-    //            //when request api 
-    //            context.Response.ContentType = "application/json";
-    //            await context.Response.WriteAsync(JsonConvert.SerializeObject(new
+    //            var response = new ApiErrorResponse
     //            {
-    //                State = 500,
-    //                message = exception.Message
-    //            }));
+    //                Errors = validationException.Errors.Select(x => new ApiErrorResponse.Error(x))
+    //            };
+    //            context.Result = new BadRequestObjectResult(response);
+    //            context.ExceptionHandled = true;
     //        }
-    //        else
-    //        {
-    //            //when request page 
-    //            context.Response.Redirect("/Home/Errorpage");
-    //        }
-           
     //    }
-
-
     //}
     public class ExceptionHandlerFilter : IActionFilter
     {

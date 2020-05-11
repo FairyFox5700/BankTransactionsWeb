@@ -21,6 +21,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
 
         private readonly IUnitOfWork unitOfWork;
         private readonly ILogger<JWTSecurityService> logger;
+        private readonly ISet<RefreshToken> refreshTokens = new HashSet<RefreshToken>();
         private readonly JwtSettings jwtSettings;
         private readonly TokenValidationParameters tokenValidationParameters;
 
@@ -120,7 +121,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
             {
                 return new AuthResult()
                 {
-                    Message =  ErrorMessage.TokenNotExpired.GetDescription(),
+                    Message = ErrorMessage.TokenNotExpired.GetDescription(),
                     MessageType = nameof(ErrorMessage.TokenNotExpired)
                 };
             }
@@ -144,6 +145,34 @@ namespace BankTransaction.BAL.Implementation.RestApi
             }
         }
 
+
+        private async Task<RefreshToken> GetRefreshToken(string token)//REFRESHTOKEN DTO??????
+        {
+            var principal = await GetCalimpPrincipalFromExpiredToken(token);
+            if (principal == null) return null;
+            var tokenIdentifier = principal.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+            var refreshToken = refreshTokens.SingleOrDefault(x => x.JwtId == tokenIdentifier);
+            return refreshToken;
+        }
+
+
+    public async Task<AuthResult> RevokeRefreshToken(RefreshTokenDTO model)
+        {
+            var refreshToken = await GetRefreshToken(model.Token);
+            var rezult = ValidateToken(refreshToken, refreshToken.JwtId);//smth here
+            if (rezult == null)
+            {
+                refreshToken.IsInvalidated = true;
+                unitOfWork.TokenRepository.Update(refreshToken);
+                await unitOfWork.Save();
+                //return new AuthResult()
+                //{
+                //    Message = ErrorMessage.TokenIsInvalidated.GetDescription(),
+                //    MessageType = nameof(ErrorMessage.TokenIsInvalidated)
+                //};
+            }
+            return rezult;
+        }
         private AuthResult ValidateToken(RefreshToken refreshToken, string tokenIdentifier)
         {
             if (refreshToken == null)

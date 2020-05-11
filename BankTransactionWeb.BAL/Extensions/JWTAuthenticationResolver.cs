@@ -14,39 +14,39 @@ using System.Threading.Tasks;
 namespace BankTransaction.BAL.Implementation.Extensions
 {
 
-    public static class JWTAuthenticationOptionsResolver
-    {
-        public static IServiceCollection AddJWTAuthenticationOptions(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
-        {
-            var jwtSettings = new JwtSettings();
-            configuration.Bind("Jwt", jwtSettings);
-            services.AddSingleton(jwtSettings);
-            var tokenValidParam = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = jwtSettings.Issuer,
-                ValidateAudience = true,
-                ValidAudience = jwtSettings.Audience,
-                ValidateLifetime = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
-                ValidateIssuerSigningKey = true
-            };
-            services.AddSingleton(tokenValidParam);
-            services.AddTransient<JWTSecurityService>();
-            services.AddScoped<RevokeCookieAuthentication>();
-            services.AddScoped<RedirectToLoginCookieAuthentication>();
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            });
-            return services;
+    //public static class JWTAuthenticationOptionsResolver
+    //{
+    //    public static IServiceCollection AddJWTAuthenticationOptions(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
+    //    {
+    //        var jwtSettings = new JwtSettings();
+    //        configuration.Bind("Jwt", jwtSettings);
+    //        services.AddSingleton(jwtSettings);
+    //        var tokenValidParam = new TokenValidationParameters
+    //        {
+    //            ValidateIssuer = true,
+    //            ValidIssuer = jwtSettings.Issuer,
+    //            ValidateAudience = true,
+    //            ValidAudience = jwtSettings.Audience,
+    //            ValidateLifetime = true,
+    //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+    //            ValidateIssuerSigningKey = true
+    //        };
+    //        services.AddSingleton(tokenValidParam);
+    //        services.AddTransient<JWTSecurityService>();
+    //        services.AddScoped<RevokeCookieAuthentication>();
+    //        services.AddScoped<RedirectToLoginCookieAuthentication>();
+    //        services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+    //        services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+    //        services.AddAuthentication(options =>
+    //        {
+    //            options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    //            options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    //            options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    //        });
+    //        return services;
 
-        }
-        }
+    //    }
+    //    }
 
         public static class JWTAuthenticationResolver
         {
@@ -67,8 +67,8 @@ namespace BankTransaction.BAL.Implementation.Extensions
                 };
                 services.AddSingleton(tokenValidParam);
                 services.AddTransient<JWTSecurityService>();
-                services.AddScoped<RevokeCookieAuthentication>();
-                services.AddScoped<RedirectToLoginCookieAuthentication>();
+                services.AddScoped<RevokeCookieAuthentication>();//DELETE
+                services.AddScoped<RedirectToLoginCookieAuthentication>();//DELETE
                 services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
                 services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
                 services.AddAuthentication()
@@ -79,6 +79,7 @@ namespace BankTransaction.BAL.Implementation.Extensions
                      options.SaveToken = true;
                      options.Events = new JwtBearerEvents
                      {
+                         
                          OnMessageReceived = context =>
                          {
                              var accessToken = context.Request.Query["access_token"];

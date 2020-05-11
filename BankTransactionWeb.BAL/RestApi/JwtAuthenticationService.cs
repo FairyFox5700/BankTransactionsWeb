@@ -101,8 +101,5 @@ namespace BankTransaction.BAL.Implementation.RestApi
             }
         }
 
-      
     }
-
-   
 }

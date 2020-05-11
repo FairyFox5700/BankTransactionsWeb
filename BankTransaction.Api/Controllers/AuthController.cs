@@ -4,6 +4,7 @@ using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Abstract.RestApi;
+using BankTransaction.BAL.Implementation.RestApi;
 using BankTransaction.Entities;
 using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
@@ -23,7 +24,7 @@ namespace BankTransaction.Api.Controllers
         private readonly IJwtAuthenticationService authService;
         private readonly IJwtSecurityService jwtService;
 
-        public AuthController(UserManager<ApplicationUser> userManager, IJwtAuthenticationService service, IJwtSecurityService jwtService)
+        public AuthController(UserManager<ApplicationUser> userManager, IJwtAuthenticationService service, IJwtSecurityService jwtService)//IJwtTokenManager jwtTokenManager,
         {
             this.userManager = userManager;
             this.authService = service;
@@ -34,6 +35,7 @@ namespace BankTransaction.Api.Controllers
 
         [HttpPost]
         [Route("login")]
+      
         public async Task<ApiDataResponse<AuthSuccesfullModel>> Login([FromBody]RequestLoginModel model)
         {
             //modelState
@@ -42,16 +44,12 @@ namespace BankTransaction.Api.Controllers
            
             if (result.Success)
             {
-               
-
                 return new ApiDataResponse<AuthSuccesfullModel>(new AuthSuccesfullModel
                 {
                     Token = result.Token,
-
                     RefreshToken = result.RefreshToken
                 });
             }
-
             else
             {
                 var apiErrorResult = AuthResultToApiErrorResponceMapper.Instance.Map(result);
@@ -59,12 +57,12 @@ namespace BankTransaction.Api.Controllers
             }
         }
 
-        [HttpPost]
-        [Route("logout")]
-        public async Task<ApiDataResponse<AuthSuccesfullModel>> Logout()
-        {
-            return ApiDataResponse<AuthSuccesfullModel>.NotFound;
-        }
+        //[HttpPost]
+        //[Route("logout")]
+        //public async Task<ApiDataResponse<AuthSuccesfullModel>> Logout()
+        //{
+        //    return ApiDataResponse<AuthSuccesfullModel>.NotFound;
+        //}
 
         [HttpPost]
         [Route("refreshToken")]
@@ -75,14 +73,6 @@ namespace BankTransaction.Api.Controllers
             var result = await jwtService.RefreshToken(tokenDto);
             if (result.Success)
             {
-                //remove
-                HttpContext.Response.Cookies.Delete("BankWeb.AspNetCore.ProductKey");
-                HttpContext.Response.Cookies.Append("BankWeb.AspNetCore.ProductKey", result.Token,
-              new CookieOptions
-              {
-                  MaxAge = TimeSpan.FromMinutes(60)
-              });
-
                 return new ApiDataResponse<AuthSuccesfullModel>(new AuthSuccesfullModel
                 {
                     Token = result.Token,
@@ -95,22 +85,30 @@ namespace BankTransaction.Api.Controllers
             }
         }
 
-        //[HttpPost]
-        //[Route("revokeToken")]
-        //public void RevokeRefreshToken(string token)
+        [HttpPost("revokeToken")]
+        public async Task<ApiDataResponse<bool>> RevokeRefreshToken([FromBody]AuthSuccesfullModel model)
+        {
+            var tokenDto = RefreshTokenDtoToAuthSuccesMapper.Instance.MapBack(model);
+             var result = await  jwtService.RevokeRefreshToken(tokenDto);
+            if(result.Success)
+            {
+                return new ApiDataResponse<bool>(true);
+            }
+            else
+            {
+                return new ApiDataResponse<bool>(400, new ApiErrorResponse(message: result.Message, messageType: result.MessageType));
+            }
+
+        }
+
+        //[HttpPost("token/cancel")]
+        //public async Task<ApiDataResponse<bool>> CancelAccessToken()
         //{
-        //    var refreshToken = GetRefreshToken(token);
-        //    if (refreshToken == null)
-        //    {
-        //        throw new Exception("Refresh token was not found.");
-        //    }
-        //    if (refreshToken.Revoked)
-        //    {
-        //        throw new Exception("Refresh token was already revoked.");
-        //    }
-        //    refreshToken.Revoked = true;
+        //    await jwtTokenManager.DeactivateCurrentTokenAsync();
+        //    return new ApiDataResponse<bool>(true);
         //}
 
+      
         [HttpPost]
         [Route("register")]
         //[ServiceFilter(typeof(ValidationFilter))]

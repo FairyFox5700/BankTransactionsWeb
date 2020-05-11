@@ -61,11 +61,12 @@ namespace BankTransaction.Api
                 app.UseDeveloperExceptionPage();
             }
             app.UseAPIResponseWrapperMiddleware();
+         
             app.UseRouting();
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            //app.AddJwtTokenManager();//REMOVE
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

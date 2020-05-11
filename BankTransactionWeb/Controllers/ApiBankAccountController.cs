@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.Web.Mapper.OldMapper;
 using BankTransaction.Models.DTOModels;
+using BankTransaction.Web.Helpers;
+using System.Net;
 
 namespace BankTransaction.Web.Controllers
 {
@@ -22,7 +24,6 @@ namespace BankTransaction.Web.Controllers
     public class ApiBankAccountController : Controller
     {
         private readonly IRestApiHelper restApiHelper;
-        
         private readonly IPersonService personService;
         private readonly IApiBankAccountService apiBankAccountService;
         private readonly IHttpContextAccessor httpContextAccessor;
@@ -38,11 +39,11 @@ namespace BankTransaction.Web.Controllers
         }
 
         [HttpGet]
+        [ApiResponceFilter]
         public async Task<IActionResult> GetAllAccounts(Api.Models.Queries.PageQueryParameters pageQueryParameters = null)
         {
             string token = httpContextAccessor.HttpContext.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
             var token2 = httpContextAccessor.HttpContext.Response.Cookies;
-            var boh = Request.Cookies["Emailoption"];
             var allAccount = await apiBankAccountService.GetAllAccounts(pageQueryParameters);
             var validateReult = ValidateApiResult(allAccount);
             if (validateReult == null)
@@ -145,7 +146,7 @@ namespace BankTransaction.Web.Controllers
         {
             if (result.IsError)
             {
-                return RedirectToAction("Error", "Home", result.ResponseException.Message);
+                return LocalRedirect($"~/Error/{result.ResponseException.MessageType}");
             }
             return null;
         }

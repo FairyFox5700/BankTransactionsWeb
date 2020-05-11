@@ -15,6 +15,8 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using BankTransaction.Api.Models.Responces;
+using Microsoft.Net.Http.Headers;
+using Microsoft.Extensions.Primitives;
 
 namespace BankTransaction.BAL.Implementation.RestApi
 {
@@ -31,20 +33,27 @@ namespace BankTransaction.BAL.Implementation.RestApi
             
             this.httpContextAccessor = httpContextAccessor;
         }
-        private RestRequest ConstructRequest(string resource, object body,  Method method, object parameters, string token = null)//string token,
+        private string GetAuthorizationHeader()
+        {
+            var authorizationHeader = httpContextAccessor
+               .HttpContext.Request.Headers["Authorization"];
+
+            return authorizationHeader == StringValues.Empty
+                ? string.Empty
+                : authorizationHeader.Single().Split(" ").Last();
+        }
+        private RestRequest ConstructRequest(string resource, object body,  Method method, object parameters)//string token,
         {
             var request = new RestRequest(apiUrl+resource, method)
             {
                 RequestFormat = DataFormat.Json
             };
-            string token2 = httpContextAccessor.HttpContext.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
-            if (token != null)
-                request.AddHeader("Authorization", "Bearer " + token);
+            var tokenFromHeader = GetAuthorizationHeader();
+            if ( !String.IsNullOrEmpty(tokenFromHeader))
+                request.AddHeader("Authorization", "Bearer " + tokenFromHeader);
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("Accept", "application/json");
-
-            //}
             if (body != null)
                 request.AddJsonBody(body);
             if (parameters != null)
@@ -80,9 +89,9 @@ namespace BankTransaction.BAL.Implementation.RestApi
             return jsonResponse;
         }
 
-        public async Task<T> ExecuteAsync<T>(string resource, object body,  Method method, object parameters = null, string token = null)
+        public async Task<T> ExecuteAsync<T>(string resource, object body,  Method method, object parameters = null)
         {
-            var request = ConstructRequest(resource, body, method, parameters,token);
+            var request = ConstructRequest(resource, body, method, parameters);
             request.JsonSerializer = NewtonsoftJsonSerializer.Default;
             var responce =  await Client.ExecuteAsync<T>(request);
             ValidateResponce(responce);
@@ -92,23 +101,11 @@ namespace BankTransaction.BAL.Implementation.RestApi
         }
         
         //https://stackoverflow.com/questions/37329354/how-to-use-ihttpcontextaccessor-in-static-class-to-set-cookies
-        public async Task<T> ExecuteApiRequestAsync<T>(string resource,  object body,  Method method, object parameters = null, string token = null)
+        public async Task<T> ExecuteApiRequestAsync<T>(string resource,  object body,  Method method, object parameters = null)
         {
-            var request = ConstructRequest(resource, body,  method, parameters, token);
+            var request = ConstructRequest(resource, body,  method, parameters);
             request.JsonSerializer = NewtonsoftJsonSerializer.Default;
             IRestResponse<ApiDataResponse<T>> responce = await Client.ExecuteAsync<ApiDataResponse<T>>(request);
-            //RestResponse tmp = (RestResponse)await Client.ExecuteTaskAsync(request);
-            //// Manually deserialize the response
-            //var data = JsonConvert.DeserializeObject<T>(tmp.Content);
-            ////Cast the RestResponse object to a RestResponse<T>
-            //var response = (RestResponse<T>)tmp;
-            //// Assign the Data
-            //response.Data = data;
-            //// Return our IRestResponse<T> object with deserialized data
-            //return response;
-           
-            //IRestResponse<ApiDataResponse<T>> responce = await Client.ExecuteAsync(request);
-            responce.Content = ValidateJSonString(responce.Content);
             ValidateApiResponce(responce);
             var result = responce.Content;
             var jsonResponse = JsonConvert.DeserializeObject<ApiDataResponse<T>>(result);
@@ -148,11 +145,11 @@ namespace BankTransaction.BAL.Implementation.RestApi
                 if (responce.ErrorException != null)
                     throw responce.ErrorException;
                 else
-                    throw new Exception(responce.ErrorMessage);
+                    throw new BankApiException(responce.ErrorMessage);
             if (!String.IsNullOrEmpty(responce.ErrorMessage))
-                throw new Exception(responce.ErrorMessage);
-            if (responce.StatusCode != HttpStatusCode.OK)
-                throw new Exception(responce.Content);
+                throw new BankApiException(responce.ErrorMessage);
+            //if (responce.StatusCode != HttpStatusCode.OK)
+                //throw new BankApiException(responce.Content);
         }
     }
 

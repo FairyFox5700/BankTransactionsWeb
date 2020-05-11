@@ -8,7 +8,7 @@ namespace BankTransaction.BAL.Abstract.RestApi
         T Execute<T>(string resource, object body,  Method method, object parameters = null);
 
         T ExecuteApiRequest<T>(string resource, object body, Method method, object parameters = null);
-        Task<T> ExecuteAsync<T>(string resource, object body, Method method, object parameters = null, string token = null);
-        Task<T> ExecuteApiRequestAsync<T>(string resource, object body, Method method, object parameters = null, string token = null);
+        Task<T> ExecuteAsync<T>(string resource, object body, Method method, object parameters = null);
+        Task<T> ExecuteApiRequestAsync<T>(string resource, object body, Method method, object parameters = null);
     }
 }
