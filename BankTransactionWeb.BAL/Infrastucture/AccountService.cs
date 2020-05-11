@@ -51,6 +51,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         public async Task<AccountDTO> GetAccountById(int id)
         {
             var accountFinded = await unitOfWork.AccountRepository.GetById(id);
+            if (accountFinded == null) return null;
             return AccountEntityToDtoMapper.Instance.Map(accountFinded); 
         }
 

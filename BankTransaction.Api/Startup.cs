@@ -9,9 +9,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
+using System.Xml;
 
 namespace BankTransaction.Api
 {
@@ -45,10 +48,10 @@ namespace BankTransaction.Api
             });
             services.AddMvc(opts =>
             {
-            opts.Filters.Add(new ValidationFilter());
-            opts.Filters.Add(typeof(StatusCodeFilter));
-            });
+                opts.Filters.Add(new ValidationFilter());
+                opts.Filters.Add(typeof(StatusCodeFilter));
 
+            });
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

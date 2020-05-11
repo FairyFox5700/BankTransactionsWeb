@@ -29,7 +29,7 @@ namespace BankTransaction.Api.Controllers
             var paginatedModel = PaginatedModelShareholderToQueryList.Instance.MapBack(pageQueryParameters);
             var filter = ShareholderFilterToSearchMapper.Instance.MapBack(searchShareholderQuery);
             var shareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
-            var paginatedShareholders = new PaginatedList<ShareholderDTO>(shareholders, paginatedModel);
+            var paginatedShareholders = new PaginatedList<ShareholderDTO>(shareholders);
             return new ApiDataResponse<PaginatedList<ShareholderDTO>>(paginatedShareholders);
         }
         // PUT /api/Shareholder/{id}

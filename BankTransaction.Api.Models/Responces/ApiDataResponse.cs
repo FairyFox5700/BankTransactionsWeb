@@ -1,11 +1,12 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
 namespace BankTransaction.Api.Models.Responces
 {
 
 
-    [DataContract]
+    [Serializable]
     public class ApiDataResponse<T>: ApiResponse
     {
         public static readonly ApiDataResponse<T> Forbidden = new ApiDataResponse<T>(ErrorMessage.Forbidden.GetHttpStatusCode(),

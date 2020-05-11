@@ -29,7 +29,7 @@ namespace BankTransaction.Models.Mapper.MpaperOld
                 Balance = destination.Balance,
                 Number = destination.Number,
                 PersonId = destination.PersonId,
-                Transactions = destination.Transactions?.Select(tr => TransactionEntityToDtoMapper.Instance.MapBack(tr)).ToList(),
+                Transactions = destination.Transactions?.Select(tr => TransactionEntityToDtoMapper.Instance.MapBack(tr))?.ToList(),
             };
         }
     }

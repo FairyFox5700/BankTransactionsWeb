@@ -34,7 +34,7 @@ namespace BankTransaction.Api.Controllers
 
             var filter = PersonFilterToSearchMapper.Instance.MapBack(personQuery);
             var allPersons = await personService.GetAllPersons(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
-            var persons = new PaginatedList<PersonDTO>(allPersons, paginatedModel);
+            var persons = new PaginatedList<PersonDTO>(allPersons);
             return new ApiDataResponse<PaginatedList<PersonDTO>>(persons);
         }
         // PUT /api/Person/{id}

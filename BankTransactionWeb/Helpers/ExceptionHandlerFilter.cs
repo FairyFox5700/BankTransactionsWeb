@@ -77,24 +77,24 @@ namespace BankTransaction.Web.Helpers
         }
         public void OnActionExecuted(ActionExecutedContext context)
         {
-           
-        }
-
-        public void OnActionExecuting(ActionExecutingContext context)
-        {
             var objectResult = context.Result as ObjectResult;
             var apiResult = objectResult?.Value as ApiResponse;
             if (apiResult == null)
                 return;
-            if( apiResult.IsError==false)
+            if (apiResult.IsError == false)
                 return;
-            var message = sharedLocalizer[apiResult.ResponseException.MessageType]?? apiResult.ResponseException.Message;
+            var message = sharedLocalizer[apiResult.ResponseException.MessageType] ?? apiResult.ResponseException.Message;
             var statusCode = apiResult.StatusCode;
             if (message == null)
                 return;
             context.HttpContext.Response.StatusCode = statusCode;
             context.Result = new RedirectToRouteResult($"Error/{message}");
             logger.LogError(0, apiResult.ResponseException.MessageType, "An exception has occurred: " + apiResult.ResponseException.MessageType);
+        }
+
+        public void OnActionExecuting(ActionExecutingContext context)
+        {
+            
 
         }
     }

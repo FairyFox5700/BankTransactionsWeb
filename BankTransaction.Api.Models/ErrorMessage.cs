@@ -12,7 +12,7 @@ namespace BankTransaction.Api.Models
 {
     public enum ErrorMessage
     {
-        [Description("Non authorized attemзt to get resource")]
+        [Description("Non authorized attempt to get resource")]
         [HttpStatusCode(401)]
         Unauthorized,
         [Description("Forbidden")]

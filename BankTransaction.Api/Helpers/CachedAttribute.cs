@@ -1,4 +1,5 @@
 ﻿using BankTransaction.Api.Models;
+using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.Configuration;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
 using System.Security.Cryptography;
 using System.Text;
@@ -48,9 +50,9 @@ namespace BankTransaction.Api.Helpers
             }
             var executeNext = await next();
             var statusCode = context.HttpContext.Response.StatusCode;
-            if( statusCode==200)
-            {
-                await cacheService.CacheResponce(cacheKey, executeNext.Result, TimeSpan.FromSeconds(timeToLiveInSeconds));
+            if ( (executeNext.Result is ObjectResult apiResponce)&& statusCode==200)
+            { 
+                await cacheService.CacheResponce(cacheKey, apiResponce.Value, TimeSpan.FromSeconds(timeToLiveInSeconds));
             }
         }
 

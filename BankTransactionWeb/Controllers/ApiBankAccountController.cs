@@ -14,9 +14,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.Web.Mapper.OldMapper;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.Controllers
 {
+    //NEED TO ADD AUTHORIZE ATTRIBUTE
     public class ApiBankAccountController : Controller
     {
         private readonly IRestApiHelper restApiHelper;
@@ -43,13 +45,13 @@ namespace BankTransaction.Web.Controllers
             var boh = Request.Cookies["Emailoption"];
             var allAccount = await apiBankAccountService.GetAllAccounts(pageQueryParameters);
             var validateReult = ValidateApiResult(allAccount);
-            if (validateReult != null)
+            if (validateReult == null)
             {
-              return View( allAccount.Data);
+                return View(allAccount.Data);
             }
             return validateReult;
         }
-
+        [HttpGet]
         public async Task<IActionResult> AddAccount(int id)
         {
             var person = await personService.GetPersonById(id);
@@ -66,7 +68,8 @@ namespace BankTransaction.Web.Controllers
             return NotFound("Sorry. Current user not found");
         }
 
-        [Authorize]
+        //[Authorize]
+        [HttpPost]
         public async Task<IActionResult> AddAccount(AddAccountViewModel accountModel)
         {
 
@@ -79,7 +82,7 @@ namespace BankTransaction.Web.Controllers
                 var account = AddAccountToAccountDTOMapper.Instance.Map(accountModel);
                 var result = await apiBankAccountService.AddAccount(account);
                 var validateReult = ValidateApiResult(result);
-                if (validateReult != null)
+                if (validateReult == null)
                 {
                     return RedirectToAction(nameof(GetAllAccounts));
 
@@ -115,7 +118,7 @@ namespace BankTransaction.Web.Controllers
                 var account = UpdateAccountToAccountDTOMapper.Instance.Map(accountModel);
                 var result = await apiBankAccountService.UpdateAccount(account);
                 var validateReult = ValidateApiResult(result);
-                if (validateReult != null)
+                if (validateReult == null)
                 {
                     return RedirectToAction(nameof(GetAllAccounts));
 
@@ -128,7 +131,7 @@ namespace BankTransaction.Web.Controllers
         {
             var result = await apiBankAccountService.DeleteAccount(id);
             var validateReult = ValidateApiResult(result);
-            if (validateReult != null)
+            if (validateReult == null)
             {
                 return RedirectToAction(nameof(GetAllAccounts));
 

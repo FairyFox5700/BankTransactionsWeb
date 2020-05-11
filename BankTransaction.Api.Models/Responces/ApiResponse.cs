@@ -1,8 +1,9 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 
 namespace BankTransaction.Api.Models.Responces
 {
-    [DataContract]
+    [Serializable]
     public class ApiResponse
     {
         [DataMember]

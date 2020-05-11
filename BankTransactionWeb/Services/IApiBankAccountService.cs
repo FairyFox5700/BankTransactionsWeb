@@ -11,7 +11,7 @@ namespace BankTransaction.Web.Services
 {
     public  interface IApiBankAccountService
     {
-        Task<ApiDataResponse<List<AccountDTO>>> GetAllAccounts(PageQueryParameters pageQueryParameters = null);
+        Task<ApiDataResponse<PaginatedList<AccountDTO>>> GetAllAccounts(PageQueryParameters pageQueryParameters = null);
         Task<ApiDataResponse<AccountDTO>> UpdateAccount(AccountDTO account);
         Task<ApiDataResponse<AccountDTO>> DeleteAccount(int id);
         Task<ApiDataResponse<AccountDTO>> AddAccount(AccountDTO account);

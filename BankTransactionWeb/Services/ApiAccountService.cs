@@ -30,11 +30,11 @@ namespace BankTransaction.Web.Services
             this.model = model = new PersonDTO() { Email = Test_EMAIL, Password = Test_PASSWORD };
         }
 
-        public async Task<ApiDataResponse<List<AccountDTO>>> GetAllAccounts(PageQueryParameters pageQueryParameters = null)
+        public async Task<ApiDataResponse<PaginatedList<AccountDTO>>> GetAllAccounts(PageQueryParameters pageQueryParameters = null)
         {
             ///FOR TEST ONLY 
             var tokenData = await restApiHelper.ExecuteAsync<ApiDataResponse<AuthSuccesfullModel>>("Auth/login", body: model, Method.POST);
-            var allAccount = await restApiHelper.ExecuteAsync<ApiDataResponse<List<AccountDTO>>>(API.Account.Acounts, null, Method.GET, parameters: new { pageQueryParameters.PageSize, pageQueryParameters.PageNumber }, tokenData.Data.Token);
+            var allAccount = (await restApiHelper.ExecuteAsync<ApiDataResponse<PaginatedList<AccountDTO>>>(API.Account.Acounts, null, Method.GET, parameters: new { pageQueryParameters.PageSize, pageQueryParameters.PageNumber }, tokenData.Data.Token));
             return allAccount;
 
         }
@@ -42,14 +42,14 @@ namespace BankTransaction.Web.Services
         public async Task<ApiDataResponse<AccountDTO>> AddAccount(AccountDTO account)
         { ///FOR TEST ONLY 
             var tokenData = await restApiHelper.ExecuteAsync<ApiDataResponse<AuthSuccesfullModel>>("Auth/login", body: model, Method.POST);
-            var result = await restApiHelper.ExecuteAsync<ApiDataResponse<AccountDTO>>(API.Account.Acounts, body: account, Method.POST, tokenData.Data.Token);
+            var result = await restApiHelper.ExecuteAsync<ApiDataResponse<AccountDTO>>(API.Account.Acounts, body: account, Method.POST,null, tokenData.Data.Token);
             return result;
         }
 
         public async Task<ApiDataResponse<AccountDTO>> UpdateAccount(AccountDTO account)
         {///FOR TEST ONLY 
             var tokenData = await restApiHelper.ExecuteAsync<ApiDataResponse<AuthSuccesfullModel>>("Auth/login", body: model, Method.POST);
-            var result = await restApiHelper.ExecuteAsync<ApiDataResponse<AccountDTO>>(API.Account.Acounts, body: account, Method.PUT, parameters: new { account.Id }, tokenData.Data.Token);
+            var result = await restApiHelper.ExecuteAsync<ApiDataResponse<AccountDTO>>(API.Account.Acounts+"/"+ account.Id, account, Method.PUT,  null, tokenData.Data.Token);
             return result;
         }
 
@@ -57,7 +57,7 @@ namespace BankTransaction.Web.Services
         public async Task<ApiDataResponse<AccountDTO>> DeleteAccount( int id)
         {///FOR TEST ONLY 
             var tokenData = await restApiHelper.ExecuteAsync<ApiDataResponse<AuthSuccesfullModel>>("Auth/login", body: model, Method.POST);
-            var result = await restApiHelper.ExecuteAsync<ApiDataResponse<AccountDTO>>(API.Account.Acounts, null, Method.DELETE, parameters: new { id }, tokenData.Data.Token);
+            var result = await restApiHelper.ExecuteAsync<ApiDataResponse<AccountDTO>>(API.Account.Acounts + "/" + id, null, Method.DELETE, null, tokenData.Data.Token);
             return result;
         }
     }

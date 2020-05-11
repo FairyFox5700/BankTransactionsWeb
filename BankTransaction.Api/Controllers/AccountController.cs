@@ -32,32 +32,33 @@ namespace BankTransaction.Api.Controllers
         [HttpGet]
         [Cached(2000)]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ApiDataResponse<IEnumerable<AccountDTO>>> GetAllAccounts([FromQuery]PageQueryParameters pageQueryParameters)
+        public async Task<ApiDataResponse<PaginatedList<AccountDTO>>> GetAllAccounts([FromQuery]PageQueryParameters pageQueryParameters)
         {
-            var accounts = (await accountService.GetAllAccounts(pageQueryParameters.PageNumber, pageQueryParameters.PageSize)).ToList();
-            return new ApiDataResponse<IEnumerable<AccountDTO>>(accounts);
+            var accounts = (await accountService.GetAllAccounts(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
+            var listOfaccounts= new PaginatedList<AccountDTO>(accounts);
+            return new ApiDataResponse<PaginatedList<AccountDTO>>(listOfaccounts);
         }
         // PUT /api/Account/{id}
         [HttpPut("{id}")]
-        public async Task<ApiDataResponse<int>> UpdateAccount(int id, AccountDTO account)
+        public async Task<ApiDataResponse<AccountDTO>> UpdateAccount(int id, [FromBody]AccountDTO account)
         {
             if (id != account.Id)
             {
-                return ApiDataResponse<int>.BadRequest;
+                return ApiDataResponse<AccountDTO>.BadRequest;
             }
             var currentAccount = await accountService.GetAccountById(id);
             if (currentAccount == null)
             {
-                return ApiDataResponse<int>.NotFound;
+                return ApiDataResponse<AccountDTO>.NotFound;
             }
             await accountService.UpdateAccount(account);
-            return new ApiDataResponse<int>(id);
+            return new ApiDataResponse<AccountDTO>(account);
 
         }
 
         // POST: api/Account
         [HttpPost]
-        public async Task<ApiDataResponse<AccountDTO>> AddAccount(AccountDTO account)
+        public async Task<ApiDataResponse<AccountDTO>> AddAccount([FromBody]AccountDTO account)
         {
                 await accountService.AddAccount(account);
             return new ApiDataResponse<AccountDTO>(account);

@@ -15,6 +15,7 @@ namespace BankTransaction.Api.Models
         public string MessageType { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public List<string> Errors { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public List<ValidationError> ValidationErrors { get; set; }
         public ApiErrorResponse()
         {

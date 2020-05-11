@@ -99,6 +99,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             try
             {
                 var personFinded = await unitOfWork.PersonRepository.GetById(id);
+                if (personFinded == null) return null;
                 var appUser = personFinded.ApplicationUser;
                 var personModel = ApplicationUserEntityToPersonDtoMapper.Instance.Map(appUser);
                 personModel.LastName = personFinded.LastName;

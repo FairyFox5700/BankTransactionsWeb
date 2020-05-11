@@ -12,7 +12,10 @@ namespace BankTransaction.Web.ViewModel
         public bool HasPrevious { get; set; }
         public bool HasNext { get; set; }
 
+        public PaginatedList()
+        {
 
+        }
         public IEnumerable<T> Data { get; set; } = new List<T>();
         public PaginatedList(PaginatedModel<T> paginatedModel)
         {
