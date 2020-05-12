@@ -21,6 +21,8 @@ using System.Net;
 namespace BankTransaction.Web.Controllers
 {
     //NEED TO ADD AUTHORIZE ATTRIBUTE
+    [Authorize]
+    [ApiResponceFilter]
     public class ApiBankAccountController : Controller
     {
         private readonly IRestApiHelper restApiHelper;
@@ -39,11 +41,9 @@ namespace BankTransaction.Web.Controllers
         }
 
         [HttpGet]
-        [ApiResponceFilter]
+      
         public async Task<IActionResult> GetAllAccounts(Api.Models.Queries.PageQueryParameters pageQueryParameters = null)
         {
-            string token = httpContextAccessor.HttpContext.Request.Cookies["BankWeb.AspNetCore.ProductKey"];
-            var token2 = httpContextAccessor.HttpContext.Response.Cookies;
             var allAccount = await apiBankAccountService.GetAllAccounts(pageQueryParameters);
             var validateReult = ValidateApiResult(allAccount);
             if (validateReult == null)

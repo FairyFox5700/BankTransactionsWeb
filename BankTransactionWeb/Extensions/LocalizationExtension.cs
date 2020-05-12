@@ -5,21 +5,17 @@ using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BankTransaction.Web.Extensions
 {
-    public static  class LocalizationExtension
+    public static class LocalizationExtension
     {
         public static IServiceCollection AddJsonLocalization(this IServiceCollection services)
         {
             services.TryAddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
             services.TryAddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
-            services.AddLocalization(options => options.ResourcesPath = "Localization/Languages");
+            services.AddLocalization(options => options.ResourcesPath = "Languages");
 
             services.AddMvc().AddViewLocalization();
 

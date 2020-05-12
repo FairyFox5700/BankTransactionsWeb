@@ -2,7 +2,7 @@
 using BankTransaction.BAL.Abstract.RestApi;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
 using BankTransaction.Web.Helpers;
-using BankTransaction.Web.Localization;
+
 using BankTransaction.Web.Mapper.Identity;
 using BankTransaction.Web.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -56,12 +56,11 @@ namespace BankTransaction.Web.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-
-        private ActionResult ValidateApiResult<T>(ApiDataResponse<T> result)//ValidateCustomnLogic
+        private ActionResult ValidateApiResult<T>( ApiDataResponse<T> result)
         {
             if (result.IsError)
             {
-                return RedirectToAction("Error", "Home", result.ResponseException.Message);
+                return LocalRedirect($"~/Error/{result.ResponseException.MessageType}");
             }
             return null;
         }

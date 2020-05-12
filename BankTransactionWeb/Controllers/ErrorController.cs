@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,12 @@ namespace BankTransaction.Web.Controllers
 
     public class ErrorController:Controller
     {
+        private readonly IStringLocalizer<ApiResponcesShared> stringLocalizer;
+
+        public ErrorController(IStringLocalizer<ApiResponcesShared> stringLocalizer)
+        {
+            this.stringLocalizer = stringLocalizer;
+        }
         [Route("Error/{statusCode:int}")]
         public IActionResult HandleErrorCode(int statusCode)
         {
@@ -58,7 +65,7 @@ namespace BankTransaction.Web.Controllers
         public IActionResult HandleErrorCode(string message)
         {
            // var statusCodeData = HttpContext.Features.Get<IStatusCodeReExecuteFeature>();
-            ViewBag.ErrorMessage = message;
+            ViewBag.ErrorMessage = stringLocalizer[message];
            // ViewBag.RouteOfException = statusCodeData.OriginalPath;
            // ViewBag.QueryString = statusCodeData.OriginalQueryString;
 

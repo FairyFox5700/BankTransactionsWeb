@@ -22,7 +22,7 @@ namespace BankTransaction.Web.Services
         {
             this.restApiHelper = restApiHelper;
         }
-        [ApiResponceFilter]
+        [ExceptionHandlerFilter]
         public async Task<ApiDataResponse<PaginatedList<AccountDTO>>> GetAllAccounts(PageQueryParameters pageQueryParameters = null)
         {
             var allAccount = (await restApiHelper.ExecuteAsync<ApiDataResponse<PaginatedList<AccountDTO>>>(API.Account.Acounts, null, Method.GET, parameters: new { pageQueryParameters.PageSize, pageQueryParameters.PageNumber }));//, tokenData.Data.Token

@@ -41,7 +41,7 @@ namespace BankTransaction.Web
             services.AddIdentiyConfig();
             services.AddJsonLocalization();
             services.AddViewServices();
-            services.AddMvc(options => options.Filters.Add(typeof(ExceptionHandlerFilter)));
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,29 +58,22 @@ namespace BankTransaction.Web
 
             else
             {
-                app.UseExceptionHandler("Home/Error");
-                app.UseSpaStaticFiles();
+                app.UseExceptionHandler("/Home/Error");
+               // app.UseExceptionHandlingMiddleware();
                 app.UseHsts();
             }
-
             var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
             app.UseRequestLocalization(localizationOptions);
            
             app.UseStaticFiles();
-            app.UseStatusCodePages();
-            //app.UseStatusCodePagesWithReExecute("/Error/{statusCode}");
+            //app.UseStatusCodePages();
+            app.UseStatusCodePagesWithReExecute("/Error/{statusCode}");
 
             app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org", "http://localhost:64943")
                             .AllowAnyHeader()
                             .AllowAnyMethod().AllowCredentials());
             app.UseRouting();
 
-            //app.UseCookiePolicy(new CookiePolicyOptions
-            //{
-            //    MinimumSameSitePolicy = SameSiteMode.Strict,
-            //    HttpOnly = HttpOnlyPolicy.None,//only for devepoment
-            //    Secure = CookieSecurePolicy.Always
-            //});
             app.UseSecurityJwt();
             app.UseAuthentication();
             app.UseAuthorization();

@@ -1,4 +1,4 @@
-﻿namespace BankTransaction.Web.Localization
+﻿namespace BankTransaction.Web
 {
     public class ApiResponcesShared
     {

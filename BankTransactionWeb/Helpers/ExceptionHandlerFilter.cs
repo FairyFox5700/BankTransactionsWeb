@@ -10,17 +10,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.Api.Models.Responces;
-using BankTransaction.Web.Localization;
+using Microsoft.AspNetCore.Builder;
 
 namespace BankTransaction.Web.Helpers
 {
     public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate next;
+        private readonly ILogger<ExceptionHandlerMiddleware> logger;
 
-        public ExceptionHandlerMiddleware(RequestDelegate next)
+        public ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
         {
             this.next = next;
+            this.logger = logger;
         }
         public async Task Invoke(HttpContext context)
         {
@@ -28,13 +30,10 @@ namespace BankTransaction.Web.Helpers
             {
 
                 await next(context);
-                //if (context.Response.StatusCode == 401)  //page not found
-                //{
-                //    await HandleFor404Async(context);
-                //}
             }
             catch (Exception ex)
             {
+                logger.LogError($"Exception occured: {ex.Message}. Details {ex.InnerException}");
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -45,26 +44,40 @@ namespace BankTransaction.Web.Helpers
 
         private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
+            if(exception.GetType() ==typeof(BankApiException))
+            {
+                context.Response.Redirect($"~/Error/{exception.Message}");
+            }
             context.Response.StatusCode = 500;
             if (IsRequestApi(context))
             {
                 //when request api 
-                context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync(JsonConvert.SerializeObject(new
-                {
-                    State = 500,
-                    message = exception.Message
-                }));
+                context.Response.Redirect($"Error/{exception.Message}");
+                //context.Response.ContentType = "application/json";
+                //await context.Response.WriteAsync(JsonConvert.SerializeObject(new
+                //{
+                //    State = 500,
+                //    message = exception.Message
+                //}));
             }
             else
             {
-                //when request page 
-                context.Response.Redirect("/Home/Errorpage");
+                context.Response.Redirect("~Home/Error");
             }
 
         }
 
 
+    }
+   
+
+    // Extension method used to add the middleware to the HTTP request pipeline.
+    public static class ExceptionHandlingMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseExceptionHandlingMiddleware(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<ExceptionHandlerMiddleware>();
+        }
     }
 
     //public class WebApiExceptionFilterAttribute : ExceptionFilterAttribute
@@ -82,15 +95,11 @@ namespace BankTransaction.Web.Helpers
     //        }
     //    }
     //}
-    public class ExceptionHandlerFilter : IActionFilter
+    public class ExceptionHandlerFilter :Attribute, IActionFilter
     {
-        private readonly ILogger<ExceptionHandlerFilter> logger;
-        private readonly IStringLocalizer<ApiResponcesShared> sharedLocalizer;
 
-        public ExceptionHandlerFilter(ILogger<ExceptionHandlerFilter> logger, IStringLocalizer<ApiResponcesShared> sharedLocalizer)
+        public ExceptionHandlerFilter()
         {
-            this.logger = logger;
-            this.sharedLocalizer = sharedLocalizer;
         }
         public void OnActionExecuted(ActionExecutedContext context)
         {
@@ -100,13 +109,12 @@ namespace BankTransaction.Web.Helpers
                 return;
             if (apiResult.IsError == false)
                 return;
-            var message = sharedLocalizer[apiResult.ResponseException.MessageType] ?? apiResult.ResponseException.Message;
+            var message = apiResult.ResponseException.MessageType;
             var statusCode = apiResult.StatusCode;
             if (message == null)
                 return;
             context.HttpContext.Response.StatusCode = statusCode;
             context.Result = new RedirectToRouteResult($"Error/{message}");
-            logger.LogError(0, apiResult.ResponseException.MessageType, "An exception has occurred: " + apiResult.ResponseException.MessageType);
         }
 
         public void OnActionExecuting(ActionExecutingContext context)

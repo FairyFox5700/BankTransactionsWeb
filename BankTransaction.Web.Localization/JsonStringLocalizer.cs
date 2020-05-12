@@ -7,22 +7,21 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace BankTransaction.Web.Localization
 {
     public class JsonStringLocalizer : IStringLocalizer
     {
-      //  List<JsonLocalization> localization = new List<JsonLocalization>();
-       // private readonly Lazy<Dictionary<string, string>> _fallbackResources;
+        //  List<JsonLocalization> localization = new List<JsonLocalization>();
+        // private readonly Lazy<Dictionary<string, string>> _fallbackResources;
         private readonly Lazy<Dictionary<string, string>> localization;
         public ILogger<JsonStringLocalizer> Logger;
 
         public string ResourceName { get; }
         public Assembly Assembly { get; }
         public CultureInfo CultureInfo { get; }
-      
+
         public JsonStringLocalizer(string resourceName, Assembly assembly, CultureInfo cultureInfo, ILogger<JsonStringLocalizer> logger)
         {
             ResourceName = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
@@ -33,14 +32,21 @@ namespace BankTransaction.Web.Localization
 
         }
 
-        private  Dictionary<string, string> ReadResources(string resourceName, Assembly resourceAssembly, CultureInfo cultureInfo, ILogger<JsonStringLocalizer> logger)
+        private Dictionary<string, string> ReadResources(string resourceName, Assembly resourceAssembly, CultureInfo cultureInfo, ILogger<JsonStringLocalizer> logger)
         {
-          //for test purposes only
+            //for test purposes only
             var names = this.GetType().Assembly.GetManifestResourceNames();
+            var nameseess = Assembly.GetEntryAssembly().GetManifestResourceNames();
             var currenAssembyNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
+            var nameees = this.GetType().GetTypeInfo().Assembly.GetManifestResourceNames();
             var name = resourceAssembly.GetName().Name;
-            resourceName = name + "." + resourceName; ;
-            //resourceName.Replace(name, "");
+
+            //BankTransaction.Web.Localization.Languages.Controllers.HomeController.ru-RU.Res.json
+            //BankTransaction.Web.Localization.Languages.Controllers.HomeController.ru-RU.Res.json
+            //BankTransaction.Web.Localization.Languages.Controllers.HomeController.ru-RU.Res.json
+            //BankTransaction.Web.Localization.Languages.Controllers.HomeController.ru-RU.Res.json
+            resourceName = name + "." + resourceName;
+            var ttt = String.Equals("BankTransaction.Web.Localization.Languages.Controllers.HomeController.ru-RU.Res.json", resourceName);           //resourceName.Replace(name, "");
             var stream = resourceAssembly.GetManifestResourceStream(resourceName);
             if (stream == null)
             {
@@ -48,7 +54,7 @@ namespace BankTransaction.Web.Localization
                 return new Dictionary<string, string>();
             }
             string json;
-            using (var reader = new StreamReader(stream))
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
                 json = reader.ReadToEnd();
             }
@@ -89,7 +95,7 @@ namespace BankTransaction.Web.Localization
 
         private bool TryGetString(string name, out string value)
         {
-           return localization.Value.TryGetValue(name, out value);
+            return localization.Value.TryGetValue(name, out value);
         }
 
         public IStringLocalizer WithCulture(CultureInfo culture)

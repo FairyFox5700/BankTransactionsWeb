@@ -3,12 +3,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace BankTransaction.Web.Localization
 {
@@ -37,7 +34,7 @@ namespace BankTransaction.Web.Localization
             }
             this.loggerFactory = loggerFactory;
         }
-        
+
         public IStringLocalizer Create(Type resourceSource)
         {
             var resourceType = resourceSource.GetTypeInfo();
@@ -49,13 +46,13 @@ namespace BankTransaction.Web.Localization
             }
             else
             {
-               var assemblyName = Assembly.GetExecutingAssembly().GetName().Name;
-               resourceName =  resourcesRelativePath + TrimPrefix(resourceType.FullName, assemblyName + ".");
+                var assemblyName = Assembly.GetEntryAssembly().GetName().Name; //GetName().Name;
+                resourceName = resourcesRelativePath + TrimPrefix(resourceType.FullName, assemblyName + ".");
             }
             resourceName = $"{resourceName}.{cultureInfo.Name}.Res.json";
             return GetCachedLocalizator(resourceName, resourceType.Assembly, cultureInfo);
         }
-        protected  string GetResourcePrefix(string location, string baseName, string resourceLocation)
+        protected string GetResourcePrefix(string location, string baseName, string resourceLocation)
         {
             // Re-root the base name if a resources path is set
             return location + "." + resourceLocation + TrimPrefix(baseName, location + ".");
@@ -73,7 +70,7 @@ namespace BankTransaction.Web.Localization
         {
             var cultureInfo = CultureInfo.CurrentUICulture;
             var resourceName = $"{baseName}.Res.json";
-            return GetCachedLocalizator(resourceName, Assembly.GetEntryAssembly(), cultureInfo);
+            return GetCachedLocalizator(resourceName, Assembly.GetEntryAssembly(), cultureInfo);//GetEntryAssembly
         }
 
         private IStringLocalizer GetCachedLocalizator(string resourceName, Assembly assembly, CultureInfo cultureInfo)
@@ -85,9 +82,9 @@ namespace BankTransaction.Web.Localization
 
         private string GetCackeKey(string resourceName, Assembly assembly, CultureInfo cultureInfo)
         {
-            return assembly.FullName +"_"+ resourceName +"_" + cultureInfo.Name;
+            return assembly.FullName + "_" + resourceName + "_" + cultureInfo.Name;
         }
 
-       
+
     }
 }
