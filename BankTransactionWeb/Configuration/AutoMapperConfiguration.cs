@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.Areas.Admin.Models.ViewModels;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
 using BankTransaction.Web.ViewModel;

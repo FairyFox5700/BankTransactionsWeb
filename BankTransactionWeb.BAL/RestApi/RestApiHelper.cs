@@ -1,7 +1,10 @@
 ﻿using BankTransaction.Api.Models;
+using BankTransaction.BAL.Abstract.RestApi;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
+using RestSharp.Deserializers;
 using RestSharp.Serialization.Json;
 using RestSharp.Serializers;
 using System;
@@ -10,28 +13,47 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
+using BankTransaction.Api.Models.Responces;
+using Microsoft.Net.Http.Headers;
+using Microsoft.Extensions.Primitives;
 
 namespace BankTransaction.BAL.Implementation.RestApi
 {
-    public class RestApiHelper
+    public class RestApiHelper: IRestApiHelper
     {
         static readonly string apiUrl = ConfigurationManager.AppSettings["api_url"] ?? "http://localhost:64943/api/";
-        public static readonly RestClient Client = new RestClient();
-       
-        private static RestRequest ConstructRequest(string resource, object body, string token,object parameters)
+        private readonly IRestClient Client;
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public RestApiHelper(IHttpContextAccessor httpContextAccessor)
         {
-            var request = new RestRequest(apiUrl+resource, body == null ? Method.GET : Method.POST)
+            Client = new RestClient(apiUrl);
+            Client.CookieContainer = new System.Net.CookieContainer();
+            
+            this.httpContextAccessor = httpContextAccessor;
+        }
+        private string GetAuthorizationHeader()
+        {
+            var authorizationHeader = httpContextAccessor
+               .HttpContext.Request.Headers["Authorization"];
+
+            return authorizationHeader == StringValues.Empty
+                ? string.Empty
+                : authorizationHeader.Single().Split(" ").Last();
+        }
+        private RestRequest ConstructRequest(string resource, object body,  Method method, object parameters)//string token,
+        {
+            var request = new RestRequest(apiUrl+resource, method)
             {
                 RequestFormat = DataFormat.Json
             };
-            if (!String.IsNullOrEmpty( token))
-            {
-                request.AddHeader("Authorization", "Bearer " + token);
+            var tokenFromHeader = GetAuthorizationHeader();
+            if ( !String.IsNullOrEmpty(tokenFromHeader))
+                request.AddHeader("Authorization", "Bearer " + tokenFromHeader);
                 request.AddHeader("cache-control", "no-cache");
                 request.AddHeader("content-type", "application/json");
                 request.AddHeader("Accept", "application/json");
-
-            }
             if (body != null)
                 request.AddJsonBody(body);
             if (parameters != null)
@@ -56,26 +78,60 @@ namespace BankTransaction.BAL.Implementation.RestApi
             return keyValue;
         }
 
-        public T Execute<T>(string resource, object body, string token, object parameters = null)
+        public T Execute<T>(string resource, object body, Method method, object parameters = null)
         {
-            var request = ConstructRequest(resource, body,token ,parameters);
+            var request = ConstructRequest(resource, body, method,parameters);
+            request.JsonSerializer = NewtonsoftJsonSerializer.Default;
             var responce = Client.Execute<T>(request);
             ValidateResponce(responce);
-            var result = responce.Data;
-            return result;
-        }
-        public object ExecuteApiRequest<T>(string resource, object body, string token, object parameters = null)
-        {
-            //ApiResponse 
-            var request = ConstructRequest(resource, body, token, parameters);
-            //request.AddHeader("Barear", token);
-            var responce = Client.Execute<ApiResponse>(request);
-            ValidateApiResponce(responce);
-            var result = responce.Data;
-            return result.Result;
+            var result = responce.Content;
+            var jsonResponse = JsonConvert.DeserializeObject<T>(result);
+            return jsonResponse;
         }
 
-        private void ValidateApiResponce(IRestResponse<ApiResponse> responce)
+        public async Task<T> ExecuteAsync<T>(string resource, object body,  Method method, object parameters = null)
+        {
+            var request = ConstructRequest(resource, body, method, parameters);
+            request.JsonSerializer = NewtonsoftJsonSerializer.Default;
+            var responce =  await Client.ExecuteAsync<T>(request);
+            ValidateResponce(responce);
+            var result = responce.Content;
+            var jsonResponse = JsonConvert.DeserializeObject<T>(result);
+            return jsonResponse;
+        }
+        
+        //https://stackoverflow.com/questions/37329354/how-to-use-ihttpcontextaccessor-in-static-class-to-set-cookies
+        public async Task<T> ExecuteApiRequestAsync<T>(string resource,  object body,  Method method, object parameters = null)
+        {
+            var request = ConstructRequest(resource, body,  method, parameters);
+            request.JsonSerializer = NewtonsoftJsonSerializer.Default;
+            IRestResponse<ApiDataResponse<T>> responce = await Client.ExecuteAsync<ApiDataResponse<T>>(request);
+            ValidateApiResponce(responce);
+            var result = responce.Content;
+            var jsonResponse = JsonConvert.DeserializeObject<ApiDataResponse<T>>(result);
+            return jsonResponse.Data;
+        } 
+        private string ValidateJSonString (string jsonString)
+        {
+            var index = jsonString.IndexOf("Formatters");
+            if( index<0)
+            {
+                return jsonString;
+            }
+            return jsonString.Substring(0, index - 2)+"}";
+        }
+        public T ExecuteApiRequest<T>(string resource, object body,  Method method, object parameters = null)
+        {
+            var request = ConstructRequest(resource, body,method,parameters);
+            request.JsonSerializer = NewtonsoftJsonSerializer.Default;
+            IRestResponse<ApiDataResponse<T>> responce = Client.Execute<ApiDataResponse<T>>(request);
+            ValidateApiResponce(responce);
+            var result = responce.Content;
+            var jsonResponse = JsonConvert.DeserializeObject<ApiDataResponse<T>>(result);
+            return jsonResponse.Data;
+        }
+
+        private void ValidateApiResponce<T>(IRestResponse<ApiDataResponse<T>> responce)
         {
             ValidateResponce(responce);
             var result = responce.Data;
@@ -89,13 +145,39 @@ namespace BankTransaction.BAL.Implementation.RestApi
                 if (responce.ErrorException != null)
                     throw responce.ErrorException;
                 else
-                    throw new Exception(responce.ErrorMessage);
+                    throw new BankApiException(responce.ErrorMessage);
             if (!String.IsNullOrEmpty(responce.ErrorMessage))
-                throw new Exception(responce.ErrorMessage);
-            if (responce.StatusCode != HttpStatusCode.OK)
-                throw new Exception(responce.Content);
+                throw new BankApiException(responce.ErrorMessage);
+            //if (responce.StatusCode != HttpStatusCode.OK)
+                //throw new BankApiException(responce.Content);
         }
     }
 
+    public class NewtonsoftJsonSerializer : IDeserializer, ISerializer
+    {
+        public string DateFormat { get; set; }
+
+        public string Namespace { get; set; }
+
+        public string RootElement { get; set; }
+
+        public string ContentType
+        {
+            get { return "application/json"; }
+            set { }
+        }
+
+        public T Deserialize<T>(IRestResponse response)
+        {
+            return JsonConvert.DeserializeObject<T>(response.Content);
+        }
+
+        public string Serialize(object obj)
+        {
+            return JsonConvert.SerializeObject(obj);
+        }
+
+        public static NewtonsoftJsonSerializer Default => new NewtonsoftJsonSerializer();
+    }
 
 }

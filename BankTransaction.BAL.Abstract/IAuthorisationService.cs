@@ -1,5 +1,4 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Entities;
+﻿using BankTransaction.Entities;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Identity;

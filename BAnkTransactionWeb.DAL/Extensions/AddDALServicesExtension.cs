@@ -1,6 +1,5 @@
 ﻿using BankTransaction.DAL.Abstract;
 using BankTransaction.DAL.Implementation.Core;
-using BankTransaction.DAL.Implementation.EfCoreDAL;
 using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
 using BankTransaction.Entities;
 using Microsoft.AspNetCore.Identity;

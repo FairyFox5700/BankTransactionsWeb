@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace BankTransaction.BAL.Implementation.DTOModels
+namespace BankTransaction.Models.DTOModels
 {
     public class AccountDTO:BaseModel
     {
         public string Number { get; set; }
         public decimal Balance { get; set; }
-        public int PersonId { get; set; }
+        public int? PersonId { get; set; }
         private List<TransactionDTO> transactions;
         public List<TransactionDTO> Transactions
         {

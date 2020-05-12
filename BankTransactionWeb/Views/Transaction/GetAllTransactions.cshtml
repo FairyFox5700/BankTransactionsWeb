@@ -1,4 +1,4 @@
-﻿@model PaginatedList<TransactionDTO>
+﻿@model PaginatedList<BankTransaction.Models.DTOModels.TransactionDTO>
 @{
     ViewData["Title"] = "All transactions";
       ViewBag.Index = 0;
@@ -40,8 +40,8 @@
                             {
                                 <tr>
                                     <th scope="row">@(ViewBag.Index += 1))</th>
-                                    <td>@transaction?.SourceAccount?.Number </td>
-                                    <td>@transaction?.DestinationAccount?.Number</td>
+                                    <td>@transaction?.SourceAccountNumber </td>
+                                    <td>@transaction?.DestinationAccountNumber</td>
                                     <td>@transaction?.DateOftransfering</td>
                                     <td>@transaction?.Amount </td>
                                     @if (User.IsInRole("Admin"))

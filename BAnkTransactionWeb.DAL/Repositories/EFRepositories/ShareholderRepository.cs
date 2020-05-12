@@ -28,6 +28,7 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
             return shareholders;
 
         }
+
         private IQueryable<Shareholder> SearchByFilters(ShareholderFilter shareholderFilter, IQueryable<Shareholder> shareholders)
         {
             if (shareholderFilter != null)
@@ -62,6 +63,11 @@ namespace BankTransaction.DAL.Implementation.Repositories.EFRepositories
             {
                 throw ex;
             }
+        }
+
+        public async Task<IEnumerable<Shareholder>> GetShareholderByPersonId(int personId)
+        {
+          return await context.Shareholders.Include(e => e.Person).Include(e => e.Company).Where(e => e.PersonId == personId).ToListAsync();
         }
     }
 }

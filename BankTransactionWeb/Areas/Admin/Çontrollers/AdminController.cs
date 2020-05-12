@@ -1,32 +1,27 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BankTransaction.Web.Areas.Admin.Models.ViewModels;
+using BankTransaction.BAL.Abstract;
 using BankTransaction.Models.Validation;
-using BankTransactionWeb.Models;
+using BankTransaction.Web.Areas.Admin.Models.ViewModels;
+using BankTransaction.Web.Mapper.Admin;
+using BankTransaction.Web.ViewModel;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
-namespace BankTransaction.Web.Areas.Admin.Controllers
+namespace BankTransaction.Web.Areas.Admin.Çontrollers
 {
     [Authorize(Roles = "Admin")]
     [Area("Admin")]
     public class AdminController : Controller
     {
         private readonly ILogger<AdminController> logger;
-        private readonly IMapper mapper;
         private readonly IAdminService adminService;
 
-        public AdminController(ILogger<AdminController> logger, IMapper mapper, IAdminService adminService)
+        public AdminController(ILogger<AdminController> logger,  IAdminService adminService)
         {
             this.logger = logger;
-            this.mapper = mapper;
             this.adminService = adminService;
         }
 
@@ -42,7 +37,7 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
             
                 if (ModelState.IsValid)
                 {
-                    var role = mapper.Map<RoleDTO>(model);
+                    var role = RoleDTOToAddRoleMapper.Instance.MapBack(model);
                     var result = await adminService.AddRole(role);
                     if (result.Succeeded)
                     {
@@ -58,7 +53,7 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GetAllRoles()
         {
-            var roles = adminService.GetAllRoles().Select(e => mapper.Map<ListRoleViewModel>(e)).ToList();
+            var roles = adminService.GetAllRoles().ToList();//Select(e => RoleDTOToListRoleMapper.Instance.Map(e)).REMOVE
             return View(roles);
         }
 
@@ -70,7 +65,7 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            var model = mapper.Map<UpdateRoleViewModel>(role);
+            var model = RoleDTOToUpdateRoleMapper.Instance.Map(role);
             return View(model);
         }
 
@@ -82,7 +77,7 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var roleToUpdate = mapper.Map<RoleDTO>(model);
+            var roleToUpdate = RoleDTOToUpdateRoleMapper.Instance.MapBack(model);
             var result = await adminService.UpdateRole(roleToUpdate);
             if (result.NotFound)
             {
@@ -106,7 +101,7 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
                 //smth here
                 return NotFound("Current role was not found");
             }
-            var model = users.Select(u => mapper.Map<UsersInRoleViewModel>(u)).ToList();
+            var model = users.Select(u => PersonInRoleDTOToUserRolesMapper.Instance.Map(u)).ToList();
             return View(model);
         }
 
@@ -114,10 +109,11 @@ namespace BankTransaction.Web.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateUsersInRole(List<UsersInRoleViewModel> model, string roleId)
         {
             ViewBag.roleId = roleId;
-            if (!ModelState.IsValid)
-            {
-                return View(roleId);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return View(model);
+            //    //return RedirectToAction(nameof(UpdateUsersInRole)), "Admin", new { roleId = roleId }); 
+            //}
             var currentRole = await adminService.GetRoleById(roleId);
             if (currentRole == null)
             {

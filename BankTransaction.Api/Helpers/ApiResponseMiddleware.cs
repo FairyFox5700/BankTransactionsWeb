@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using BankTransaction.Api.Models.Responces;
 
 namespace BankTransaction.Api.Helpers
 {
@@ -31,25 +32,21 @@ namespace BankTransaction.Api.Helpers
                 context.Response.Body = responseBody;
                 try
                 {
-                    //Return result from inner midlleware
                     await next(context);
                     var feature = context.Features.Get<ModelStateFeature>();
                     var ModelState = context.Features.Get<ModelStateFeature>()?.ModelState;
                     var body = await FormatResponse(context.Response);
-
+                    context.Response.ContentType = "application/json";
                     if (context.Response.StatusCode == (int)HttpStatusCode.OK)
                     {
-                        //var body = await FormatResponse(context.Response);
                         await HandleSuccessRequestAsync(context, body, context.Response.StatusCode);
-
                     }
                     else if (ModelState != null && !ModelState.IsValid)
                     {
                         var error = HandleNotSuccessValidationAsync(context, context.Response.StatusCode, ModelState);
                     }
                     else
-                    {
-
+                    { 
                         await HandleNotSuccessRequestAsync(context, context.Response.StatusCode, body);
                     }
                 }
@@ -68,23 +65,21 @@ namespace BankTransaction.Api.Helpers
 
         private Task HandleNotSuccessRequestAsync(HttpContext context, int statusCode, string body)
         {
-            context.Response.ContentType = "application/json";
-            var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResponse>(body);
-            if (apiErrorResponce != null && apiErrorResponce is ApiErrorResponse)
-                apiErrorResponce = apiErrorResponce;
-            else
-                apiErrorResponce = new ApiErrorResponse { Message = "Your request cannot be processed. Please contact a support." };
-
-
-            var apiResponce = new ApiResponse(statusCode, apiErrorResponce);
+            var result = ReturnApiErrorResponce(context, body);
+            if (result != null)
+            {
+                return result;
+            }
+            var apiResponce = ApiDataResponse < ApiErrorResponse >.ServerError;
             context.Response.StatusCode = statusCode;
+            if (statusCode == (int)HttpStatusCode.Unauthorized)
+                apiResponce = ApiDataResponse<ApiErrorResponse>.Unauthorized;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
         }
 
         private Task HandleNotSuccessValidationAsync(HttpContext context, int statusCode, ModelStateDictionary modelState)
         {
-            context.Response.ContentType = "application/json";
             var errorListModel = modelState
                 .Where(x => x.Value.Errors.Count > 0)
                 .ToDictionary(er => er.Key, er => er.Value.Errors.Select(x => x.ErrorMessage))
@@ -102,7 +97,7 @@ namespace BankTransaction.Api.Helpers
                     apiErrorResponce.ValidationErrors.Add(errorModel);
                 }
             }
-            var apiResponce = new ApiResponse(statusCode, apiErrorResponce);
+            var apiResponce = new ApiDataResponse<ApiErrorResponse>(statusCode, apiErrorResponce);
             context.Response.StatusCode = statusCode;
             var json = JsonConvert.SerializeObject(apiResponce);
             return context.Response.WriteAsync(json);
@@ -111,7 +106,7 @@ namespace BankTransaction.Api.Helpers
 
         private Task HandleSuccessRequestAsync(HttpContext context, object body, int statusCode)
         {
-            context.Response.ContentType = "application/json";
+            //context.Response.ContentType = "application/json";
             string jsonString, bodyText = string.Empty;
 
             if (!IsValidJson(body.ToString(), logger))
@@ -120,21 +115,35 @@ namespace BankTransaction.Api.Helpers
                 bodyText = body.ToString();
             if (statusCode == StatusCodes.Status401Unauthorized)
             {
-                jsonString = JsonConvert.SerializeObject(ApiResponse.Unauthorized);
+                jsonString = JsonConvert.SerializeObject(ApiDataResponse<ApiErrorResponse>.Unauthorized);
                 return context.Response.WriteAsync(jsonString);
             }
             else
             {
-                dynamic bodyContent = JsonConvert.DeserializeObject<dynamic>(bodyText);
-                var apiResponse = new ApiResponse(bodyContent, statusCode);
-                jsonString = JsonConvert.SerializeObject(apiResponse);
+                var result = ReturnApiErrorResponce(context, bodyText);
+                if (result != null)
+                {
+                    return result;
+                }
+                jsonString = bodyText;
             }
             return context.Response.WriteAsync(jsonString);
         }
 
+        private Task ReturnApiErrorResponce(HttpContext context,string body)
+        {
+            var apiErrorResponce = JsonConvert.DeserializeObject<ApiErrorResponse>(body);
+            if (apiErrorResponce!=null && (apiErrorResponce.Message!=null))
+            {
+                return context.Response.WriteAsync(body);
+            }
+            return null;
+
+        }
+
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
+            //context.Response.ContentType = "application/json";
             var apiErrorResponce = new ApiErrorResponse();
             int code = (int)HttpStatusCode.InternalServerError;
             if (exception is DbUpdateException)
@@ -151,8 +160,7 @@ namespace BankTransaction.Api.Helpers
                 context.Response.StatusCode = code;
             }
 
-            context.Response.ContentType = "application/json";
-            var apiResponce = new ApiResponse(code, apiErrorResponce);
+            var apiResponce = new ApiDataResponse<ApiErrorResponse>(code, apiErrorResponce);
             var json = JsonConvert.SerializeObject(apiResponce);
             logger.LogError($"An exception occured {exception.Message}");
             return context.Response.WriteAsync(json);

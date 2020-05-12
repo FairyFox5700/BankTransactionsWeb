@@ -1,98 +1,78 @@
-﻿using BankTransaction.Api.Models;
+﻿using AutoMapper;
+using BankTransaction.Api.Models;
+using BankTransaction.Api.Models.Mapper;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using BankTransaction.Api.Helpers;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PersonController : ControllerBase
+    public class PersonController : BaseApiController
     {
         private readonly IPersonService personService;
         private readonly ILogger<PersonController> logger;
-        private readonly IMapper mapper;
 
-        public PersonController(IPersonService personService, ILogger<PersonController> logger, IMapper mapper )
+        public PersonController(IPersonService personService, ILogger<PersonController> logger, IMapper mapper)
         {
             this.personService = personService;
             this.logger = logger;
-            this.mapper = mapper;
         }
 
         // GET /api/Person
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters, [FromQuery]SearchPersonQuery personQuery  )
+        public async Task<ApiDataResponse<PaginatedList<PersonDTO>>> GetAllPersons([FromQuery]PageQueryParameters pageQueryParameters = null, [FromQuery]SearchPersonQuery personQuery = null)
         {
-           
-           var paginatedModel = mapper.Map<PaginatedModel<PersonDTO>>(pageQueryParameters);
 
-            var filter = mapper.Map<PersonFilterModel>(personQuery);
-            PaginatedModel<PersonDTO> allPersons = null;
-            if(filter!=null)
-            {
-                allPersons = await personService.GetAllPersons(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
-            }
-            else
-                allPersons = await personService.GetAllPersons(pageQueryParameters.PageNumber, pageQueryParameters.PageSize);
-            var persons =new PaginatedList<PersonDTO>(allPersons, paginatedModel);
-            return Ok(persons);
+            var paginatedModel = PaginatedModelPersonToQueryList.Instance.MapBack(pageQueryParameters);
+
+            var filter = PersonFilterToSearchMapper.Instance.MapBack(personQuery);
+            var allPersons = await personService.GetAllPersons(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
+            var persons = new PaginatedList<PersonDTO>(allPersons);
+            return new ApiDataResponse<PaginatedList<PersonDTO>>(persons);
         }
         // PUT /api/Person/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePerson(int id, PersonDTO person)
+        public async Task<ApiDataResponse<int>> UpdatePerson(int id, PersonDTO person)
         {
             if (id != person.Id)
             {
-                return BadRequest();
+                return ApiDataResponse<int>.BadRequest;
             }
             var currentPerson = await personService.GetPersonById(id);
             if (currentPerson == null)
             {
-                return NotFound();
+                return ApiDataResponse<int>.NotFound;
             }
             await personService.UpdatePerson(person);
-            return Ok(currentPerson);
+            return new ApiDataResponse<int>(id);
 
         }
 
         // POST: api/APerson
         [HttpPost]
-        public async Task<IActionResult> AddPerson(PersonDTO person)
+        public async Task<ApiDataResponse<PersonDTO>> AddPerson(PersonDTO person)
         {
-            if (person == null)
-            {
-                return BadRequest("Object of type person is null");
-            }
-            else
-            {
-                await personService.AddPerson(person);
-                return Ok(person);
-            }
-
+            await personService.AddPerson(person);
+            return new ApiDataResponse<PersonDTO>(person);
         }
         // DELETE /api/Person/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePerson(int id)
+        public async Task<ApiDataResponse<PersonDTO>> DeletePerson(int id)
         {
             var person = await personService.GetPersonById(id);
             if (person == null)
             {
-                return NotFound();
+                return ApiDataResponse<PersonDTO>.NotFound;
             }
             await personService.DeletePerson(person);
-            return Ok("Deleted successfully");
+            return new ApiDataResponse<PersonDTO>(person);
         }
 
     }

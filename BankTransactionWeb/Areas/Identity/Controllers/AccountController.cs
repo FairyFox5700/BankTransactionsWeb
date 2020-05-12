@@ -1,15 +1,15 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
-using BankTransactionWeb.Controllers;
+using BankTransaction.Web.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
+using BankTransaction.Web.Mapper.Identity;
 
 namespace BankTransaction.Web.Areas.Identity.Controllers
 {
@@ -20,14 +20,12 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
 
         private readonly ILogger<AccountController> logger;
         private readonly IPersonService personService;
-        private readonly IMapper mapper;
         private readonly IAuthenticationService authService;
 
-        public AccountController(ILogger<AccountController> logger, IPersonService personService, IMapper mapper, IAuthenticationService authService)
+        public AccountController(ILogger<AccountController> logger, IPersonService personService,  IAuthenticationService authService)
         {
             this.logger = logger;
             this.personService = personService;
-            this.mapper = mapper;
             this.authService = authService;
         }
 
@@ -41,7 +39,7 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         [HttpGet]
         [AllowAnonymous]
 
-        public ActionResult Login(string returnUrl = null)
+        public async Task<IActionResult> Login(string returnUrl = null)
         {
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
@@ -49,12 +47,12 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login([FromForm]LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var person = mapper.Map<PersonDTO>(model);
+                var person = LoginToPersonDtoMapper.Instance.Map(model);
                 var result = await authService.LoginPerson(person);
                 if (result.NotFound)
                     return NotFound(result);
@@ -85,18 +83,10 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            try
-            {
+
                 await authService.SignOutPerson();
                 logger.LogInformation("User successfully logged out.");
                 return RedirectToAction(nameof(HomeController.Index), "Home", new { area = "" });
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(Logout)}. The exception is {ex.Message}. " +
-                    $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                return StatusCode(500, "Internal server error");
-            }
         }
 
 
@@ -107,7 +97,7 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         {
             if (ModelState.IsValid)
             {
-                var person = mapper.Map<PersonDTO>(model);
+                var person = RegisterToPersonDtoMapper.Instance.Map(model);
                 var result = await authService.RegisterPerson(person);
                 if (result.NotFound)
                     return NotFound(result.Errors);
@@ -253,7 +243,7 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         {
             if (ModelState.IsValid)
             {
-                var person = mapper.Map<PersonDTO>(model);
+                var person = ResetPasswordToPersonDtoMapper.Instance.Map(model);
                 var result = await authService.ResetPasswordForPerson(person);
                 if (result.NotFound)
                 {

@@ -1,36 +1,33 @@
-﻿using AutoMapper;
+﻿
 using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Models;
-using BankTransaction.Web.Helpers;
-using BankTransaction.Web.Models;
+using BankTransaction.Web.Mapper;
+using BankTransaction.Web.Mapper.Filters;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Web.Mapper;
 
-namespace BankTransactionWeb.Controllers
+namespace BankTransaction.Web.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ShareholderController : Controller
     {
         private readonly IShareholderService shareholderService;
         private readonly ILogger<ShareholderController> logger;
-        private readonly IMapper mapper;
         private readonly ICompanyService companyService;
         private readonly IPersonService personService;
 
 
-        public ShareholderController(IShareholderService shareholderService, ILogger<ShareholderController> logger, IMapper mapper,
+        public ShareholderController(IShareholderService shareholderService, ILogger<ShareholderController> logger,
             ICompanyService companyService, IPersonService personService)
         {
             this.shareholderService = shareholderService;
             this.logger = logger;
-            this.mapper = mapper;
             this.companyService = companyService;
             this.personService = personService;
         }
@@ -39,12 +36,13 @@ namespace BankTransactionWeb.Controllers
         [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 30000)]
         public async Task<IActionResult> GetAllShareholders(ShareholderSearchModel searchModel = null, PageQueryParameters pageQueryParameters = null)
         {
-            var filter = mapper.Map<ShareholderFilterModel>(searchModel);
+            var filter = ShareholderSearchToFilterDto.Instance.Map(searchModel);
             var allshareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
             var listOfShareholdersVM = new PaginatedList<ShareholderDTO>(allshareholders);
             return View(listOfShareholdersVM);
         }
 
+        [HttpGet]
         public async Task<IActionResult> AddShareholder(int id)
         {
             var person = await personService.GetPersonById(id);
@@ -52,7 +50,10 @@ namespace BankTransactionWeb.Controllers
             {
                 var shareholderVM = new AddShareholderViewModel()
                 {
-                    Person = person,
+                    //Person = person,
+                    PersonSurName = person.Surname,
+                    PersonName = person.Name,
+                    PersonLastName = person.LastName,
                     PersonId = id,
                     Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name")
                 };
@@ -65,16 +66,19 @@ namespace BankTransactionWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddShareholder(AddShareholderViewModel shareholderModel)
         {
-            if (!ModelState.IsValid)
+            shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+            if (ModelState.IsValid)
             {
-                return View(shareholderModel);
-            }
-            else
-            {
-                var shareholder = mapper.Map<ShareholderDTO>(shareholderModel);
-                await shareholderService.AddShareholder(shareholder);
+                var shareholder = AddShareholderToShareholderDTOMapper.Instance.Map(shareholderModel);
+                var result = await shareholderService.AddShareholder(shareholder);
+                if (result.IsError)
+                {
+                    ModelState.AddModelError("", result.Message);
+                    return View(shareholderModel);
+                }
                 return RedirectToAction(nameof(GetAllShareholders));
             }
+            return View(shareholderModel);
 
         }
 
@@ -82,19 +86,19 @@ namespace BankTransactionWeb.Controllers
         public async Task<IActionResult> UpdateShareholder(int id)
         {
             var currentShareholder = await shareholderService.GetShareholderById(id);
-                if (currentShareholder == null)
-                { 
-                    return NotFound($"Shareholder with id {id} not find");
-                }
-                else
-                {
-                    var shareholderModel = mapper.Map<UpdateShareholderViewModel>(currentShareholder);
-                    shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
-                shareholderModel.Person = await personService.GetPersonById(id); 
-                    return View(shareholderModel);
-                }
+            if (currentShareholder == null)
+            {
+                return NotFound($"Shareholder with id {id} not find");
+            }
+            else
+            {
+                var shareholderModel = UpdateShareholderToShareholderDTOMapper.Instance.MapBack(currentShareholder);
+                shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+               // shareholderModel.PersonId = (await personService.GetPersonById(shareholderModel.PersonId)).Id;
+                return View(shareholderModel);
+            }
 
-          
+
 
         }
 
@@ -102,15 +106,8 @@ namespace BankTransactionWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateShareholder([FromForm]UpdateShareholderViewModel shareholderModel)
         {
-            if (shareholderModel == null)
-            {
-                return BadRequest("Object of type shareholder is null");
-            }
-            if (!ModelState.IsValid)
-            {
-                return View(shareholderModel);
-            }
-            else
+            shareholderModel.Comapnanies = new SelectList(await companyService.GetAllCompanies(), "Id", "Name");
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -121,8 +118,13 @@ namespace BankTransactionWeb.Controllers
                     }
                     else
                     {
-                        var updatedShareholder = mapper.Map<UpdateShareholderViewModel, ShareholderDTO>(shareholderModel, shareholder);
-                        await shareholderService.UpdateShareholder(updatedShareholder);
+                        var updatedShareholder = UpdateShareholderToShareholderDTOMapper.Instance.Map(shareholderModel);
+                        var result = await shareholderService.UpdateShareholder(updatedShareholder);
+                        if (result.IsError)
+                        {
+                            ModelState.AddModelError("", result.Message);
+                            return View(shareholderModel);
+                        }
                         return RedirectToAction(nameof(GetAllShareholders));
                     }
                 }
@@ -134,7 +136,10 @@ namespace BankTransactionWeb.Controllers
                     "see your system administrator.");
                     return View(shareholderModel);
                 }
-
+            }
+            else
+            {
+                return View(shareholderModel);
             }
 
         }

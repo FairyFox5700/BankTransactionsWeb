@@ -1,91 +1,77 @@
-﻿using AutoMapper;
-using BankTransaction.Api.Helpers;
+﻿using BankTransaction.Api.Helpers;
+using BankTransaction.Api.Models;
+using BankTransaction.Api.Models.Mapper;
 using BankTransaction.Api.Models.Queries;
 using BankTransaction.Api.Models.Responces;
 using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ShareholderController : ControllerBase
+    public class ShareholderController : BaseApiController
     {
         private readonly IShareholderService shareholderService;
-        private readonly IMapper mapper;
         private readonly ILogger<ShareholderController> logger;
 
-        public ShareholderController(IShareholderService shareholderService,IMapper mapper, ILogger<ShareholderController> logger)
+        public ShareholderController(IShareholderService shareholderService, ILogger<ShareholderController> logger)
         {
             this.shareholderService = shareholderService;
-            this.mapper = mapper;
             this.logger = logger;
         }
         // GET /api/Shareholder
         [HttpGet]
-        [Cached(2000)]
-        public async Task<IActionResult> GetAllShareholders([FromQuery]PageQueryParameters pageQueryParameters,[FromQuery]SearchShareholderQuery searchShareholderQuery)
+        //[Cached(2000)]
+        public async Task<ApiDataResponse<PaginatedList<ShareholderDTO>>> GetAllShareholders([FromQuery]PageQueryParameters pageQueryParameters, [FromQuery]SearchShareholderQuery searchShareholderQuery)
         {
-            var paginatedModel = mapper.Map<PaginatedModel<ShareholderDTO>>(pageQueryParameters);
-            var filter = mapper.Map<ShareholderFilterModel>(searchShareholderQuery);
-            PaginatedModel<ShareholderDTO> shareholders = null;
-            if (searchShareholderQuery != null)
-            {
-               shareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize,filter);
-            }
-            shareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize);
-            var paginatedShareholders = new PaginatedList<ShareholderDTO>(shareholders, paginatedModel );
-            return Ok (paginatedShareholders);
+            var paginatedModel = PaginatedModelShareholderToQueryList.Instance.MapBack(pageQueryParameters);
+            var filter = ShareholderFilterToSearchMapper.Instance.MapBack(searchShareholderQuery);
+            var shareholders = await shareholderService.GetAllShareholders(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
+            var paginatedShareholders = new PaginatedList<ShareholderDTO>(shareholders);
+            return new ApiDataResponse<PaginatedList<ShareholderDTO>>(paginatedShareholders);
         }
         // PUT /api/Shareholder/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateShareholder(int id, ShareholderDTO shareholder)
+        public async Task<ApiDataResponse<int>> UpdateShareholder(int id, ShareholderDTO shareholder)
         {
             if (id != shareholder.Id)
             {
-                return BadRequest();
+                return ApiDataResponse<int>.BadRequest;
             }
             var currentShareholder = await shareholderService.GetShareholderById(id);
             if (currentShareholder == null)
             {
-                return NotFound();
+                return ApiDataResponse<int>.NotFound;
             }
-            await shareholderService.UpdateShareholder(shareholder);
-            return Ok(currentShareholder);
+            var result = await shareholderService.UpdateShareholder(shareholder);
+            if (result.IsError)
+                return new ApiDataResponse<int>(400, new ApiErrorResponse() { Message = result.Message });
+            return new ApiDataResponse<int>(id);
 
         }
 
         // POST: api/Shareholder
         [HttpPost]
-        public async Task<IActionResult> AddShareholder(ShareholderDTO shareholder)
+        public async Task<ApiDataResponse<ShareholderDTO>> AddShareholder(ShareholderDTO shareholder)
         {
-            if (shareholder == null)
-            {
-                return BadRequest("Object of type shareholder is null");
-            }
-            else
-            {
-                await shareholderService.AddShareholder(shareholder);
-                return Ok(shareholder);
-            }
+           var result= await shareholderService.AddShareholder(shareholder);
+            if (result.IsError)
+                return new ApiDataResponse<ShareholderDTO>(400, new ApiErrorResponse() { Message = result.Message });
+            return new ApiDataResponse<ShareholderDTO>(shareholder);
         }
         // DELETE /api/Shareholder/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteShareholder(int id)
+        public async Task<ApiDataResponse<ShareholderDTO>> DeleteShareholder(int id)
         {
             var shareholder = await shareholderService.GetShareholderById(id);
             if (shareholder == null)
             {
-                return NotFound();
+                return ApiDataResponse<ShareholderDTO>.NotFound;
             }
             await shareholderService.DeleteShareholder(shareholder);
-            return Ok("Deleted succesfully");
+            return new ApiDataResponse<ShareholderDTO>(shareholder);
 
         }
     }

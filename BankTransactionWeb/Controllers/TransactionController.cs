@@ -1,8 +1,7 @@
-﻿using AutoMapper;
+﻿
 using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.Helpers;
-using BankTransaction.Web.Models;
+using BankTransaction.Web.Mapper;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,8 +12,10 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Web.Mapper;
 
-namespace BankTransactionWeb.Controllers
+namespace BankTransaction.Web.Controllers
 {
 
     public class TransactionController : Controller
@@ -22,15 +23,13 @@ namespace BankTransactionWeb.Controllers
         private readonly ITransactionService transactionService;
         private readonly IAccountService accountService;
         private readonly ILogger<TransactionController> logger;
-        private readonly IMapper mapper;
 
         public TransactionController(ITransactionService transactionService, IAccountService accountService,
-            ILogger<TransactionController> logger, IMapper mapper)
+            ILogger<TransactionController> logger)
         {
             this.transactionService = transactionService;
             this.accountService = accountService;
             this.logger = logger;
-            this.mapper = mapper;
         }
 
         //auth User
@@ -66,7 +65,7 @@ namespace BankTransactionWeb.Controllers
                 }
                 else
                 {
-                    var transactionModel = mapper.Map<UpdateTransactionViewModel>(currentTransaction);
+                    var transactionModel = UpdateTransactionToTransactionDTOMapper.Instance.Map(currentTransaction);
                     return View(transactionModel);
                 }
 
@@ -96,15 +95,16 @@ namespace BankTransactionWeb.Controllers
                     }
                     else
                     {
-                        var updatedTransaction = mapper.Map<UpdateTransactionViewModel, TransactionDTO>(transactionModel, transaction);
+                        var updatedTransaction = UpdateTransactionToTransactionDTOMapper.Instance.MapBack( transactionModel);
+                        
                         var result =await transactionService.UpdateTransaction(updatedTransaction);
                         if (result.IsError)
                         {
                             ModelState.AddModelError("",result.Message);
                             return View(transactionModel);
                         }
-                            return RedirectToAction("Error", "Home", result.Message);
-                        return RedirectToAction(nameof(GetAllTransactions));
+                        return RedirectToAction("Error", "Home", result.Message);
+
                     }
                 }
                 catch (DbUpdateException ex)
@@ -170,7 +170,8 @@ namespace BankTransactionWeb.Controllers
                         ModelState.AddModelError("", result.Message);
                         return View(executeTransactionViewModel);
                     }
-                    return RedirectToAction(nameof(SuccessfulTransaction),result.Message);
+                    return View(nameof(SuccessfulTransaction), result.Message);
+                   
                 }
                 else
                 {
@@ -197,9 +198,6 @@ namespace BankTransactionWeb.Controllers
             transactionService.Dispose();
             base.Dispose(disposing);
         }
-
-
-
 
     }
 }

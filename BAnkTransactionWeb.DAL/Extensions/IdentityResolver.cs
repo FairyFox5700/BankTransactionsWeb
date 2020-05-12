@@ -12,7 +12,7 @@ namespace BankTransaction.DAL.Implementation.Extensions
         {
             services.ConfigureApplicationCookie(options =>
             {
-                options.Cookie.HttpOnly = true;
+                options.Cookie.HttpOnly = true;//disable 
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
 
                 options.LoginPath = "/Identity/Account/Login";

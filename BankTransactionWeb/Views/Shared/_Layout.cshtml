@@ -45,34 +45,36 @@
                         <li class="nav-item">
                             <a class="nav-link " asp-area="" asp-controller="Company" asp-action="Index">Our companies</a>
                         </li>
-                         @await Html.PartialAsync("_LoginPartialNav")
 
                         @await Html.PartialAsync("_LoginPartialNav")
+
                     </ul>
                 </div>
+
+            </div>
+            <div class="col-md-2 text-right">
                 @await Html.PartialAsync("_SelectLanguagePartial")
             </div>
         </nav>
 
     </header>
-    <div class="container body-content" style="margin-top:60px">
-        @*<main role="main" class="pb-3">*@
-        @RenderBody()
-        <hr>
-        <footer class="border-top footer text-muted">
-            <div class="row">
-                <div class="col-md-6">
-                    <p>  &copy; @System.DateTime.Now.Year  - Bank Transaction Web</p>
-                </div>
-                <div class="col-md-6 text-right">
-                  
-                </div>
-            </div>
-        </footer>
-        @*</main>*@
-    </div>
 
-   
+
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+    <hr />
+    <footer class="sticky-footer bg-white">
+        <div class="container ">
+            <div class="copyright text-center my-auto">
+                <span>Copyright &copy; @System.DateTime.Now.Year - BankTransactionWeb</span>
+            </div>
+        </div>
+    </footer>
+ 
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

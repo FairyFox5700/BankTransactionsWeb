@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
 
@@ -8,7 +7,7 @@ namespace BankTransaction.BAL.Abstract.RestApi
     public interface IJwtAuthenticationService
     {
        // Task RefreshToken(RefreshTokenDTO model);
-        Task<AuthResult> LoginPerson(string email, string password);
+        Task<AuthResult> LoginPerson(PersonDTO person);
         Task<AuthResult> RegisterPersonWithJwtToken(PersonDTO person);
     }
 }

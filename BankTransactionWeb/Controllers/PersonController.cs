@@ -1,9 +1,9 @@
-﻿using AutoMapper;
+﻿
 using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Models;
 using BankTransaction.Web.Helpers;
-using BankTransaction.Web.Models;
+using BankTransaction.Web.Mapper;
+using BankTransaction.Web.Mapper.Filters;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,21 +11,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Web.Mapper;
 
-namespace BankTransactionWeb.Controllers
+namespace BankTransaction.Web.Controllers
 {
     // [Authorize(Roles = "Admin")]
     public class PersonController : Controller
     {
         private readonly IPersonService personService;
         private readonly ILogger<PersonController> logger;
-        private readonly IMapper mapper;
 
-        public PersonController(IPersonService personService, ILogger<PersonController> logger, IMapper mapper)
+        public PersonController(IPersonService personService, ILogger<PersonController> logger)
         {
             this.personService = personService;
             this.logger = logger;
-            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -33,7 +33,7 @@ namespace BankTransactionWeb.Controllers
         public async Task<IActionResult> GetAllPersons([FromQuery]PersonSearchModel personSearch = null, PageQueryParameters pageQueryParameters = null)
         {
 
-            var filter = mapper.Map<PersonFilterModel>(personSearch);
+            var filter = PersonSearchToFilterDto.Instance.Map(personSearch);
             var allPersons = await personService.GetAllPersons(pageQueryParameters.PageNumber, pageQueryParameters.PageSize, filter);
             var listOfPersonsVM = new PaginatedList<PersonDTO>(allPersons);
             return View(listOfPersonsVM);
@@ -52,7 +52,7 @@ namespace BankTransactionWeb.Controllers
             }
             else
             {
-                var personModel = mapper.Map<UpdatePersonViewModel>(currentPerson);
+                var personModel = UpdatePersonToPersonDTOMapper.Instance.MapBack(currentPerson);
                 return View(personModel);
             }
 
@@ -74,7 +74,7 @@ namespace BankTransactionWeb.Controllers
             {
                 try
                 {
-                    var updatedPerson = mapper.Map<PersonDTO>(personModel);
+                    var updatedPerson = UpdatePersonToPersonDTOMapper.Instance.Map(personModel);
                     var result = await personService.UpdatePerson(updatedPerson);
                     if (result == null)
                     {
@@ -109,7 +109,7 @@ namespace BankTransactionWeb.Controllers
 
         public async Task<IActionResult> PersonSearch([FromQuery]PersonSearchModel personSearch)
         {
-            var filter = mapper.Map<PersonFilterModel>(personSearch);
+            var filter = PersonSearchToFilterDto.Instance.Map(personSearch);
             var allPersons = await personService.GetAllPersons(1, 30, filter);
             return Json(allPersons);
         }
@@ -127,7 +127,7 @@ namespace BankTransactionWeb.Controllers
             }
             else
             {
-                var personModel = mapper.Map<UpdatePersonViewModel>(currentPerson);
+                var personModel = UpdatePersonToPersonDTOMapper.Instance.MapBack(currentPerson);
                 return View(personModel);
             }
 

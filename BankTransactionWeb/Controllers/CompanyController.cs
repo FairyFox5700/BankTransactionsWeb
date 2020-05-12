@@ -1,8 +1,6 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.Web.Helpers;
-using BankTransaction.Web.Models;
+using BankTransaction.Web.Mapper;
 using BankTransaction.Web.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Web.Mapper;
 
 namespace BankTransaction.Web.Controllers
 {
@@ -19,13 +19,11 @@ namespace BankTransaction.Web.Controllers
     {
         private readonly ICompanyService companyService;
         private readonly ILogger<CompanyController> logger;
-        private readonly IMapper mapper;
 
-        public CompanyController(ICompanyService companyService, ILogger<CompanyController> logger, IMapper mapper)
+        public CompanyController(ICompanyService companyService, ILogger<CompanyController> logger)
         {
             this.companyService = companyService;
             this.logger = logger;
-            this.mapper = mapper;
         }
         [HttpGet]
        
@@ -60,7 +58,7 @@ namespace BankTransaction.Web.Controllers
                 }
                 if (ModelState.IsValid)
                 {
-                    var company = mapper.Map<CompanyDTO>(companyModel);
+                    var company = AddCompanyToCompanyDTOMapper.Instance.Map(companyModel);
                     await companyService.AddCompany(company);
                     return RedirectToAction(nameof(GetAllCompanies));
                 }
@@ -77,7 +75,7 @@ namespace BankTransaction.Web.Controllers
             }
             else
             {
-                var companyModel = mapper.Map<UpdateCompanyViewModel>(currentCompany);
+                var companyModel = UpdateCompanyToCompanyDTOMapper.Instance.MapBack(currentCompany);
                 return View(companyModel);
             }
         }
@@ -106,7 +104,7 @@ namespace BankTransaction.Web.Controllers
                         }
                         else
                         {
-                            var updatedCompany = mapper.Map<UpdateCompanyViewModel, CompanyDTO>(companyModel, company);
+                            var updatedCompany = UpdateCompanyToCompanyDTOMapper.Instance.Map(companyModel);
                             await companyService.UpdateCompany(updatedCompany);
                             return RedirectToAction(nameof(GetAllCompanies));
                         }

@@ -1,17 +1,14 @@
-﻿
-using BankTransaction.Entities;
-using BankTransaction.DAL.Implementation.InMemoryDAL;
-using BankTransaction.DAL.Abstract;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BankTransaction.DAL.Implementation.InMemoryCore;
-using BankTransaction.DAL.Implementation.Extensions;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.DAL.Implementation.Core.InMemoryCore;
+using BankTransaction.Entities;
 using BankTransaction.Entities.Filter;
 using Microsoft.AspNetCore.Identity;
 
-namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRepositories
+namespace BankTransaction.DAL.Implementation.Repositories.InMemoryRepositories
 {
     public class PersonInMemoryRepository : IPersonRepository
     {

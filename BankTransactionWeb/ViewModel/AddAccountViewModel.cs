@@ -1,8 +1,8 @@
-﻿using BankTransaction.BAL.Implementation.DTOModels;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.ViewModel
 {
@@ -19,7 +19,7 @@ namespace BankTransaction.Web.ViewModel
         public PersonDTO Person { get; set; }
         [Required]
         [Display(Name ="Current person id")]
-        public int PersonId { get;set;}
+        public int? PersonId { get;set;}
         //public int Name { get; set; }
     }
 }

@@ -1,62 +1,47 @@
-using AutoMapper;
-using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation;
 using BankTransaction.BAL.Implementation.Extensions;
-using BankTransaction.BAL.Implementation.Infrastucture;
-using BankTransaction.Configuration;
-using BankTransaction.Configuration.Extension;
-using BankTransaction.DAL.Abstract;
 using BankTransaction.DAL.Implementation.Core;
-using BankTransaction.DAL.Implementation.EfCoreDAL;
 using BankTransaction.DAL.Implementation.Extensions;
-using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
 using BankTransaction.Entities;
-using BankTransaction.Models.Mapper;
-using BankTransaction.Models.Validation;
-using BankTransaction.Web.Configuration;
+using BankTransaction.Web.Extensions;
 using BankTransaction.Web.Helpers;
-using BankTransaction.Web.Mapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Text;
+using Microsoft.Extensions.Options;
 
 namespace BankTransaction.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration;
+            Environment = environment;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-          
             services.AddRazorPages().AddRazorRuntimeCompilation();
-            services.AddMapperViewConfiguration();
             services.AddDALServices(Configuration);
             services.AddBalServices(Configuration);
-            services.AddJwtAuthentication(Configuration);
+            services.AddJwtAuthentication(Configuration,Environment);
             services.AddDistributedCache(Configuration);
             services.AddIdentiyConfig();
+            services.AddJsonLocalization();
+            services.AddViewServices();
             services.AddMvc();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -73,22 +58,25 @@ namespace BankTransaction.Web
 
             else
             {
-
                 app.UseExceptionHandler("/Home/Error");
+               // app.UseExceptionHandlingMiddleware();
+                app.UseHsts();
             }
-
-            //app.UseCors(c=>c.SetIsOriginAllowed(x=>_=true).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+            var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
+            app.UseRequestLocalization(localizationOptions);
+           
             app.UseStaticFiles();
-            app.UseStatusCodePages();
+            //app.UseStatusCodePages();
+            app.UseStatusCodePagesWithReExecute("/Error/{statusCode}");
 
             app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org", "http://localhost:64943")
                             .AllowAnyHeader()
-                            .AllowAnyMethod().AllowCredentials()); 
+                            .AllowAnyMethod().AllowCredentials());
             app.UseRouting();
 
+            app.UseSecurityJwt();
             app.UseAuthentication();
             app.UseAuthorization();
-            //MyIdentityDataInitializer.SeedData(userManager, roleManager, context);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

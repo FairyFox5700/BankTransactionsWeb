@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace BankTransaction.BAL.Implementation.DTOModels
+namespace BankTransaction.Models.DTOModels
 {
     public class PersonDTO:BaseModel
     {

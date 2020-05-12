@@ -1,10 +1,7 @@
-﻿using BankTransaction.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using BankTransaction.Models;
 
-namespace BankTransaction.Web.Models
+namespace BankTransaction.Web.ViewModel
 {
     public class PaginatedList<T>
     {
@@ -15,7 +12,10 @@ namespace BankTransaction.Web.Models
         public bool HasPrevious { get; set; }
         public bool HasNext { get; set; }
 
+        public PaginatedList()
+        {
 
+        }
         public IEnumerable<T> Data { get; set; } = new List<T>();
         public PaginatedList(PaginatedModel<T> paginatedModel)
         {

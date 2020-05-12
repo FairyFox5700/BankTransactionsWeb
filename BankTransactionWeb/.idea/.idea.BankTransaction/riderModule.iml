@@ -8,7 +8,6 @@
     <content url="file://$MODULE_DIR$/../../../BankTransaction.Configuration" />
     <content url="file://$MODULE_DIR$/../../../BankTransaction.DAL.Abstract" />
     <content url="file://$MODULE_DIR$/../../../BankTransaction.Entities" />
-    <content url="file://$MODULE_DIR$/../../../BankTransaction.Mapper" />
     <content url="file://$MODULE_DIR$/../../../BankTransaction.Models" />
     <content url="file://$MODULE_DIR$/../.." />
     <content url="file://$MODULE_DIR$/../../../BankTransactionWeb.BAL" />

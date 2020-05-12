@@ -22,7 +22,8 @@ namespace BankTransaction.Models
         }
         public PaginatedModel(IEnumerable<T>items, int pageNumber, int pageSize, int totalCount, int totalPages)
         {
-            AddRange(items);
+            if (items!=null)
+                AddRange(items);
             PageNumber = pageNumber;
             PageSize = pageSize;
             TotalCount = totalCount;

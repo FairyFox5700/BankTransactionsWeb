@@ -1,0 +1,65 @@
+﻿@model BankTransaction.Api.Models.Responces.PaginatedList<BankTransaction.Models.DTOModels.AccountDTO>
+@{
+      ViewData["Title"] = "All accounts";
+      ViewBag.Index = 0;
+      Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
+
+}
+    <form asp-controller="ApiBankAccount" asp-action="GetAllAccounts" method="get">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <div class="row">
+                    <div class="col-6">
+                        <h6 class="m-0 font-weight-bold text-primary">All accounts</h6>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="table-responsive">
+                    @if (Model.Data.Any())
+                    {
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Number</th>
+                                    <th scope="col">Balance</th>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <th scope="col">Options</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var account in Model.Data)
+                                {
+                                    <tr>
+                                        <th scope="row" >@(ViewBag.Index += 1)</th>
+                                        <td>@account?.Number </td>
+                                        <td>@account?.Balance </td>
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <td>
+                                                <button class="btn-primary" asp-action="UpdateAccount" asp-controller="ApiBankAccount" asp-route-id="@account.Id">Update</button>
+                                                <button class="btn-danger" asp-action="DeleteAccount" asp-controller="ApiBankAccount" asp-route-id="@account.Id">Delete</button>
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                No account created yet
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            @await Html.PartialAsync("_PaginationTableLayout")
+        </div>
+        </form>

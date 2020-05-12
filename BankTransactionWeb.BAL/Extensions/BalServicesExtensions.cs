@@ -34,7 +34,9 @@ namespace BankTransaction.BAL.Implementation.Extensions
             services.AddTransient<IJwtSecurityService, JWTSecurityService>();
             services.AddTransient<IJwtAuthenticationService, JwtAuthenticationService>();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<RestApiHelper>();
+            services.AddTransient<IRestApiHelper,RestApiHelper>();
+            services.AddTransient<ICookieHelperService, CookieHelperService>();
+            services.AddTransient<IJwtTokenManager, JwtTokenManager>();
             var emailConfig = configuration.GetSection("EmailConfiguration").Get<EmailConfig>();
             services.AddSingleton(emailConfig);
             return services;

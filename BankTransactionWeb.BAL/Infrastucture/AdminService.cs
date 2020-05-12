@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.DAL.Abstract;
+using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -9,18 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Mapper;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class AdminService : IAdminService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
-
-        public AdminService( IUnitOfWork unitOfWork, IMapper mapper)
+        public AdminService( IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
         }
 
         public async Task<IdentityUserResult> AddRole(RoleDTO role)
@@ -64,7 +62,11 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
         public IEnumerable<RoleDTO> GetAllRoles()
         {
-            return unitOfWork.RoleManager.Roles.Select(e => mapper.Map<RoleDTO>(e));
+            return unitOfWork.RoleManager.Roles.Select(e => new RoleDTO()
+            {
+                Id = e.Id,
+                Name = e.Name
+            });//RoleDTOToIdentityRoleMapper.Instance.MapBack(e) REMOVE
         }
         public void Dispose()
         {
@@ -84,8 +86,11 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             {
                
                 var person = await unitOfWork.PersonRepository.GetPersonByAccount(user.Id);
+                if (person == null) continue;
                 user.Person = person;
-                var userInRole = mapper.Map<PersonInRoleDTO>(user);
+                var userInRole = PersonRoleToDtoMapper.Instance.MapBack(person);
+                userInRole.AppUserId = user.Id;
+                userInRole.UserName = user.UserName;
                 //if (userInRole == null || user.ApplicationUser == null)
                 //    continue;
                 if (await unitOfWork.UserManager.IsInRoleAsync(user, identityRole.Name))
@@ -103,22 +108,22 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         public async Task<RoleDTO> GetRoleById(string id)
         {
             var identityRole = await unitOfWork.RoleManager.FindByIdAsync(id);
-            return identityRole == null ? null : mapper.Map<RoleDTO>(identityRole);
+            return identityRole == null ? null : RoleDTOToIdentityRoleMapper.Instance.MapBack(identityRole);
         }
 
 
         public async Task<RoleDTO> GetRoleWithUsers(string id)
         {
-            var identityRole = await GetRoleById(id);
-            if (identityRole == null)
+            var roleMapped = await GetRoleById(id);
+            if (roleMapped == null)
             {
                 return null;
             }
-            var roleMapped = mapper.Map<RoleDTO>(identityRole);
+            //var roleMapped = mapper.Map<RoleDTO>(identityRole);
             {
                 foreach (var user in unitOfWork.UserManager.Users)
                 {
-                    if (await unitOfWork.UserManager.IsInRoleAsync(user, identityRole.Name))
+                    if (await unitOfWork.UserManager.IsInRoleAsync(user, roleMapped.Name))
                     {
                         roleMapped.Users.Add(user.UserName);
                     }

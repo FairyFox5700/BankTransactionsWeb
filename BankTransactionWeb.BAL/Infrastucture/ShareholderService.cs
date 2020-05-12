@@ -1,42 +1,73 @@
-﻿using AutoMapper;
+﻿
 using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
-using BankTransaction.Entities;
 using BankTransaction.DAL.Abstract;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
+using BankTransaction.Entities;
+using BankTransaction.Entities.Filter;
+using BankTransaction.Models;
+using BankTransaction.Models.Mapper;
+using BankTransaction.Models.Mapper.Filters;
+using BankTransaction.Models.Validation;
 using System.Linq;
 using System.Threading.Tasks;
-using BankTransaction.BAL.Implementation.Extensions;
-using BankTransaction.Models;
-using BankTransaction.Entities.Filter;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Mapper;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class ShareholderService : IShareholderService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
-        private readonly ILogger<ShareholderService> logger;
-
-        public ShareholderService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<ShareholderService> logger)
+        public ShareholderService(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
-            this.logger = logger;
         }
-        public async Task AddShareholder(ShareholderDTO shareholder)
+        public async Task<ValidationModel> AddShareholder(ShareholderDTO shareholder)
         {
-            var shareholderMapped = mapper.Map<Shareholder>(shareholder);
-            unitOfWork.ShareholderRepository.Add(shareholderMapped);
-            await unitOfWork.Save();
+            var shareholderMapped = ShareholderEntityToDtoMapper.Instance.MapBack(shareholder);
+            var result = await ValidateShareholder(shareholderMapped);
+            if (result == null)
+            {
+                unitOfWork.ShareholderRepository.Add(shareholderMapped);
+                await unitOfWork.Save();
+                return new ValidationModel("Succesfully added person to shareholder", false);
+            }
+            else
+            {
+                return result;
+            }
+
+        }
+
+        private async Task<ValidationModel> ValidateShareholder(Shareholder shareholderMapped)
+        {
+            var companyFinded = await unitOfWork.CompanyRepository.GetById(shareholderMapped.CompanyId);
+            var shareholdersOfPerson = await unitOfWork.ShareholderRepository.GetShareholderByPersonId(shareholderMapped.PersonId);
+            if (shareholdersOfPerson.Any() && shareholdersOfPerson.Where(e => e.Company?.Name == companyFinded?.Name).Any())
+            {
+                return new ValidationModel("Current person is already shareholder of current company", true);
+            }
+            return null;
+        }
+
+        public async Task<ValidationModel> UpdateShareholder(ShareholderDTO shareholder)
+        {
+            var shareholderMapped = ShareholderEntityToDtoMapper.Instance.MapBack(shareholder);
+            var result = await ValidateShareholder(shareholderMapped);
+            if (result == null)
+            {
+                unitOfWork.ShareholderRepository.Update(shareholderMapped);
+                await unitOfWork.Save();
+                return new ValidationModel("Succesfully added person to shareholder", false);
+            }
+            else
+            {
+                return result;
+            }
         }
 
         public async Task DeleteShareholder(ShareholderDTO shareholder)
         {
-            var shareholderMapped = mapper.Map<Shareholder>(shareholder);
+            var shareholderMapped = ShareholderEntityToDtoMapper.Instance.MapBack(shareholder);
             unitOfWork.ShareholderRepository.Delete(shareholderMapped);
             await unitOfWork.Save();
         }
@@ -46,54 +77,30 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             unitOfWork.Dispose();
         }
 
-        public async Task<PaginatedModel<ShareholderDTO>> GetAllShareholders(int pageNumber, int pageSize,ShareholderFilterModel shareholderFilterModel =null )
+        public async Task<PaginatedModel<ShareholderDTO>> GetAllShareholders(int pageNumber, int pageSize, ShareholderFilterModel shareholderFilterModel = null)
         {
             PaginatedPlainModel<Shareholder> shareholders = null;
 
             if (shareholderFilterModel != null)
             {
-                var filter = mapper.Map<ShareholderFilter>(shareholderFilterModel);
+                var filter = ShareholderFilterDtoToShareholder.Instance.Map(shareholderFilterModel);
                 shareholders = await unitOfWork.ShareholderRepository.GetAll(pageNumber, pageSize, filter);
             }
             else
             {
                 shareholders = await unitOfWork.ShareholderRepository.GetAll(pageNumber, pageSize);
             }
-            return new PaginatedModel<ShareholderDTO>(shareholders.Select(shareholder => mapper.Map<ShareholderDTO>(shareholder)), shareholders.PageNumber, shareholders.PageSize, shareholders.TotalCount, shareholders.TotalPages);
+            //TODO smt better
+            return new PaginatedModel<ShareholderDTO>(shareholders.Select(shareholder => ShareholderEntityToDtoMapper.Instance.Map(shareholder)), shareholders.PageNumber, shareholders.PageSize, shareholders.TotalCount, shareholders.TotalPages);
         }
 
         public async Task<ShareholderDTO> GetShareholderById(int id)
         {
-            try
-            {
-                var shareholderFinded = await unitOfWork.ShareholderRepository.GetById(id);
-                return mapper.Map<ShareholderDTO>(shareholderFinded);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetShareholderById)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+            var shareholderFinded = await unitOfWork.ShareholderRepository.GetById(id);
+            shareholderFinded.Company = await unitOfWork.CompanyRepository.GetById(shareholderFinded.CompanyId);
+            return ShareholderEntityToDtoMapper.Instance.Map(shareholderFinded);
         }
 
-        public async Task UpdateShareholder(ShareholderDTO shareholder)
-        {
-            try
-            {
 
-                var shareholderMapped = mapper.Map<Shareholder>(shareholder);
-                unitOfWork.ShareholderRepository.Update(shareholderMapped);
-                await unitOfWork.Save();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdateShareholder)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
-        }
     }
 }

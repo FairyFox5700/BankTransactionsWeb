@@ -12,7 +12,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
         <div class="form-group row ">
             <label class="col-sm-2 col-form-label"></label>
-            <label class="col-form-label"><span>New account for @Model.Person?.Name @Model.Person?.LastName @Model.Person?.Surname</span></label>
+            <label class="col-form-label"><span>New account for @Model.PersonName @Model.PersonLastName @Model.PersonSurName</span></label>
             <input asp-for="PersonId" hidden />
         </div>
         <div class="form-group row ">
@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="form-group row ">
-            <label asp-for="@Model.Company.Name" class="col-sm-2 col-form-label">Company name</label>
+            <label asp-for="@Model.CompanyName" class="col-sm-2 col-form-label">Company name</label>
             <div class="col-sm-5">
                 <select asp-for="CompanyId" class="form-control" asp-items="@Model.Comapnanies">
                     <option>Please select company</option>

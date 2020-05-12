@@ -1,33 +1,32 @@
-﻿using AutoMapper;
-using BankTransaction.BAL.Abstract;
-using BankTransaction.BAL.Implementation.DTOModels;
+﻿using BankTransaction.BAL.Abstract;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models;
+using BankTransaction.Models.Mapper;
 using BankTransaction.Models.Validation;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Mapper;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class TransactionService : ITransactionService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly ILogger<TransactionService> logger;
 
-        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<TransactionService> logger)
+        public TransactionService(IUnitOfWork unitOfWork, ILogger<TransactionService> logger)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             this.logger = logger;
         }
         public async Task AddTransaction(TransactionDTO transaction)
         {
-            var transactionMapped = mapper.Map<Transaction>(transaction);
+            var transactionMapped = TransactionEntityToDtoMapper.Instance.MapBack(transaction);
             transactionMapped.DateOftransfering = DateTime.Now;
             unitOfWork.TransactionRepository.Add(transactionMapped);
             await unitOfWork.Save();
@@ -36,7 +35,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         public async Task DeleteTransaction(TransactionDTO transaction)
         {
 
-            var transactionMapped = mapper.Map<Transaction>(transaction);
+            var transactionMapped = TransactionEntityToDtoMapper.Instance.MapBack(transaction);
             unitOfWork.TransactionRepository.Delete(transactionMapped);
             await unitOfWork.Save();
 
@@ -51,9 +50,9 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 var listOfTransaction = new List<TransactionDTO>();
                 foreach (var transaction in transactions)
                 {
-                    var mappedTransaction = mapper.Map<TransactionDTO>(transaction);
-                    mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
-                    mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
+                    var mappedTransaction = TransactionEntityToDtoMapper.Instance.Map(transaction);
+                    mappedTransaction.DestinationAccountNumber = (await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId))?.Number;
+                    //mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
                     listOfTransaction.Add(mappedTransaction);
                 }
 
@@ -71,9 +70,9 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             try
             {
                 var transactionFinded = await unitOfWork.TransactionRepository.GetById(id);
-                var transaction=mapper.Map<TransactionDTO>(transactionFinded);
-                transaction.SourceAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountSourceId));
-                transaction.DestinationAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountDestinationId));
+                var transaction= TransactionEntityToDtoMapper.Instance.Map(transactionFinded);
+                //transaction.SourceAccount = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountSourceId));
+                transaction.DestinationAccountNumber = (await unitOfWork.AccountRepository.GetById(transactionFinded.AccountDestinationId))?.Number;
                 return transaction;
             }
             catch (Exception ex)
@@ -83,20 +82,20 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
             }
         }
 
-        public async Task<ValidateTransactionModel> UpdateTransaction(TransactionDTO transaction)
+        public async Task<ValidationModel> UpdateTransaction(TransactionDTO transaction)
         {
             try
             {
-                var transactionMapped = mapper.Map<Transaction>(transaction);
-                var source = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.SourceAccount?.Number));
-                var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.DestinationAccount?.Number));
-                if (source == null) return new ValidateTransactionModel("Source account is not founded", true);
-                if (destination == null) return new ValidateTransactionModel("Destination account is not founded", true);
+                var transactionMapped = TransactionEntityToDtoMapper.Instance.MapBack(transaction);
+                var source = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.SourceAccountNumber));
+                var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(transaction.DestinationAccountNumber));
+                if (source == null) return new ValidationModel("Source account is not founded", true);
+                if (destination == null) return new ValidationModel("Destination account is not founded", true);
                 transactionMapped.AccountDestinationId = destination.Id;
                 transactionMapped.AccountSourceId = source.Id;
                 unitOfWork.TransactionRepository.Update(transactionMapped);
                 await unitOfWork.Save();
-                return new ValidateTransactionModel("Successfully updated", true);
+                return new ValidationModel("Successfully updated", true);
             }
             catch (Exception ex)
             {
@@ -120,7 +119,7 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
         //}
 
 
-        public async Task<ValidateTransactionModel> ExecuteTransaction(int accountSourceId, string accountDestinationNumber, decimal amount)
+        public async Task<ValidationModel> ExecuteTransaction(int accountSourceId, string accountDestinationNumber, decimal amount)
         {
             using (var trans = unitOfWork.BeginTransaction())
             {
@@ -128,8 +127,8 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                 {
                     var source = (await unitOfWork.AccountRepository.GetById(accountSourceId));
                     var destination = (await unitOfWork.AccountRepository.GetTransactionByDestinationNumber(accountDestinationNumber));
-                    if (source == null) return new ValidateTransactionModel ("Source account is not founded", true);
-                    if (destination == null) return new ValidateTransactionModel("Destination account is not founded", true);
+                    if (source == null) return new ValidationModel ("Source account is not founded", true);
+                    if (destination == null) return new ValidationModel("Destination account is not founded", true);
                     if ((source.Balance -= amount) >= 0)
                     {
                         source.Balance -= amount;
@@ -144,12 +143,12 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
 
                         await AddTransaction(transaction);
                         unitOfWork.CommitTransaction();
-                        return new ValidateTransactionModel($"You have succesfully send {amount} to  {accountDestinationNumber} account.", false);
+                        return new ValidationModel($"You have succesfully send {amount} to  {accountDestinationNumber} account.", false);
 
                     }
                     else
                     {
-                        return new ValidateTransactionModel("Not enough money on your account", true);
+                        return new ValidationModel("Not enough money on your account", true);
                     }
 
                 }
@@ -182,9 +181,9 @@ namespace BankTransaction.BAL.Implementation.Infrastucture
                     {
                         if (trans != null)
                         {
-                            var mappedTransaction = mapper.Map<TransactionDTO>(trans);
-                            mappedTransaction.DestinationAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId);
-                            mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
+                            var mappedTransaction = TransactionEntityToDtoMapper.Instance.Map(trans);
+                            mappedTransaction.DestinationAccountNumber =( await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountDestinationId))?.Number;
+                            //mappedTransaction.SourceAccount = await unitOfWork.AccountRepository.GetById(mappedTransaction.AccountSourceId);
                             listOfTransaction.Add(mappedTransaction);
                         }
 
