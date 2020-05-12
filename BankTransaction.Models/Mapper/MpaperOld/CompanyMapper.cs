@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Configuration;
 using BankTransaction.Entities;
-using BankTransaction.Models.DTOModels;
+using System.Linq;
 
-namespace BankTransaction.Models.Mapper.MpaperOld
+namespace BankTransaction.Models.Mapper
 {
     public class CompanyMapper : IMapper<Company, CompanyDTO>
     {

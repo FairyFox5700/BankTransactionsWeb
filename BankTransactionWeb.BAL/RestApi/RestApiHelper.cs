@@ -10,7 +10,6 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net;
-using BankTransaction.Api.Models.Responces;
 
 namespace BankTransaction.BAL.Implementation.RestApi
 {

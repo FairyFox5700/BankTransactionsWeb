@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using BankTransaction.BAL.Implementation.DTOModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BankTransaction.Models.DTOModels;
 
-namespace BankTransactionWeb.ViewModel
+namespace BankTransaction.Web.ViewModel
 {
     public class UpdateAccountViewModel
     {
@@ -18,9 +19,10 @@ namespace BankTransactionWeb.ViewModel
         [Range(0, 99999999999)]
         [DataType(DataType.Currency)]
         public decimal Balance { get; set; } = 0;
-        public SelectList People { get; set; }
+        public PersonDTO Person { get; set; }
         [Required]
         [Display(Name = "Current person id")]
         public int PersonId { get; set; }
+       // public string ApplicationUserFkId { get; set; }
     }
 }

@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using BankTransaction.Api.Models;
 using BankTransaction.BAL.Abstract;
 using BankTransaction.BAL.Abstract.RestApi;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Entities;
 using BankTransaction.Models.DTOModels;
@@ -28,7 +28,10 @@ namespace BankTransaction.BAL.Implementation.RestApi
             this.logger = logger;
         }
          
-     
+        Task RefreshToken(RefreshTokenDTO model)
+        {
+            throw new NotImplementedException();
+        }
         public async Task<AuthResult> LoginPerson(string email, string password)
         {
             var user = await unitOfWork.UserManager.FindByEmailAsync(email);
@@ -39,16 +42,14 @@ namespace BankTransaction.BAL.Implementation.RestApi
                 {
                     return new AuthResult()
                     {
-                        Errors = new[] { ErrorMessage.LoginAttemptNotSuccesfull.GetDescription() },
-                        ErrorMessageKey = nameof(ErrorMessage.LoginAttemptNotSuccesfull)
+                        Errors = new[] { " Login attempt is not successful" }
                     };
                 }
                 return await jwtSecurityService.GenerateJWTToken(user.Email);
             }
             return new AuthResult()
             {
-                Errors = new[] { ErrorMessage.EmailNotValid.GetDescription() },
-                ErrorMessageKey = nameof(ErrorMessage.EmailNotValid)
+                Errors = new[] { "User with this email does not exists." }
             };
         }
         
@@ -88,8 +89,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
                     {
                         return new AuthResult
                         {
-                            Errors = new[] { ErrorMessage.EmailIsAlreadyInUse.GetDescription() },
-                            ErrorMessageKey = nameof(ErrorMessage.EmailIsAlreadyInUse)
+                            Errors = new[] {"User with this email is already registered"}
                         };
                     }
                 }

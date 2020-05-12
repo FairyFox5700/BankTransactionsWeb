@@ -1,11 +1,11 @@
 ﻿@model List<UsersInRoleViewModel>
 @{
-    ViewData["Title"] = "UpdateUsersInRole";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Update users in role";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
     var roleId = ViewBag.roleId;
 }
 
-<h1>Update Users In Role</h1>
+
 <form asp-controller="Admin" asp-area="Admin" asp-action="UpdateUsersInRole" class="form-horozontal" method="post">
     <table class="table table-striped table-light">
         <thead>

@@ -1,4 +1,7 @@
-﻿namespace BankTransaction.Web.ViewModel
+﻿using System;
+using System.Collections.Generic;
+
+namespace BankTransaction.Web.Models
 {
     public class PageQueryParameters
     {

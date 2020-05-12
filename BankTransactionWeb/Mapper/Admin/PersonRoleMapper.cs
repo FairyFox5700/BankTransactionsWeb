@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BankTransaction.BAL.Implementation.DTOModels;
+using Microsoft.AspNetCore.Identity;
 using BankTransaction.Configuration;
-using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.Web.Mapper.Admin
 {

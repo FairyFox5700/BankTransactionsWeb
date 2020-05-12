@@ -1,8 +1,10 @@
-﻿using BankTransaction.Configuration;
+﻿using BankTransaction.BAL.Implementation.DTOModels;
+using BankTransaction.Configuration;
 using BankTransaction.Entities;
-using BankTransaction.Models.DTOModels;
+using System.Collections.Generic;
+using System.Text;
 
-namespace BankTransaction.Models.Mapper.MpaperOld
+namespace BankTransaction.Models.Mapper
 {
 
     public class TransactionMapper : IMapper<Transaction, TransactionDTO>

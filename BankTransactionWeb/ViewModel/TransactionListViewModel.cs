@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.ViewModel
+namespace BankTransaction.Web.ViewModel
 {
     public class TransactionListViewModel
     {

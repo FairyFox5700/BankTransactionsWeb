@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BankTransaction.Models.DTOModels;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.ViewModel;
 
 namespace BankTransaction.Web.Mapper

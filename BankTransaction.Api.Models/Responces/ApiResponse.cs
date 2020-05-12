@@ -1,7 +1,12 @@
-﻿using System.Runtime.Serialization;
+﻿using BankTransaction.Api.Models;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Runtime.Serialization;
 
-namespace BankTransaction.Api.Models.Responces
+namespace BankTransaction.Api.Models
 {
 
     [DataContract]

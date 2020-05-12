@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.Areas.Identity.Models.ViewModels;
+using BankTransactionWeb.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using BankTransaction.Models.DTOModels;
 using BankTransaction.Models.Validation;
-using BankTransaction.Web.Controllers;
 
 namespace BankTransaction.Web.Areas.Identity.Controllers
 {

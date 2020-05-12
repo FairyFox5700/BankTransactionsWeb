@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using BankTransaction.Api.Mapper;
-using BankTransaction.Models.Mapper;
+using BankTransaction.Api.Models.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BankTransaction.Api.Extensions
+namespace BankTransaction.Models.Mapper
 {
     public static class AutoMapperExtension
     {

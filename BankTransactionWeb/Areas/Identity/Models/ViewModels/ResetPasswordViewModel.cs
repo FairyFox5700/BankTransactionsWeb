@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BankTransactionWeb.Areas.Identity.Models.ViewModels
+namespace BankTransaction.Web.Areas.Identity.Models.ViewModels
 {
     public class ResetPasswordViewModel
     {
@@ -24,6 +24,6 @@ namespace BankTransactionWeb.Areas.Identity.Models.ViewModels
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        public string Code { get; set; }
+        public string Token { get; set; }
     }
 }

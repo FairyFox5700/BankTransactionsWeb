@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using BankTransaction.Api.Models.Responces;
 
 namespace BankTransaction.Api.Helpers
 {

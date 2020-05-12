@@ -1,13 +1,17 @@
-﻿using System;
+﻿
+using BankTransaction.Entities;
+using BankTransaction.DAL.Implementation.InMemoryDAL;
+using BankTransaction.DAL.Abstract;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BankTransaction.DAL.Abstract;
-using BankTransaction.DAL.Implementation.Core.InMemoryCore;
-using BankTransaction.DAL.Implementation.Extensions;
-using BankTransaction.Entities;
+using BankTransaction.DAL.Implementation.InMemoryCore;
 using BankTransaction.Entities.Filter;
+using BankTransaction.DAL.Implementation.Extensions;
+using Microsoft.EntityFrameworkCore;
 
-namespace BankTransaction.DAL.Implementation.Repositories.InMemoryRepositories
+namespace BankTransaction.DAL.Implementation.InMemoryDAL.Repositories.InMemoryRepositories
 {
     public class ShareholderInMemoryRepository : IShareholderRepository
     {

@@ -1,30 +1,36 @@
+using AutoMapper;
+using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation;
 using BankTransaction.BAL.Implementation.Extensions;
+using BankTransaction.BAL.Implementation.Infrastucture;
+using BankTransaction.Configuration;
+using BankTransaction.Configuration.Extension;
+using BankTransaction.DAL.Abstract;
 using BankTransaction.DAL.Implementation.Core;
+using BankTransaction.DAL.Implementation.EfCoreDAL;
 using BankTransaction.DAL.Implementation.Extensions;
+using BankTransaction.DAL.Implementation.Repositories.EFRepositories;
 using BankTransaction.Entities;
-using BankTransaction.Web.Extensions;
-using BankTransaction.Web.Localization;
+using BankTransaction.Models.Mapper;
+using BankTransaction.Models.Validation;
+using BankTransaction.Web.Configuration;
+using BankTransaction.Web.Helpers;
+using BankTransaction.Web.Mapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Localization.Routing;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Razor;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace BankTransaction.Web
 {
@@ -41,6 +47,7 @@ namespace BankTransaction.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
+          
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddMapperViewConfiguration();
             services.AddDALServices(Configuration);
@@ -48,49 +55,13 @@ namespace BankTransaction.Web
             services.AddJwtAuthentication(Configuration);
             services.AddDistributedCache(Configuration);
             services.AddIdentiyConfig();
+            services.AddMvc();
 
-            #region Localization
-            //https://riptutorial.com/asp-net-core/example/9728/localization-using-json-language-resources
-            // services.AddSingleton<IdentityLocalizationService>();//??
-            //https://github.com/dradovic/Embedded.Json.Localization/blob/master/src/Embedded.Json.Localization/JsonStringLocalizer.cs
-
-            // var options = new LocalizationOptions { ResourcesPath = "Localization/Languages" };
-            //IOptions<LocalizationOptions> localizationOptions = new LocalizationOptions() { ResourcesPath = "Localization/Languages" };
-            services.TryAddSingleton<IStringLocalizerFactory, JsonStringLocalizerFactory>();
-            services.TryAddTransient(typeof(IStringLocalizer<>), typeof(StringLocalizer<>));
-            CultureInfo.CurrentCulture = new CultureInfo("en-US");
-            CultureInfo.CurrentUICulture = new CultureInfo("en-US");
-            IList<CultureInfo> supportedCultures = new List<CultureInfo>
-            {
-                new CultureInfo("en-US"),
-                new CultureInfo("fr-FR"),
-            };
-            services.Configure<RequestLocalizationOptions>(options =>
-            {
-                options.DefaultRequestCulture = new RequestCulture(culture: "en_US", uiCulture: "en-US");
-                options.SupportedCultures = supportedCultures;
-                options.SupportedUICultures = supportedCultures;
-                options.RequestCultureProviders.Insert(0, new RouteDataRequestCultureProvider());
-            });
-           
-            //options.RequestCultureProviders.Insert(0, new CustomRequestCultureProvider(context =>
-            services.AddLocalization(opt =>
-            {
-                opt.ResourcesPath = @"Localization\Languages";
-            });
-            
-            //services.AddMvc().AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix,
-            //    opts => { opts.ResourcesPath = "Localization/Languages"; })
-            //    .AddDataAnnotationsLocalization(opts => { });
-            services.AddMvc().AddViewLocalization();
-
-            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, BankTransactionContext context)
         {
-            //_e = localizerFactory.Create(null);
             if (env.IsDevelopment())
             {
                 var options = new DeveloperExceptionPageOptions
@@ -102,42 +73,27 @@ namespace BankTransaction.Web
 
             else
             {
-                app.UseHsts();
+
                 app.UseExceptionHandler("/Home/Error");
             }
-            #region Localization
 
-            //var localizationOpts = app.ApplicationServices.GetService<RequestLocalizationOptions>();
-            //localizationOpts.RequestCultureProviders.Insert(0, new JsonRequestCultureProvider(configuration));
-
-
-            var localizationOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>().Value;
-            app.UseRequestLocalization(localizationOptions);
-
-            #endregion
-
+            //app.UseCors(c=>c.SetIsOriginAllowed(x=>_=true).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             app.UseStaticFiles();
             app.UseStatusCodePages();
 
             app.UseCors(builder => builder.WithOrigins("https://en.wikipedia.org", "http://localhost:64943")
                             .AllowAnyHeader()
-                            .AllowAnyMethod().AllowCredentials());
+                            .AllowAnyMethod().AllowCredentials()); 
             app.UseRouting();
-            app.UseRequestLocalization();
+
             app.UseAuthentication();
             app.UseAuthorization();
-            //https://github.com/DmitrySikorsky/AspNetCoreCultureRouteParameter
-
-            //MyIdentityDataInitializer.SeedData(userManager, roleManager, context);//, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, BankTransactionContext context
+            //MyIdentityDataInitializer.SeedData(userManager, roleManager, context);
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                  name: "Area",
-                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapControllerRoute(
-                    name: "culture-route", 
-                    pattern: "{culture=en-US}/{controller=Home}/{action=Index}/{id?}");
-               
+                   name: "Area",
+                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -145,36 +101,4 @@ namespace BankTransaction.Web
 
         }
     }
-
-    //public class RouteCultureCodesRequestCultureProvider : RequestCultureProvider
-    //{
-    //    public override Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
-    //    {
-    //        string cultureCode = null;
-    //        if (httpContext.Request.Path.HasValue && httpContext.Request.Path.Value == "/")
-    //            cultureCode = this.GetDefaultCultureCode();
-    //        else if (httpContext.Request.Path.HasValue && httpContext.Request.Path.Value.Length >= 4)
-
-    //        {
-    //            var parts = httpContext.Request.Path.Value.Split('/');
-    //            if (!this.IsCulrureCodeValid(parts[0]))
-    //                cultureCode = this.GetDefaultCultureCode(); //throw new HttpException(HttpStatusCode.NotFound);
-    //        }
-    //        else cultureCode = this.GetDefaultCultureCode();
-    //        ProviderCultureResult requestCulture = new ProviderCultureResult(cultureCode);
-
-    //        return Task.FromResult(requestCulture);
-    //    }
-
-
-    //    private string GetDefaultCultureCode()
-    //    {
-    //        return this.Options.DefaultRequestCulture.Culture.TwoLetterISOLanguageName;
-    //    }
-
-    //    private bool IsCulrureCodeValid(string cultureCode)
-    //    {
-    //        return this.Options.SupportedCultures.Select(c => c.TwoLetterISOLanguageName).Contains(cultureCode);
-    //    }
-    //}
 }

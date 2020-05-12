@@ -1,6 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace BankTransaction.Web.ViewModel
+namespace BankTransaction.Web.Models
 {
     public class PersonSearchModel
     {

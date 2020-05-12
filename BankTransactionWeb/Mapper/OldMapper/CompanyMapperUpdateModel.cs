@@ -1,16 +1,11 @@
-﻿using BankTransaction.Configuration;
-using BankTransaction.Models.DTOModels;
+﻿using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.Web.ViewModel;
+using BankTransaction.Configuration;
 
-namespace BankTransaction.Web.Mapper.OldMapper
+namespace BankTransaction.Web.Mapper
 {
     public class CompanyMapperUpdateModel : IMapper<UpdateCompanyViewModel, CompanyDTO>
     {
-        private CompanyMapperUpdateModel()
-        {
-        }
-
-        public static CompanyMapperUpdateModel Instance { get; private set; } = new CompanyMapperUpdateModel();
         public CompanyDTO Map(UpdateCompanyViewModel source)
         {
             return new CompanyDTO()

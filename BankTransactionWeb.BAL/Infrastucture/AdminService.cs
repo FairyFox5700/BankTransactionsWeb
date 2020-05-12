@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BankTransaction.BAL.Abstract;
+using BankTransaction.BAL.Implementation.DTOModels;
 using BankTransaction.DAL.Abstract;
 using BankTransaction.Models.Validation;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BankTransaction.Models.DTOModels;
 
 namespace BankTransaction.BAL.Implementation.Infrastucture
 {

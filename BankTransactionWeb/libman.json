@@ -9,6 +9,10 @@
     {
       "library": "jquery@3.4.1",
       "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "jquery.customSelect@0.5.1",
+      "destination": "wwwroot/lib/jquery/"
     }
   ]
 }

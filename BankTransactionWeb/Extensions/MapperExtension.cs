@@ -2,8 +2,12 @@
 using BankTransaction.Models.Mapper;
 using BankTransaction.Web.Mapper;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace BankTransaction.Web.Extensions
+namespace BankTransaction.Configuration.Extension
 {
     public static class MapperExtension
     {
