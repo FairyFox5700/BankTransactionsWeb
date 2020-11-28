@@ -1,37 +1,46 @@
-﻿@model BankTransactionWeb.ViewModel.UpdateTransactionViewModel
+﻿@model BankTransaction.Web.ViewModel.UpdateTransactionViewModel
 @{
-    ViewData["Title"] = "UpdateTransaction";
+    ViewData["Title"] = "Update Transaction";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
 }
 
-<form asp-controller="Transaction" asp-action="AddTransaction" method="post">
-    <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
-    <div class="form-group row">
-        <label asp-for="AccountSourceId" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <select asp-for="AccountSourceId" asp-items="@Model.Accounts">
-                <option>Please select account source</option>
-            </select>
+
+    <form asp-controller="Transaction" asp-action="UpdateTransaction" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
+        <div class="form-group row ">
+            <div class="form-group">
+                <input asp-for="Id" type="hidden" class="form-contol" />
+            </div>
         </div>
-    </div>
-    <div class="form-group row">
-        <label asp-for="AccountDestinationId" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <select asp-for="AccountDestinationId" asp-items="@Model.Accounts">
-                <option>Please select account destination</option>
-            </select>
+
+        <div class="form-group row">
+            <label asp-for="AccountSourceNumber" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-5">
+                <div class="form-group">
+                    <input asp-for="AccountSourceNumber"  readonly class="form-contol" />
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="form-group row">
-        <label asp-for="Amount" class="col-sm-2 col-form-label"></label>
-        <div class="col-sm-10">
-            <input asp-for="Amount" class="form-contol" />
-            <span asp-validation-for="Amount" class="text-danger"></span>
+        <div class="form-group row">
+            <label asp-for="AccountDestinationNumber" class="col-sm-2 col-form-label"></label>
+            <div class="col-sm-5">
+                <div class="form-group">
+                    <input asp-for="AccountDestinationNumber" readonly ="form-contol" />
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="form-group row">
-        <div class="col-sm-10">
-            <input class="btn-success" type="submit" asp-controller="Transaction" asp-action="AddTransaction" value="Confirm" />
-            <a asp-controller="Transaction" asp-action="GetAllTransactions" class="btn btn-primary">Cancel</a>
+        <div class="form-group row ">
+            <label asp-for="Amount" class="col-sm-2 col-form-label"></label>
+            <div class="form-group">
+                <input asp-for="Amount" class="form-control" placeholder="Account number *" />
+                <span asp-validation-for="Amount" class="text-danger"></span>
+            </div>
         </div>
-    </div>
-</form>
+
+        <div class="form-group row">
+            <div class="col-sm-10">
+                <input class="btn btn-success" type="submit" asp-controller="Transaction" asp-action="UpdateTransaction" value="Confirm" />
+                <a asp-controller="Transaction" asp-action="GetAllTransactions" class="btn btn-primary">Cancel</a>
+            </div>
+        </div>
+    </form>

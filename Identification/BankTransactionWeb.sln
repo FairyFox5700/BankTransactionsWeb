@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransactionWeb", "BankTransactionWeb\BankTransactionWeb.csproj", "{9780CCBA-AD7E-444D-9DB6-F5112A472248}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransactionWeb.BAL", "BankTransactionWeb.BAL\BankTransactionWeb.BAL.csproj", "{7E9EBBD2-979A-4DE7-984D-1AB82F677E25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestWebBankTransactionApp", "RestWebBankTransactionApp\RestWebBankTransactionApp.csproj", "{9F2B1F17-736B-4A6B-85BB-9F71BB73B793}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Identification", "Identification\Identification.csproj", "{BB710945-CAB1-45E1-AAE5-1FE3074A412D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransactionWeb.DAL", "BAnkTransactionWeb.DAL\BankTransactionWeb.DAL.csproj", "{0B294A73-6E44-4419-AAB4-C4DD36329187}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9780CCBA-AD7E-444D-9DB6-F5112A472248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9780CCBA-AD7E-444D-9DB6-F5112A472248}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9780CCBA-AD7E-444D-9DB6-F5112A472248}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9780CCBA-AD7E-444D-9DB6-F5112A472248}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E9EBBD2-979A-4DE7-984D-1AB82F677E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E9EBBD2-979A-4DE7-984D-1AB82F677E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E9EBBD2-979A-4DE7-984D-1AB82F677E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E9EBBD2-979A-4DE7-984D-1AB82F677E25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F2B1F17-736B-4A6B-85BB-9F71BB73B793}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F2B1F17-736B-4A6B-85BB-9F71BB73B793}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F2B1F17-736B-4A6B-85BB-9F71BB73B793}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F2B1F17-736B-4A6B-85BB-9F71BB73B793}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB710945-CAB1-45E1-AAE5-1FE3074A412D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB710945-CAB1-45E1-AAE5-1FE3074A412D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB710945-CAB1-45E1-AAE5-1FE3074A412D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB710945-CAB1-45E1-AAE5-1FE3074A412D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B294A73-6E44-4419-AAB4-C4DD36329187}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B294A73-6E44-4419-AAB4-C4DD36329187}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B294A73-6E44-4419-AAB4-C4DD36329187}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B294A73-6E44-4419-AAB4-C4DD36329187}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {08538E84-AAD3-4981-BC6A-70A24E01E2A3}
+	EndGlobalSection
+EndGlobal

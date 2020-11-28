@@ -1,10 +1,10 @@
-﻿using BankTransactionWeb.BAL.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BankTransaction.Models.DTOModels;
 
-namespace BankTransactionWeb.ViewModel
+namespace BankTransaction.Web.ViewModel
 {
     public class AddAccountViewModel
     {
@@ -15,9 +15,11 @@ namespace BankTransactionWeb.ViewModel
         [Range(0, 99999999999)]
         [DataType(DataType.Currency)]
         public decimal Balance { get; set; } = 0;
-        public SelectList People { get; set; }
+        //public SelectList People { get; set; }
+        public PersonDTO Person { get; set; }
         [Required]
         [Display(Name ="Current person id")]
-        public int PersonId { get;set;}
+        public int? PersonId { get;set;}
+        //public int Name { get; set; }
     }
 }

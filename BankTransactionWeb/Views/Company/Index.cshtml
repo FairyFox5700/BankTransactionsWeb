@@ -1,0 +1,52 @@
+﻿@model List<BankTransaction.Models.DTOModels.CompanyDTO>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Our companies </h1>
+
+    <div class="row">
+        <div class="btn-group">
+            @foreach (var bank in Model)
+            {
+                <button id="companyInfo" value="@bank.Name" onclick="GetContent(this)">@bank.Name</button>
+            }
+        </div>
+    </div>
+
+@*<div class="row">
+    <div class="btn-group">
+        <button id="companyInfo" value="PrivatBank" onclick="GetContent(this)">PrivatBank</button>
+        <button id="companyInfo" value="Alfa-Bank" onclick="GetContent(this)">Alfa-Bank</button>
+        <button id="companyInfo" value="OTP Bank" onclick="GetContent(this)">OTP Bank</button>
+        <button id="companyInfo" value="Citibank" onclick="GetContent(this)">Citibank</button>
+        <button id="companyInfo" value="Ukrsotsbank" onclick="GetContent(this)">Ukrsotsbank</button>
+    </div>
+</div>*@
+<div id="infoBar"></div>
+@section scripts
+{
+    <script type="text/javascript">
+
+        function GetContent(elem) {
+            var companyName = elem.value;
+            console.log(companyName);
+            $.ajax(
+                {
+                    url: "https://en.wikipedia.org/w/api.php?action=parse&format=json&prop=text&page=" + companyName + "&callback=?",
+                    type: 'GET',
+                    contentType: "application/json; charset=utf-8",
+                    async: false,
+                    dataType: "json",
+                    success: function (data, status, jqXHR) {
+                        console.log(data);
+                        $('#infoBar').html(data.parse.text['*']);
+                        $("#infoBar").find("a:not(.references a)").attr("href", function () { return "http://www.wikipedia.org" + $(this).attr("href"); });
+                        $("#infoBar").find("a").attr("target", "_blank");
+                    },
+                    error: function (errorMessage) {
+                    }
+                });
+        };
+    </script>
+}

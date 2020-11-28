@@ -1,29 +1,34 @@
-﻿@model BankTransactionWeb.ViewModel.AddShareholderViewModel
+﻿@model BankTransaction.Web.ViewModel.AddShareholderViewModel
 @{
     ViewData["Title"] = "AddShareholder";
+    if(User.IsInRole("Admin"))
+    {
+            Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
+    }
 }
 
     <form asp-controller="Shareholder" asp-action="AddShareholder" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
-        <div class="form-group row">
-            <label asp-for="@Model.Company.Name" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <select asp-for="CompanyId" asp-items="@Model.Comapnanies">
+        <div class="form-group row ">
+            <label class="col-sm-2 col-form-label">New account</label>
+            <label class="col-form-label">for @Model.PersonName @Model.PersonLastName @Model.PersonSurName</label>
+            <input asp-for="PersonId" hidden />
+        </div>
+
+        <div class="form-group row ">
+            <label asp-for="@Model.CompanyName" class="col-sm-2 col-form-label">Company name</label>
+            <div class="col-sm-5">
+                <select asp-for="CompanyId" class="form-control" asp-items="@Model.Comapnanies">
                     <option>Please select company</option>
                 </select>
             </div>
         </div>
-        <div class="form-group row">
-            <label asp-for="@Model.Person.Name" class="col-sm-2 col-form-label"></label>
-            <div class="col-sm-10">
-                <select asp-for="PersonId" asp-items="@Model.People">
-                    <option>Please select person</option>
-                </select>
-            </div>
+        <div class="form-group row ">
+                <input asp-for="PersonId" hidden />
         </div>
         <div class="form-group row">
             <div class="col-sm-10">
-                <input class="btn-success" type="submit" asp-action="AddShareholder" asp-controller="Shareholder" value="Confirm" />
+                <input class="btn btn-success" type="submit" asp-action="AddShareholder" asp-controller="Shareholder" value="Confirm" />
                 <a asp-action="GetAllShareholders" asp-controller="Shareholder" class="btn btn-primary">Cancel</a>
             </div>
         </div>

@@ -1,124 +1,137 @@
-﻿using AutoMapper;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Interfaces;
+﻿using BankTransaction.BAL.Abstract;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.Entities;
+using BankTransaction.Entities.Filter;
+using BankTransaction.Models;
+using BankTransaction.Models.Mapper;
+using BankTransaction.Models.Mapper.Filters;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Mapper;
 
-namespace BankTransactionWeb.BAL.Infrastucture
+namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class PersonService : IPersonService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
         private readonly ILogger<PersonService> logger;
 
-        public PersonService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<PersonService> logger)
+        public PersonService(IUnitOfWork unitOfWork,  ILogger<PersonService> logger)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
             this.logger = logger;
         }
+
         public async Task AddPerson(PersonDTO person)
         {
-            try
-            {
-                var personMapped = mapper.Map<Person>(person);
+           
+                var personMapped = PersonEntityToDtoMapper.Instance.MapBack(person);
                 unitOfWork.PersonRepository.Add(personMapped);
                 await unitOfWork.Save();
                 logger.LogInformation($"In method {nameof(AddPerson)} instance of person successfully added");
-            }
-            catch(Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddPerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-               
-            }
-
         }
 
-        public async Task DeletePerson(PersonDTO person)
+        //Unit of work transaction
+        public async Task<IdentityResult> DeletePerson(PersonDTO person)
         {
-            try
+            using (var trans = await unitOfWork.BeginTransaction())
             {
-                var personMapped = mapper.Map<Person>(person);
-                unitOfWork.PersonRepository.Delete(personMapped);
-                await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully added");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(DeletePerson)} in class {nameof(PersonService)}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
+                try
+                {
 
+                    var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
+                    if (user != null)
+                    {
+                        var personMapped = PersonEntityToDtoMapper.Instance.MapBack(person);
+                        unitOfWork.PersonRepository.Delete(personMapped);
+                        await unitOfWork.Save();
+                        var result = await unitOfWork.UserManager.DeleteAsync(user);
+                        unitOfWork.CommitTransaction();
+                        logger.LogInformation($"In method {nameof(DeletePerson)} instance of person successfully deleted");
+                        return result;
+                    }
+                    return null;
+                }
+                catch (Exception ex)
+                {
+                    unitOfWork.RollbackTransaction();
+                    throw ex;
+
+                }
             }
         }
+
 
         public void Dispose()
         {
             unitOfWork.Dispose();
         }
-
-        public async Task<List<PersonDTO>> GetAllPersons(string name=null, string surname = null, string lastname = null,
-            string accountNumber = null, string transactionNumber = null, string companyName = null)
-        { 
-            try
-            {
-                var persons = await unitOfWork.PersonRepository.GetAll();
-                if (!String.IsNullOrEmpty(name))
+        public async Task<PaginatedModel<PersonDTO>> GetAllPersons(int pageNumber, int pageSize, PersonFilterModel personFilter = null)
+        {
+                PaginatedPlainModel<Person> persons =null;
+                   
+                if (personFilter != null)
                 {
-                    persons = persons.Where(s => s.Name.Contains(name));
+                    var filter = PersonFilterDtoToPerson.Instance.Map(personFilter);
+                    persons = await unitOfWork.PersonRepository.GetAll(pageNumber,pageSize,filter);
                 }
-                if (!String.IsNullOrEmpty(surname))
+                else
                 {
-                    persons = persons.Where(s => s.Surname.Contains(surname));
+                    persons = await unitOfWork.PersonRepository.GetAll(pageNumber, pageSize);
                 }
-                if (!String.IsNullOrEmpty(lastname))
-                {
-                    persons = persons.Where(s => s.LastName.Contains(lastname));
-                }
-                if (!String.IsNullOrEmpty(accountNumber))
-                {
-                    persons = persons.Where(s => s.Accounts.Select(e => e.Number).Contains(accountNumber)); 
-                }
-                if (!String.IsNullOrEmpty(transactionNumber))
-                {
-                    persons = persons.Where(p=>p.Accounts.Contains(p.Accounts.Where
-                        (a=>a.Transactions.Contains(a.Transactions.Where
-                        (e=>e.Id.ToString()==transactionNumber).FirstOrDefault())).FirstOrDefault()));
-                }
-                if (!String.IsNullOrEmpty(companyName))
-                {
-                    persons = (await unitOfWork.ShareholderRepository.GetAll()).Where(sh => sh.Company.Name.Contains(companyName)).Select(sh=>sh.Person);
-                }
-                return persons.Select(p => mapper.Map<PersonDTO>(p)).ToList();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllPersons)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+                //TODo smt better here
+                return new PaginatedModel<PersonDTO>(persons.Select(p => PersonEntityToDtoMapper.Instance.Map(p)),persons.PageNumber, persons.PageSize,persons.TotalCount, persons.TotalPages);
+          
 
         }
 
 
 
-        public async  Task<PersonDTO> GetPersonById(int id)
+        public async Task<PersonDTO> GetPersonById(int id)
         {
             try
             {
                 var personFinded = await unitOfWork.PersonRepository.GetById(id);
-               
-                return mapper.Map<PersonDTO>(personFinded);
+                if (personFinded == null) return null;
+                var appUser = personFinded.ApplicationUser;
+                var personModel = ApplicationUserEntityToPersonDtoMapper.Instance.Map(appUser);
+                personModel.LastName = personFinded.LastName;
+                personModel.Name = personFinded.Name;
+                personModel.Surname = personFinded.Surname;
+                personModel.DataOfBirth = personFinded.DataOfBirth;
+                personModel.Id = personFinded.Id;
+                return personModel;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError($"Catch an exception in method {nameof(GetPersonById)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                throw ex;
+
+            }
+        }
+
+        public async Task<PersonDTO> GetPersonById(ClaimsPrincipal user)
+        {
+            try
+            {
+                var id = unitOfWork.UserManager.GetUserId(user);
+                var personFinded = await unitOfWork.PersonRepository.GetPersonByAccount(id);
+                var appUser = personFinded.ApplicationUser;
+                var personModel = ApplicationUserEntityToPersonDtoMapper.Instance.Map(appUser);
+                personModel.LastName = personFinded.LastName;
+                personModel.Name = personFinded.Name;
+                personModel.Surname = personFinded.Surname;
+                personModel.DataOfBirth = personFinded.DataOfBirth;
+                personModel.Id = personFinded.Id;
+                return personModel;
             }
             catch (Exception ex)
             {
@@ -134,13 +147,13 @@ namespace BankTransactionWeb.BAL.Infrastucture
             try
             {
 
-            decimal totalBalance = 0;
-            var currentPerson = await unitOfWork.PersonRepository.GetById(id);
-            if (currentPerson != null)
-            {
-                totalBalance = currentPerson.Accounts.Select(ac => ac.Balance).Sum();
-            }
-            return totalBalance;
+                decimal totalBalance = 0;
+                var currentPerson = await unitOfWork.PersonRepository.GetById(id);
+                if (currentPerson != null)
+                {
+                    totalBalance = currentPerson.Accounts.Select(ac => ac.Balance).Sum();
+                }
+                return totalBalance;
             }
             catch (Exception ex)
             {
@@ -151,21 +164,45 @@ namespace BankTransactionWeb.BAL.Infrastucture
             }
         }
 
-        public async Task UpdatePerson(PersonDTO person)
+        //Related data transaction
+        public async Task<IdentityResult> UpdatePerson(PersonDTO person)
         {
-            try
+            using (var trans = await unitOfWork.BeginTransaction())
             {
-            var personMapped = mapper.Map<Person>(person);
-            unitOfWork.PersonRepository.Update(personMapped);
-            await unitOfWork.Save();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdatePerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
+                try
+                {
+
+                    var user = await unitOfWork.UserManager.FindByIdAsync(person.ApplicationUserFkId);
+                    if (user != null)
+                    {
+                        //user.Email = person.Email;
+                        user.UserName = person.UserName;
+                        user.PhoneNumber = person.PhoneNumber;
+                        var personMapped = PersonEntityToDtoMapper.Instance.MapBack(person);
+                        var result = await unitOfWork.UserManager.UpdateAsync(user);
+                        await unitOfWork.Save();
+                        personMapped.ApplicationUserFkId = user.Id;
+                        unitOfWork.PersonRepository.Update(personMapped);
+                        await unitOfWork.Save();
+                        unitOfWork.CommitTransaction();
+                        return result;
+                    }
+                    return null;
+
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError($"Catch an exception in method {nameof(UpdatePerson)} in class {this.GetType()}. The exception is {ex.Message}. " +
+                       $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
+                    unitOfWork.RollbackTransaction();
+                    throw ex;
+
+                }
 
             }
         }
+
+
     }
 }
+

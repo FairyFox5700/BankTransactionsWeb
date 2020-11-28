@@ -1,0 +1,19 @@
+﻿
+    <div>
+        <ul class="pagination">
+            <li class="page-item @(!Model.HasPrevious? "disabled":"")">
+                <a asp-page="/pagination" asp-route-PageNumber="1" class="page-link"><i class="fas fa-fast-backward"></i></a>
+            </li>
+
+            <li class="page-item @(!Model.HasPrevious? "disabled":"")">
+                <a asp-page="/pagination" asp-route-PageNumber="@(Model.PageNumber -1)" class="page-link"><i class="fas fa-step-backward"></i></a>
+            </li>
+            <li class="page-item  @(!Model.HasNext? "disabled":"")">
+                <a asp-page="/pagination" asp-route-PageNumber="@(Model.PageNumber + 1)" class="page-link"><i class="fas fa-step-forward"></i></a>
+            </li>
+
+            <li class="page-item  @(!Model.HasNext? "disabled":"")">
+                <a asp-page="/pagination" asp-route-PageNumber="@Model.TotalPages" class="page-link"><i class="fas fa-fast-forward"></i></a>
+            </li>
+        </ul>
+    </div>

@@ -1,69 +1,98 @@
-﻿@model BankTransactionWeb.ViewModel.PersonListViewModel
+﻿@model PaginatedList<BankTransaction.Models.DTOModels.PersonDTO>
 @{
-    ViewData["Title"] = "Add person";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "All users";
+    ViewBag.Index = 0;
+    if(User.IsInRole("Admin"))
+    {
+            Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
+    }
 }
-    <form asp-controller="Person" asp-action="GetAllPersons" method="get">
-        <button class="btn-dark" asp-action="AddPerson" asp-controller="Person">Add new</button>
-        <br />
-        <br />
-        <h3> Search by parameters</h3>
-        <br />
-        <div class="form-row align-items-center">
-            <div class="col-auto my-1">
-                <label asp-for="Name" class="dark control-label"></label>
-                <input asp-for="Name" class="form-contol"  />
-            </div>
-            <div class="col-auto my-1">
-                <label asp-for="SurName" class="dark control-label"></label>
-                <input asp-for="SurName" class="form-contol"  />
-            </div>
-            <div class="col-auto my-1">
-                <label asp-for="LastName" class="dark control-label"></label>
-                <input asp-for="LastName" class="form-contol"  />
-            </div>
-            <div class="col-auto my-1">
-                <label asp-for="AccoutNumber" class="dark control-label"></label>
-                <input asp-for="AccoutNumber" class="form-contol" />
-            </div>
-            <div class="col-auto my-1">
-                <label asp-for="AccountTransactionNumber" class="dark control-label"></label>
-                <input asp-for="AccountTransactionNumber" class="form-contol"  />
-            </div>
-            <div class="col-auto my-1">
-            <label asp-for="CompanyName" class="dark control-label"></label>
-            <input asp-for="CompanyName" class="form-contol"  />
-        </div>
-            <div class="col-auto my-1">
-                <input type="submit" value="Search" class="btn btn-primary" />
+<form asp-controller="Person" asp-action="GetAllPersons" method="get">
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="row">
+            <div class="col-6">
+                <h6 class="m-0 font-weight-bold text-primary"></h6>
             </div>
         </div>
-        <table class="table table-striped table-light">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Surname</th>
-                    <th scope="col">Last name</th>
-                    <th scope="col">Date of birth</th>
-                    <th scope="col">Options</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < Model.Persons.Count(); i++)
-                {
-                    <tr>
-                        <th scope="row">@(i + 1)</th>
-                        <td>@Model.Persons[i].Name </td>
-                        <td>@Model.Persons[i].Surname </td>
-                        <td>@Model.Persons[i].LastName</td>
-                        <td>@Model.Persons[i].DataOfBirth </td>
-                        <td>
-                            <button class="btn-primary" asp-action="UpdatePerson" asp-controller="Person" asp-route-id="@Model.Persons[i].Id">Update</button>
-                            <button class="btn-danger" asp-action="DeletePerson" asp-controller="Person" asp-route-id="@Model.Persons[i].Id">Delete</button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </form>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            @if (Model.Data.Any())
+            {
+                <h3> Search by parameters</h3>
+                <br />
+                <div class="form-inline">
+                    <div class="col-auto my-1">
+                        <label class="dark control-label">Name</label>
+                        <input name="Name" type="text" class="form-contol" />
+                    </div>
+                    <div class="col-auto my-1">
+                        <label class="dark control-label">Surname</label>
+                        <input name="Surname" type="text" class="form-contol" />
+                    </div>
+                    <div class="col-auto my-1">
+                        <label class="dark control-label">Lastname</label>
+                        <input name="LastName" type="text" class="form-contol" />
+                    </div>
+                    <div class="col-auto my-1">
+                        <label class="dark control-label">Accout number</label>
+                        <input name="AccoutNumber" type="text" class="form-contol" />
+                    </div>
+                    <div class="col-auto my-1">
+                        <label class="dark control-label">Account transaction number</label>
+                        <input name="AccountTransactionNumber" type="text" class="form-contol" />
+                    </div>
+
+                    <div class="col-auto my-1">
+                        <label class="dark control-label">Company name</label>
+                        <input name="CompanyName" type="text" class="form-contol" />
+                    </div>
+                    <div class="col-auto my-1">
+                        <input type="submit" value="Search" class="btn btn-primary" />
+                    </div>
+                </div>
+                <table class="table table-striped table-light">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Surname</th>
+                            <th scope="col">Last name</th>
+                            <th scope="col">Date of birth</th>
+                            <th scope="col">Options</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var person in Model.Data)
+                        {
+                            <tr>
+                                <th scope="row">@(ViewBag.Index += 1)</th>
+                                <td>@person.Name </td>
+                                <td>@person.Surname </td>
+                                <td>@person.LastName</td>
+                                <td>@person.DataOfBirth.ToString("dd/MM/yyyy") </td>
+                                <td>
+                                    <button class="btn-primary" asp-action="UpdatePerson" asp-controller="Person" asp-route-id="@person.Id">Update</button>
+                                    <button class="btn-danger" asp-action="DeletePerson" asp-controller="Person" asp-route-id="@person.Id">Delete</button>
+                                    <button class="btn-danger" asp-action="GetPersonCardCabinet" asp-controller="Person" asp-route-id="@person.Id">Info</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="card">
+                    <div class="card-header">
+                        No person founded
+                    </div>
+                </div>
+            }
+        </div>
+        @await Html.PartialAsync("_PaginationTableLayout")
+    </div>
+</div>
+</form>

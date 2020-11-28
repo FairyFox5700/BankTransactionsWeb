@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace BankTransactionWeb.ViewModel
+namespace BankTransaction.Web.ViewModel
 {
     public class UpdateCompanyViewModel
     {

@@ -1,40 +1,71 @@
-﻿@model List<BankTransactionWeb.ViewModel.TransactionListViewModel>
+﻿@model PaginatedList<BankTransaction.Models.DTOModels.TransactionDTO>
 @{
-    ViewData["Title"] = "GetAllTransactions";
+    ViewData["Title"] = "All transactions";
+      ViewBag.Index = 0;
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
+    }
 }
-
 <form asp-controller="Transaction" asp-action="GetAllTransactions" method="get">
-    @*<h4>Transactions count today: @ViewBag.CountOfTransactionPerDay</h4>*@
-    <button class="btn-info" asp-action="AddTransaction" asp-controller="Transaction">Add new</button>
-    <br />
-    <br />
-    <table class="table table-striped table-light">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Account Sorce</th>
-                <th scope="col">Account Destination</th>
-                <th scope="col">Date of transfering</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Options</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Count(); i++)
-            {
-                <tr>
-                    <th scope="row">@(i + 1)</th>
-                    <td>@Model[i]?.AccountSourceNumber </td>
-                    <td>@Model[i]?.AccountDestinationeNumber</td>
-                    <td>@Model[i]?.DateOftransfering</td>
-                    <td>@Model[i]?.Amount </td>
-                    <td>
-                        <button class="btn-primary" asp-action="UpdateTransaction" asp-controller="Transaction" asp-route-id="@Model[i]?.AccountSourceId">Update</button>
-                        <button class="btn-danger" asp-action="DeleteTransaction" asp-controller="Transaction" asp-route-id="@Model[i]?.AccountSourceId">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</form>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="col-6">
+                    <h6 class="m-0 font-weight-bold text-primary">All transactions</h6>
+                </div>
+            </div>
+        </div>
 
+        <div class="card-body">
+            <div class="table-responsive">
+                @if (Model.Data.Any())
+                {
+                    <table class="table table-striped table-light">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Account Sorce</th>
+                                <th scope="col">Account Destination</th>
+                                <th scope="col">Date of transfering</th>
+                                <th scope="col">Amount</th>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <th scope="col">Options</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var transaction in Model.Data)
+                            {
+                                <tr>
+                                    <th scope="row">@(ViewBag.Index += 1))</th>
+                                    <td>@transaction?.SourceAccountNumber </td>
+                                    <td>@transaction?.DestinationAccountNumber</td>
+                                    <td>@transaction?.DateOftransfering</td>
+                                    <td>@transaction?.Amount </td>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <td>
+                                            <button class="btn-primary" asp-action="UpdateTransaction" asp-controller="Transaction" asp-route-id="@transaction?.Id">Update</button>
+                                            <button class="btn-danger" asp-action="DeleteTransaction" asp-controller="Transaction" asp-route-id="@transaction?.Id">Delete</button>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="card">
+                        <div class="card-header">
+                            No transactions created yet
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+        @await Html.PartialAsync("_PaginationTableLayout")
+    </div>
+    </form>

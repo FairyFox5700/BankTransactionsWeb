@@ -1,64 +1,45 @@
-﻿using AutoMapper;
-using BankTransactionWeb.BAL.Interfaces;
-using BankTransactionWeb.BAL.Models;
-using BankTransactionWeb.DAL.Entities;
-using BankTransactionWeb.DAL.Interfaces;
+﻿
+using BankTransaction.BAL.Abstract;
+using BankTransaction.DAL.Abstract;
+using BankTransaction.Entities;
+using BankTransaction.Models;
+using BankTransaction.Models.Mapper;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using BankTransaction.Models.DTOModels;
+using BankTransaction.Models.Mapper;
 
-namespace BankTransactionWeb.BAL.Infrastucture
+
+namespace BankTransaction.BAL.Implementation.Infrastucture
 {
     public class AccountService : IAccountService
     {
         private readonly IUnitOfWork unitOfWork;
-        private readonly IMapper mapper;
-        private readonly ILogger<AccountService> logger;
+        private readonly Random random;
 
-        public AccountService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<AccountService> logger)
+        public AccountService(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
-            this.mapper = mapper;
-            this.logger = logger;
+            random = new Random();
         }
         public async Task AddAccount(AccountDTO account)
         {
-            try
-            {
-                var accountMapped = mapper.Map<Account>(account);
+                var accountMapped = AccountEntityToDtoMapper.Instance.MapBack(account);
                 unitOfWork.AccountRepository.Add(accountMapped);
                 await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(AddAccount)} instance of account successfully added");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(AddAccount)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+           
         }
 
         public async Task DeleteAccount(AccountDTO account)
         {
-           
-            try
-            {
-                var accountMapped = mapper.Map<Account>(account);
+                var accountMapped = AccountEntityToDtoMapper.Instance.MapBack(account);
                 unitOfWork.AccountRepository.Delete(accountMapped);
                 await unitOfWork.Save();
-                logger.LogInformation($"In method {nameof(DeleteAccount)} instance of account successfully added");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(DeleteAccount)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
         }
 
         public void Dispose()
@@ -66,56 +47,47 @@ namespace BankTransactionWeb.BAL.Infrastucture
             unitOfWork.Dispose();
         }
 
+
         public async Task<AccountDTO> GetAccountById(int id)
         {
-            try
-            {
-                var accountFinded = await unitOfWork.AccountRepository.GetById(id);
-                return mapper.Map<AccountDTO>(accountFinded);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAccountById)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+            var accountFinded = await unitOfWork.AccountRepository.GetById(id);
+            if (accountFinded == null) return null;
+            return AccountEntityToDtoMapper.Instance.Map(accountFinded); 
         }
 
-        public async  Task<IEnumerable<AccountDTO>> GetAllAccounts()
+        public async Task<PaginatedModel<AccountDTO>> GetAllAccounts(int pageNumber, int pageSize)
         {
-            try
-            {
-                var accounts= await unitOfWork.AccountRepository.GetAll();
-            return accounts.Select(account => mapper.Map<AccountDTO>(account)).ToList();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(GetAllAccounts)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
 
-            }
+                var accounts = (await unitOfWork.AccountRepository.GetAll(pageNumber, pageSize));
+            //TODO smth better here
+            return new PaginatedModel<AccountDTO>(accounts.Select(account => AccountEntityToDtoMapper.Instance.Map(account)), accounts.PageNumber, accounts.PageSize, accounts.TotalCount, accounts.TotalPages);
+        }
+
+        public async Task<IEnumerable<AccountDTO>> GetMyAccounts(ClaimsPrincipal user)
+        {
+            
+                var id = unitOfWork.UserManager.GetUserId(user);
+                var personFinded = await unitOfWork.PersonRepository.GetPersonByAccount(id);
+                var accounts = (await unitOfWork.PersonRepository.GetById(personFinded.Id)).Accounts;
+                return accounts.Select(account => AccountEntityToDtoMapper.Instance.Map(account)).ToList();
         }
 
         public async Task UpdateAccount(AccountDTO account)
         {
-            try
-            {
-                var accountMapped = mapper.Map<Account>(account);
-            unitOfWork.AccountRepository.Update(accountMapped);
-            await unitOfWork.Save();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError($"Catch an exception in method {nameof(UpdateAccount)} in class {this.GetType()}. The exception is {ex.Message}. " +
-                   $"Inner exception {ex.InnerException?.Message ?? @"NONE"}");
-                throw ex;
-
-            }
+                var accountMapped = AccountEntityToDtoMapper.Instance.MapBack(account);
+                unitOfWork.AccountRepository.Update(accountMapped);
+                await unitOfWork.Save();
         }
-       
 
-      
+        public string GenerateCardNumber(int numberOfDigits)
+        {
+            StringBuilder genCardNumber = new StringBuilder();
+            for (int i = 0; i < numberOfDigits; i++)
+            {
+                genCardNumber.Append(random.Next(0, 9).ToString());
+            }
+            return genCardNumber.ToString();
+        }
+
     }
 }
