@@ -22,7 +22,7 @@ namespace BankTransaction.BAL.Implementation.RestApi
 {
     public class RestApiHelper: IRestApiHelper
     {
-        static readonly string apiUrl = ConfigurationManager.AppSettings["api_url"] ?? "http://localhost:64943/api/";
+        static readonly string apiUrl = ConfigurationManager.AppSettings["api_url"] ?? "http://localhost:44372/api/";
         private readonly IRestClient Client;
         private readonly IHttpContextAccessor httpContextAccessor;
 

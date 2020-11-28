@@ -1,0 +1,57 @@
+version: '3.4'
+
+networks:
+ localdev:
+
+
+services:
+ banktransaction.web:
+    image: ${DOCKER_REGISTRY-}banktransactionweb
+    build:
+      context: .
+      dockerfile: BankTransactionWeb/Dockerfile
+    ports:
+    - "55369:80"
+    restart: always
+    depends_on:
+    - db-server
+    - transaction-api
+    - cache
+    networks:
+    - localdev
+
+ cache:
+  image: redis:latest
+  restart: always
+  ports:
+    - "6379:6379"
+  
+
+ db-server:
+    image: microsoft/mssql-server-linux:2017-latest
+    restart: always
+    container_name: db-server
+    environment:
+    - MSSQL_SA_PASSWORD=Ira2020IT81     
+    - ACCEPT_EULA=Y 
+    - MSSQL_TCP_PORT=1433
+    ports:       
+        - "1433:80" 
+    networks:
+        - localdev
+
+ transaction-api:
+    image: dockersupportbankweb/apibank:latest
+    restart: always
+    build:
+      context: .
+      dockerfile: BankTransaction.Api/Dockerfile
+    ports:
+    - "50051:80"
+    depends_on:
+      - db-server
+      - cache
+    networks:
+        - localdev
+
+

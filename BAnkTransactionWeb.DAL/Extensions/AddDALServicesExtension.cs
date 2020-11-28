@@ -19,7 +19,7 @@ namespace BankTransaction.DAL.Implementation.Extensions
         {
             var dbConfig = 
             services.AddDbContext<BankTransactionContext>(options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-          .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
             services.AddTransient<IPersonRepository, PersonRepository>();
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<ICompanyRepository, CompanyRepository>();
