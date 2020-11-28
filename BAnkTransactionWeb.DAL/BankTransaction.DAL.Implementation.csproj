@@ -52,8 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EfCoreDAL\" />
-    <Folder Include="InMemoryDAL\Repositories\" />
     <Folder Include="RestApi\" />
   </ItemGroup>
 

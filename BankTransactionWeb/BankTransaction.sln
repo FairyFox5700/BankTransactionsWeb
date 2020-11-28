@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.Web", "Bank
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.Api.Models", "..\BankTransaction.Api.Models\BankTransaction.Api.Models.csproj", "{9ED79E14-9F27-40EC-9824-210EA9C13678}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankTransaction.Web.Localization", "..\BankTransaction.Web.Localization\BankTransaction.Web.Localization.csproj", "{5E51373E-6E35-4252-B328-CCBE6722A630}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankTransaction.Web.Localization", "..\BankTransaction.Web.Localization\BankTransaction.Web.Localization.csproj", "{5E51373E-6E35-4252-B328-CCBE6722A630}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
