@@ -38,7 +38,7 @@ namespace BankTransaction.Web.Controllers
         public async Task<IActionResult> MyTransaction()
         {
             var transactions = (await transactionService.GetAllUserTransactions(HttpContext.User));
-            return View(transactions);
+            return Ok(transactions);
         }
 
         [HttpGet]
@@ -48,7 +48,7 @@ namespace BankTransaction.Web.Controllers
 
             var transactions = (await transactionService.GetAllTransactions(pageQueryParameters.PageNumber, pageQueryParameters.PageSize));
             var transactionListVM = new PaginatedList<TransactionDTO>(transactions);
-            return View(transactionListVM);
+            return Ok(transactionListVM);
 
 
         }

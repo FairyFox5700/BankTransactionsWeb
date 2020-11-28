@@ -76,7 +76,7 @@ namespace BankTransaction.Web.Areas.Identity.Controllers
         [AllowAnonymous]
         public IActionResult Lockout()
         {
-            return View();
+            return Ok();
         }
 
         [HttpPost]

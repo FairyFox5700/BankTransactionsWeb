@@ -4,7 +4,7 @@
         Layout = "~/Areas/Admin/Views/Shared/_AdminLayoutDashboard.cshtml";
 }
 
-    <form asp-controller="Person"  asp-action="AddPerson" method="post">
+    <form asp-controller="Person"  asp-action="UpdatePerson"  method="put">
         <div asp-validation-summary="ModelOnly" class="text-danger">  </div>
         <div class="form-group row">
                 <label asp-for="Name" class="col-sm-2 col-form-label"></label>
